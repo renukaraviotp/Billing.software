@@ -1,0 +1,975 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .tb{
+        color: black;
+        
+    }
+    table td{
+        border-bottom: 1px solid #ddd;
+    }
+    table th{
+        background-color:rgb(61, 68, 101);color: white;
+        margin-top: 4vh;
+        
+    }
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+
+    
+    .heading-with-dropdown {
+        display: flex;
+        align-items: center;
+    }
+    
+    .heading-with-dropdown span {
+        margin-right: 5px; /* Adjust as needed */
+    }
+    
+</style>
+
+
+<style>
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        }
+
+        .dropdown-toggle {
+        padding: 10px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        }
+
+        .dropdown-content {
+        z-index: 1;
+        display: none;
+        position: absolute;
+        top: 40px;
+        left: 2px;
+        background-color: #b4b4b450;
+        backdrop-filter: blur(5px);
+        padding: 10px;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        box-shadow: 3px 5px 5px 5px rgba(0, 0, 0, 0.201);
+        }
+
+        .dropdown-content input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        background-color: white;
+        border-radius: 5px;
+        border: 1px solid rgb(168, 168, 168);
+        }
+
+        .dropdown-content button {
+        padding: 8px 15px;
+        background-color: rgb(0, 154, 108);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+        }
+
+        .custom-dropdown .dropdown-content .cls{
+            position: absolute;
+            right: -7px;
+            top: -7px;
+            padding: 3px 5px;
+            color: white;
+            text-shadow: 0px 0px 2px black ;
+            border-radius: 50%;
+            font-size: 15px;
+            background-color: rgba(255, 0, 0, 0.424);
+        }
+        .custom-dropdown .dropdown-content .title
+        {
+            background-color: rgb(255, 255, 255);
+            font-weight: 500;
+            color: rgb(0, 0, 0);
+            text-shadow: 0px 0px 20px rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+        }
+        /* tooltip */
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #ccc; /* Add a dotted underline for visual indication */
+        cursor: help; /* Change the cursor to a help cursor on hover */
+        }
+
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+        }
+
+        .filter-option {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 1px;
+    }
+
+    #myTable tbody{
+        cursor: pointer;
+        
+    }
+   
+    .custom-container {
+        
+        min-height: 100vh;
+        padding: 50px;
+         
+    }
+    .content-body {
+        width: 100%;
+        margin-left: 0%;
+        display: flex;
+        justify-content: center; /* Center the content horizontally */
+        align-items: center; /* Center the content vertically */
+        height: 100%; /* Full height of the viewport */
+        background-color: rgb(130, 144, 199);
+    }
+ 
+</style>
+
+<div class="content-body" style="margin-left: 1vw;">
+    <div class="custom-container col-md-12 mr-1">
+        <div class="col-md-6  " style=" margin-left: 20%; margin-top: -10vh; width: 50%;">
+            <h1><ul>Sales Invoice</ul></h1>
+        </div>
+    <div class="d-flex mt-2"  style="background-color: white;height: 6vw;margin-left: 20vw;border-radius: 15px 15px 15px 15px;">
+        <div class="date-range-box rounded" style="margin-left: 2vw;  margin-top: 2vh; background-color: white;height: 10vh; padding-top: 3vh;width: 30vw;padding-left: 1vw;">
+            <label for="" style="color: rgb(0, 0, 0); font-size: 1.3vw;"><b>Date</b></label>
+            <input type="date" id="fromDate" class="date-input"> TO
+            <input type="date" id="toDate" class="date-input">
+        </div>
+        <div class="ml-auto rounded " style="margin-left: 24vw; margin-top: 2vh; background-color: white;padding-right: 1vw;height: 10vh;" >
+            <a href="{% url 'salesinvoice_graph' %}">
+            <button class="btn p-0 ps-2 pe-2 ms-2" type="button">
+                <span>
+                   <img width="30px" src="{% static 'images/graph.png' %}" alt="graph Icon">
+                   <br><span style="color: black; font-size: small; ">Graph</span>
+                </span>
+            </button></a>
+            
+
+            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()">
+                <span>
+                    <img width="22px" src="{% static 'images/excel2.png' %}" alt="Excel Icon">
+                    <br><span style="color: black; font-size: small; ">Export</span>
+                </span>
+            </button>
+
+            
+
+            <label for="file-input" title="import excel" class="btn p-0 ps-2 pe-2 ms-2" type="button">
+                <span style="position: relative; display: inline-block;">
+                    <img width="23px" src="{% static 'images/import.png' %}" alt="no img" style="position: absolute; top: 2vh; left: 50%; transform: translateX(-50%);">
+                    <span style="color: black; font-size: small; display: block; text-align: center; padding-top: 5.5vh;">Import</span>
+                </span>
+                <input id="file-input" type="file" name="file" style="display:none;" onchange="uploadFile()">
+            </label>
+            
+                  
+                
+            <button id="printButton" class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="printSalesInvoice()">
+                <span>
+                    <img width="28px" src="{% static 'images/printer.jpeg' %}" alt="Printer Icon">
+                    <br><span style="color: black; font-size: small; ">Printer</span>
+                </span>
+            </button>
+        </div>
+    </div>
+    <div style="background-color: white; margin-left:20vw;margin-top: 5vh;border-radius: 15px 15px 15px 15px;">
+    <div class="row">
+        
+        <div class="col-md-6 d-flex align-items-center" style="padding-top: 2%; margin-bottom: 2vh;margin-left: 59%;">
+            <input type="text"  autocomplete="off" id="myInput1" onkeyup="filter(this);" onclick="myFunction1()" class="form-control w-35 border-secondary text-dark pt-1 pb-1 pe-1 rounded" placeholder="search" />
+            <a style="color: white; height: 45px; width: 150px; margin-left: 10px;background-color:rgb(61, 68, 101);" class="btn pt-2 " href="{% url 'sales_invoice_add' %}">
+                Add 
+            </a>
+        </div>
+        
+    </div>
+    
+    <!-- Add a container to display search results -->
+    <div id="searchResultsContainer"></div>
+    <script>
+        function printSalesInvoice() {
+            // Clone the table to avoid modifying the original
+            var clonedTable = document.getElementById('printTable').cloneNode(true);
+    
+            // Remove any dropdown elements from the cloned table
+            var dropdowns = clonedTable.querySelectorAll('select');
+            dropdowns.forEach(function(dropdown) {
+                dropdown.remove();
+            });
+    
+            // Hide any dropdowns in the original table
+            var originalDropdowns = document.getElementById('printTable').querySelectorAll('select');
+            originalDropdowns.forEach(function(dropdown) {
+                dropdown.style.display = 'none';
+            });
+    
+            // Create a new window for printing
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write('/* Add any print-specific styling here */');
+            printWindow.document.write('h1 { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid black; }');
+            printWindow.document.write('table { border-collapse: collapse; width: 100%; }');
+            printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body>');
+    
+            // Add the heading "Sales Invoice" before the table with a styled boundary
+            printWindow.document.write('<h1>Sales Invoice</h1>');
+    
+            // Add the table content
+            printWindow.document.write('<table>' + clonedTable.innerHTML + '</table>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+    
+            // Trigger the print dialog in the new window
+            printWindow.print();
+    
+            // Show the original dropdowns after printing
+            originalDropdowns.forEach(function(dropdown) {
+                dropdown.style.display = 'block';
+            });
+        }
+    </script>
+    
+    
+    
+    
+    <script>
+        function exportToExcel() {
+            // Make an AJAX request to the Django view
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "{% url 'export_sales_invoices_to_excel' %}", true);
+            xhr.responseType = "blob";
+    
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Create a link element and trigger the download
+                    var blob = new Blob([xhr.response], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                    var link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "sales_invoices.xlsx";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            };
+    
+            xhr.send();
+        }
+    </script>
+    
+    
+    <script>
+        function searchInvoices(query) {
+            // Replace '/search_invoices/' with the actual URL for the search view
+            const searchUrl = `/InvoiceSearchView/?query=${query}`;
+    
+            // Perform AJAX request
+            fetch(searchUrl)
+                .then(response => response.json())
+                .then(data => displaySearchResults(data))
+                .catch(error => console.error('Error fetching search results:', error));
+        }
+    
+        function displaySearchResults(results) {
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+    
+            // Clear previous search results
+            searchResultsContainer.innerHTML = '';
+    
+            // Display the new search results
+            if (results.length > 0) {
+                const resultList = document.createElement('ul');
+                resultList.classList.add('list-group');
+    
+                results.forEach(result => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+                    listItem.textContent = result.name;  // Assuming 'name' is a property of the search result
+                    resultList.appendChild(listItem);
+                });
+    
+                searchResultsContainer.appendChild(resultList);
+            } else {
+                // Display a message if no results are found
+                const noResultsMessage = document.createElement('p');
+                noResultsMessage.textContent = 'No results found.';
+                searchResultsContainer.appendChild(noResultsMessage);
+            }
+        }
+
+
+        function filter(input) {
+    var filterValue = input.value.toLowerCase();
+    var tableRows = document.querySelectorAll('#InvoiceTable tbody tr');
+
+    tableRows.forEach(function(row) {
+        var cells = row.querySelectorAll('td'); // Assuming all data cells are td elements
+
+        var rowMatch = Array.from(cells).some(function(cell) {
+            var cellValue = cell.textContent || cell.innerText;
+            return cellValue.toLowerCase().includes(filterValue);
+        });
+
+        if (rowMatch) {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+
+
+    </script>
+    
+    
+    
+    
+  
+       <div class="col-md-12  table-container" style="width: 100%;">
+           <div class="table-responsive" style="border-radius: 15px 15px 15px 15px; gray; width: 100%;">
+            <table class="text-dark"  id="InvoiceTable" style=" background-color: rgb(255, 255, 255);">
+                <thead style="border-bottom: 1px solid #ddd; ">
+                    
+                    <!-- Example for the first column -->
+                <th class="text-center fs-8" style="width: 30vw; padding-top: 15px; padding-bottom: 2vh; ">
+                    <div>
+                        <span style="margin-left: 2px;">DATE</span>
+                        
+                    </div>
+                </th>
+
+                    <th class="text-center fs-8 " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown ">
+                            <span style="white-space: nowrap;  ">INVOICE NO</span>
+                        
+                        
+                                                
+                                            </div>
+                    </th>
+                
+                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="white-space: nowrap;">PARTY NAME</span>
+                            
+                                
+                        </div>
+                    </th>
+                    <th class="text-center fs-8  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span>TRANSACTION</span>
+                           
+                        </div>
+                    </th>
+                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="white-space: nowrap;">PAYMENT</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-9  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown"style="margin-right: -1vw;">
+                            <span style="width: 6vw;">AMOUNT</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown" >
+                            <span style=" width: 6vw;">BALANCE</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-8 no-export " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="margin-left: 20px;width: 5vw;">ACTION</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-8 no-export  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="margin-left: 25px;width: 1vw; ">BY</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center p-0 m-0 no-export  " style="padding-right: 5px;padding-top: 15px; padding-bottom: 2vh;"></th> 
+            </thead>
+                <tbody class="text-dark" style="color: black;">
+                    {% for s in sales_invoices %}
+                                            <tr class="sales-row">                                               
+                                                <td class="text-center date-cell td_date clickable-row" id="filterByDate" data-href="salesinvoice_template/{{ s.id }}">{{s.date|date:"d-m-y"}}</td>
+                                                <td class="text-center td_invoice clickable-row" id="filterByInvoiceNumber" data-href="salesinvoice_template/{{ s.id }}">{{s.invoice_no}}</td>
+                                                <td class="text-center td_name clickable-row" id="filterByName" data-href="salesinvoice_template/{{ s.id }}">{{s.party_name}}</td>
+                                                <td class="text-center td_transcation clickable-row"  id="filterByTransaction" data-href="salesinvoice_template/{{ s.id }}">Sale Invoice</td>
+                                                <td class="text-center td_payment clickable-row" id="filterByPayment" data-href="salesinvoice_template/{{ s.id }}">{{ s.paymenttype }}</td>
+                                                <td class="text-center td_amount clickable-row" id="filterByAmount" data-href="salesinvoice_template/{{ s.id }}">{{s.grandtotal}}</td>
+                                                <td class="text-center td_balance clickable-row" id="filterByBalance'" data-href="salesinvoice_template/{{ s.id }}">{{ s.totalbalance }}</td>
+                                                <td class="text-center td_action no-export clickable-row" id="filterByAction" data-href="salesinvoice_template/{{ s.id }}">{{ s.action }}</td>
+                                                <td class="text-center td_by no-export clickable-row" id="filterByBy" data-href="salesinvoice_template/{{ s.id }}">{{s.company.company_name}}</td>
+                                                <td>
+                            <div class="btn-group mb-1">
+                                <div class="dropdown" style="margin-bottom: 4vh;">
+                                    <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                       <span class="fa fa-ellipsis-v text-dark fs-5 ps-"></span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                        <ul>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_v" onclick="redirectToView(event, {{ s.id }})">
+                                                    <span class="fa fa-eye pe-2 tg"></span> View
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_e" onclick="redirectToEdit(event, {{ s.id }})">
+                                                    <span class="fa fa-edit pe-2 text-primary mt-2"></span> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 20px;" class="hide_table_text_d" onclick="redirectToDelete(event, {{ s.id }})">
+                                                    <span class="fa-solid fa-trash" style="margin-left: -.7vw;padding-right: .7vw;"></span> Delete
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_h" onclick="redirectToHistory(event, {{ s.id }})">
+                                                    <span class="fa fa-history pe-2 th mt-2"></span> History
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <script>
+                                        function redirectToView(event, id) {
+                                            event.preventDefault();
+                                            window
+                                            window.location.href = "{% url 'salesinvoice_template' 0 %}".replace('0', id);
+                                        }
+                                    
+                                        function redirectToEdit(event, id) {
+                                            event.preventDefault();
+                                            window.location.href = "{% url 'invoice_edit' 0 %}".replace('0', id);
+                                        }
+                                    
+                                        function redirectToDelete(event, id) {
+                                            event.preventDefault();
+                                            window.location.href = "{% url 'delete_sales_invoice' 0 %}".replace('0', id);
+                                        }
+                                    
+                                        function redirectToHistory(event, id) {
+                                            event.preventDefault();
+                                            window.location.href = "{% url 'salesinvoice_history' 0 %}".replace('0', id);
+                                        }
+                                    </script>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+           </div>
+       </div>
+    </div>
+   </div>
+
+   </div>
+</div>
+
+<table id="printTable" style="display: none;">
+    <thead >
+        
+        <tr class="fs-2 tb" >
+            <th> DATE </th>
+            <th> INVOICE NO </th>
+            <th> PARTY NAME </th>
+            <th> TRANSCATION </th>
+            <th> PAYMENT TYPE </th>
+            <th> AMOUNT </th>
+            <th> BALANCE DUE </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in sales_invoices %}
+        <tr>
+            <td>{{t.date | date:'d-m-Y'}}</td>
+            <td style="justify-content: center;text-align: center;">{{t.invoice_no}}</td>
+            <td>{{t.party.party_name}}</td>
+            <td>Sale Invoice</td>
+            <td>{{t.paymenttype}}</td>
+            <td>{{t.grandtotal}}</td>
+            <td>{{t.totalbalance}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<table id="tablemodel" hidden>
+    <thead>
+        <tr>
+            <th>Party Name</th>
+            <th>Party Email</th>
+            <th>Date</th>
+            <th>Supply State</th>
+            <th>Payment Method</th>
+            <th>Payment No</th>
+            <th>Adjustment</th>
+            <th>Advance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>State/Other State</td>
+            <td>Cash/Cheque/UPI/Bank Name</td>
+            <td>Cheque ID/UPI ID/Bank no</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tableitemmodel" hidden>
+    <thead>
+        <tr>
+            <th>Invoice</th>
+            <th>Item Name</th>
+            <th>Item HSN</th>
+            <th>Quantity</th>
+            <th>Tax</th>
+            <th>Discount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Corresponding Row no from invoice Model </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Check if the cookie name matches the CSRF cookie name
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function uploadFile() {
+        const fileInput = document.getElementById("file-input");
+        const file = fileInput.files[0];
+        const csrfToken = getCookie('csrftoken')
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/import_excel", {
+            method: "POST",
+            headers: { 'X-CSRFToken': csrfToken },
+            body: formData
+        })
+        window.location.href = '/sales_invoice_list';
+
+
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to filter rows based on date range
+        function filterRowsByDate() {
+            var fromDate = new Date(document.getElementById("fromDate").value);
+            var toDateInput = document.getElementById("toDate");
+            var toDate = new Date(toDateInput.value);
+
+            // Set the min attribute of toDate input to the selected fromDate
+            toDateInput.min = document.getElementById("fromDate").value;
+
+            var rows = document.querySelectorAll(".sales-row");
+
+            rows.forEach(function (row) {
+                var dateCell = row.querySelector(".date-cell");
+
+                if (dateCell) {
+                    var rowDate = new Date(dateCell.textContent.replace(/(\d{2})-(\d{2})-(\d{2})/, '20$3-$2-$1'));
+
+                    
+                    // Show/hide rows based on the date range (inclusive)
+                    if (rowDate >= fromDate && rowDate <= toDate) {
+                        row.style.display = "table-row";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+        }
+
+        // Attach the filter function to the date input change event
+        document.getElementById("fromDate").addEventListener("change", filterRowsByDate);
+        document.getElementById("toDate").addEventListener("change", filterRowsByDate);
+    });
+</script>
+
+<script>
+    function printTable() {
+        // Get the table element by its ID
+        var table = document.getElementById('myTable');
+        
+
+        // Exclude the last column (ACTION) from export
+        var noExportCols = Array.from(table.querySelectorAll('th.no-export, td.no-export'));
+        noExportCols.forEach(col => col.style.display = 'none');
+
+        
+
+        // Open a new window and write the table HTML content to it
+        var newWin = window.open('', 'Print-Window');
+        newWin.document.open();
+        newWin.document.write('<html><head><style>@media print {table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #000; padding: 8px;}} </style></head><body>');
+        newWin.document.write('<h1>Sales Invoice</h1>');
+        newWin.document.write('<html><head><style>@media print {table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #000; padding: 8px;}}</style></head><body>' + table.outerHTML + '</body></html>');
+        newWin.document.close();
+
+        // Restore the display of excluded columns after export
+        noExportCols.forEach(col => col.style.display = '');
+
+        // Trigger the print action
+        newWin.print();
+    }
+</script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.10/xlsx.full.min.js"></script>
+
+
+<script>
+
+
+    function ExportToExcel() {
+        const table = document.querySelector('#excelinvoicetable');
+        const ws = XLSX.utils.table_to_sheet(table);
+    
+        // Specify column widths (in Excel characters, e.g., "15px")
+        ws['!cols'] = [
+            { wch: 12 }, // DATE
+            { wch: 15 }, // INVOICE NO
+            { wch: 20 }, // PARTY NAME
+            { wch: 15 }, // TRANSCATION
+            { wch: 15 }, // PAYMENT TYPE
+            { wch: 12 }, // AMOUNT
+            { wch: 15 }, // BALANCE DUE
+        ];
+    
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'SalesInvoice.xlsx');
+    }
+    
+ 
+    
+
+    $(document).ready(function() {
+        $("#search_input1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    $(document).ready(function(){
+        $('#search_item').click(function(){
+            $(this).attr('hidden',true)
+            $('#search_item_input').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',true)
+        })
+    })
+    $(document).ready(function(){
+        $('#close_seacrh').click(function(){
+            $('#search_item_input').val('')
+            $('#search_item_input').attr('hidden',true)
+            $('#search_item').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',true)
+        })
+    })
+ 
+</script>
+
+{% comment %} <script>
+
+    function updateTotalBalance() {
+        $.ajax({
+            url: '/get_total_balance/', 
+            type: 'GET',
+            success: function(data) {
+                $('#total-balance').text('₹' + data.total_balance);
+                $('#total-paidoff').text('₹' + data.paid_off);
+                $('#grand_total').text('₹' + data.grand_total);
+            },
+            error: function(error) {
+                console.log('Error fetching total balance:', error);
+            }
+        });
+    }
+    updateTotalBalance();
+</script> {% endcomment %}
+
+<script>
+    calculatetotal()
+
+    function calculatetotal() {
+        var table = document.getElementById('myTable');
+        var rows = table.getElementsByTagName('tr');
+        var tpaid = 0;
+        var tunpaid = 0;
+        var ttotal = 0;
+    
+        for (var i = 1; i < rows.length; i++) {
+            if (rows[i].style.display != 'none') {
+                var paidCell = rows[i].querySelector('.td_paidoff'); 
+                var unpaidCell = rows[i].querySelector('.td_balance'); 
+                var totalCell = rows[i].querySelector('.td_amount'); 
+    
+                tpaid += parseFloat(paidCell.textContent) || 0;
+                tunpaid += parseFloat(unpaidCell.textContent) || 0;
+                ttotal += parseFloat(totalCell.textContent) || 0;
+            }
+        }
+    
+        document.getElementById('paidval').textContent = tpaid.toFixed(2);
+        document.getElementById('unpaidval').textContent = tunpaid.toFixed(2);
+        document.getElementById('totalval').textContent = ttotal.toFixed(2);
+    }
+    
+</script>
+
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+
+
+
+
+<div class="modal" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="excelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excelModalLabel">Upload File
+                    <label for="" style="color: red; font-size: x-small;" >* Refer Downloaded Sheet For Format </label><br></h5>
+                    <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="excelForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="file" style="color: black;">Choose Excel File for Sales invoice- </label> <br>
+                            <input type="file" class="form-control-file" id="billfile" name="billfile" accept=".xls, .xlsx"><br><br>
+                            
+
+                            <label for="file" style="color: black;">Choose Excel File for Sales invoice product- </label> <br>
+                            <input type="file" class="form-control-file" id="prdfile" name="prdfile" accept=".xls, .xlsx"><br>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadFile()" data-dismiss="modal">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Define global variables to store filter state
+var filters = {};
+
+// Function to toggle dropdown visibility
+function toggleDropdown(index) {
+        var dropdownContent = document.getElementById('dropdownContent' + index);
+        var isVisible = dropdownContent.style.display === 'block';
+        var allDropdowns = document.querySelectorAll('.dropdown-content');
+        allDropdowns.forEach(function (dropdown) {
+            dropdown.style.display = 'none';
+        });
+        dropdownContent.style.display = isVisible ? 'none' : 'block';
+    }
+
+// Function to clear dropdown filter
+function cleardropdown(columnIndex) {
+    $('#filterInput' + columnIndex).val('');
+    filters[columnIndex] = '';
+    filterTable(columnIndex);
+}
+
+// Function to filter the table based on the selected filter
+function filterTable(index) {
+        var input;
+        document.getElementById('dropdownContent' + index).style.display = 'none';
+        if (index === 0) {
+            input = document.getElementById('filterInput' + index).value;
+        } else {
+            input = document.getElementById('filterInput' + index).value.toUpperCase();
+        }
+        var table = document.getElementById('InvoiceTable');
+        var rows = table.getElementsByTagName('tr');
+        var emptyMessage = document.getElementById('emptyMessage');
+        var isEmpty = true;
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            var cell = cells[index];
+            if (cell) {
+                var textValue = cell.textContent || cell.innerText;
+                if (index === 0) {
+                    if (input==''){
+                        rows[i].style.display = 'table-row';
+                            isEmpty = false;
+                    }else{
+                        dateval  = textValue.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2-$1-$3");
+                        inputval  = input.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2-$1-$3");
+                        const formattedDate = formatDateString(input);
+                        if (dateval === formattedDate) {
+                            rows[i].style.display = 'table-row';
+                            isEmpty = false;
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                } else {
+                    if (textValue.toUpperCase().includes(input)) {
+                        rows[i].style.display = 'table-row';
+                        isEmpty = false;
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+        emptyMessage.style.display = isEmpty ? 'block' : 'none';
+        calculatetotal()
+    }
+
+
+// Close the dropdown if the user clicks outside of it
+$(window).on('click', function (e) {
+    if (!$(e.target).closest('.dropdown-content').length) {
+        $('.dropdown-content').removeClass('show');
+    }
+});
+function filterDateColumn() {
+    var filterInput = $('#filterInput0');
+    var filterValue = filterInput.val();
+
+    $('#InvoiceTable tbody tr').each(function () {
+        var row = $(this);
+        var cellValue = row.find('td').eq(0).text().trim();
+
+        // Check if the cell value matches the filter value
+        if (cellValue === filterValue) {
+            row.show();
+        } else {
+            row.hide();
+        }
+    });
+
+    // Close the dropdown
+    toggleDropdown(0);
+}
+
+// Update your existing filterTable function to use the new date filter function
+function filterTable(columnIndex) {
+    if (columnIndex === 0) {
+        filterDateColumn();
+    }
+}
+
+        </script>
+{% endblock %}

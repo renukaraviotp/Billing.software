@@ -1,0 +1,473 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>MultiUser Billing Software In India</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<!-- favicon -->
+        <link rel="shortcut icon" type="image/png" href="{% static 'img/logo/logo3.png' %}" />		
+		<!-- <link rel="shortcut icon" type="image/x-icon" href="img/logo/favicon.ico"> -->
+
+		<!-- all css here -->
+
+		<!-- bootstrap v3.3.6 css -->
+		<link rel="stylesheet" href="static/assets/css/bootstrap.min.css">
+		<!-- owl.carousel css -->
+		<link rel="stylesheet" href="static/assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="static/assets/css/owl.transitions.css">
+       <!-- Animate css -->
+        <link rel="stylesheet" href="static/assets/css/animate.css">
+        <!-- meanmenu css -->
+        <link rel="stylesheet" href="static/assets/css/meanmenu.min.css">
+		<!-- font-awesome css -->
+		<link rel="stylesheet" href="static/assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="static/assets/css/themify-icons.css">
+		<link rel="stylesheet" href="static/assets/css/flaticon.css">
+		<!-- magnific css -->
+        <link rel="stylesheet" href="static/assets/css/magnific.min.css">
+		<!-- style css -->
+		<link rel="stylesheet" href="static/assets/style/style.css">
+		<!-- responsive css -->
+		<link rel="stylesheet" href="static/assets/css/responsive.css">
+
+		<!-- modernizr css -->
+		<script src="static/assets/js/vendor/modernizr-2.8.3.min.js"></script>
+
+
+        <style>
+            .self-area {
+    background: url(static/img/background/ag1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top center;
+    background-attachment: scroll;
+    z-index: 1;
+    position: relative;
+}
+.self-area:after{
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background: rgba(6,34,65,0.40) none repeat scroll 0 0;
+    content:"";
+    z-index: -1;
+}
+@media (max-width: 768px) {
+    /* Adjust styles for tablets */
+    .self-content {
+        padding: 30px 15px 30px 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Adjust styles for mobile devices */
+    .self-content {
+        padding: 20px;
+    }
+}
+
+.slide-area {
+    background: rgba(0, 0, 0, 0) url(static/img/slider/h1.jpg) no-repeat scroll top center / cover;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    position: relative;
+}
+.slide-area::after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(10, 24, 40, 0.8) none repeat scroll 0 0;
+    content: "";
+    z-index: -1;
+}
+
+.header-right-link {
+                float: right;
+                width: 115px;
+                padding: 30px 0px;
+                margin-left: 20px;
+                text-align: right;
+            }
+
+
+        </style>
+	</head>
+		<body>
+
+		<!--[if lt IE 8]>
+			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+
+        <div id="preloader"></div>
+        <header class="header-one">
+          
+            <!-- header-area start -->
+            <div id="sticker" class="header-area hidden-xs">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="row">
+                                <!-- logo start -->
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="logo">
+                                        <!-- Brand -->
+                                        <a class="navbar-brand page-scroll white-logo" href="">
+                                            <img src="static/img/logo/logo3.png" alt="">
+                                            <img src="static/img/logo/" alt="">
+                                        </a>
+
+                                    </div>
+                                    <!-- logo end -->
+                                </div>
+                                <div class="col-md-9 col-sm-9">
+                                    <div class="header-right-link">
+                                        <!-- search option end -->
+                                        <a class="s-menu" href="{% url 'login' %}">Login</a>
+                              
+                                    </div>
+                                    <div class="header-right-link">
+                                        <!-- search option end -->
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="navbar-example" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: orange; width: 120px; height: 42px; margin-top: -10px; color: white; ">
+                                               <b style="font-size: 14px;"> REGISTER</b>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="navbar-example" style="margin-left: -15px; ">
+                                                <a class="dropdown-item" href="{% url 'register' %}" style="color: black; margin-left: 10px; ">Company Registration</a>
+                                                <a class="dropdown-item" href="{% url 'registerstaff' %}" style="color: black; margin-left: 10px; ">Staff Registration</a>
+                                                <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+                                              </div>
+                                        </div>
+                                    </div>
+                                    <!-- mainmenu start -->
+                                    <nav class="navbar navbar-default">
+                                        <div class="collapse navbar-collapse" id="navbar-example">
+                                            <div class="main-menu">
+                                                <ul class="nav navbar-nav navbar-right">
+                                                    <li><a class="pages" href="">Home</a></li>
+                                                    <li><a href="{% url 'about' %}">About us</a></li>
+                                                    <li><a href="{% url 'service' %}">Service</a></li>
+                                                    <li><a href="{% url 'contact' %}">contacts</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <!-- mainmenu end -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- header-area end -->
+            <!-- mobile-menu-area start -->
+            <div class="mobile-menu-area hidden-lg hidden-md hidden-sm">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mobile-menu">
+                                <div class="logo">
+                                    <a href=""><img src="static/img/logo/logo3.png" alt="" /></a>
+                                </div>
+                                <nav id="dropdown">
+                                    <ul>
+                                        <li><a class="pages" href="{% url 'home' %}">Home</a>
+                                        </li>
+                                        <li><a href="{% url 'about' %}">About us</a></li>
+                                        <li><a href="{% url 'service' %}">Service</a></li>
+                                        <li><a href="{% url 'contact' %}">contacts</a></li>
+                                    </ul>
+                                </nav>
+                            </div>				
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- mobile-menu-area end -->		
+        </header>
+        <!-- header end -->
+        <!-- Start Intro Area -->
+		<div class="slide-area fix" data-stellar-background-ratio="0.6">
+            <div class="display-table">
+                <div class="display-table-cell">
+					<div class="container">
+						<div class="row">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <!-- Start Slider content -->
+                                <div class="slide-content text-center">
+                                    <h2 class="title2">Best multiuser billing software in india</h2>
+                                    <div class="layer-1-3">
+                                        <a href="{% url 'login' %}" class="ready-btn left-btn" >Get started</a>
+                                        <div class="video-content">
+                                            <!-- <a href="https://www.youtube.com/watch?v=O33uuBh6nXA" class="video-play vid-zone">
+                                                <i class="fa fa-play"></i>
+                                                <span>watch video</span>
+                                            </a> -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Slider content -->
+						    </div>
+						</div>
+					</div>
+				</div>
+            </div>
+		</div>
+		<!-- End Intro Area -->
+        <!-- Start Count area -->
+        {% comment %} <div class="counter-area fix area-padding-2">
+            <div class="container">
+                <!-- Start counter Area -->
+                 <div class="row">
+                    <div class="fun-content">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                            <!-- fun_text  -->
+                            <div class="fun_text">
+                                <span class="counter-icon"><i class="flaticon-035-savings"></i></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                            <!-- fun_text  -->
+                            <div class="fun_text">
+                               <span class="counter-icon"><i class="flaticon-034-reward"></i></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                            <!-- fun_text  -->
+                            <div class="fun_text">
+                               <span class="counter-icon"><i class="flaticon-016-graph"></i></span>
+
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                            <!-- fun_text  -->
+                            <div class="fun_text">
+                              <span class="counter-icon"><i class="flaticon-043-world"></i></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+        <!-- End Count area -->
+        <!-- Start Support-service Area -->
+         <div class="support-service-area fix area-padding-2">
+            <div class="container">
+                <div class="row">
+                    <div class="support-all">
+                        <!-- Start About -->
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="support-services wow ">
+                                <a class="support-images" href="#"><i class="flaticon-023-management"></i></a>
+                                <div class="support-content">
+                                    <h4>Expert management</h4>
+                                    <p>Replacing a  maintains the amount of lines. When replacing a selection. help to define their new business objectives and then create</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Start About -->
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="support-services ">
+                                <a class="support-images" href="#"><i class="flaticon-036-security"></i></a>
+                                <div class="support-content">
+                                    <h4>Secure </h4>
+                                    <p>Replacing a  maintains the amount of lines. When replacing a selection. help to define their new business objectives and then create</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Start services -->
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="support-services ">
+                                <a class="support-images" href="#"><i class="flaticon-003-approve"></i></a>
+                                <div class="support-content">
+                                    <h4>Registered company</h4>
+                                    <p>Replacing a  maintains the amount of lines. When replacing a selection. help to define their new business objectives and then create</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Start services -->
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                           
+                        </div>
+                        <!-- Start services -->
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                            <div class="support-services ">
+                                <a class="support-images" href="#"><i class="flaticon-032-report"></i></a>
+                                <div class="support-content">
+                                    <h4>Verified security</h4>
+                                    <p>Replacing a  maintains the amount of lines. When replacing a selection. help to define their new business objectives and then create</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Start services -->
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Support-service Area -->
+        <!-- Start Self-area -->
+        <div class="self-area area-padding">
+            <div class="container">
+                <div class="row">
+                    <!-- column end -->
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="self-content" >
+							<h4>FREE Business Accounting Software built for Indian small businesses to deal with invoicing,inventory,accounting needs,and much more! </h4>
+
+                        </div>
+                    </div>
+                    <!-- column end -->
+                </div>
+            </div>
+        </div>
+        <!-- End Self-area -->
+        <!-- Start Banner Area -->
+        <div class="banner-area area-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="banner-all area-80 text-center">
+                            <div class="banner-content">
+                                <h3>Easily run small businesses relations for development</h3>{% endcomment %}
+                                {% comment %} <a class="banner-btn" href="#">Sign up now</a> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Banner Area -->
+     </div>
+    </div>
+<!-- End row -->
+ </div>
+</div>
+<!-- End Blog Area-->
+</div>
+</div>
+</div> 
+</div>
+</div>
+</div> {% endcomment %}
+        <!-- End FAQ area -->
+        <!-- Start Footer Area -->
+        <footer class="footer1">
+            <div class="footer-area">
+                <div class="container">
+                    <div class="row">
+                        
+                        <!-- end single footer -->
+                        <div class="col-md-4 col-sm-3 col-xs-12">
+                            <div class="footer-content">
+                                <div class="footer-head">
+                                    <h4>Services Link</h4>
+                                    <ul class="footer-list">
+                                        <li><a href="#">Home</a></li>
+                                        <li><a href="#">About us</a></li>
+                                        <li><a href="#">Contact us </a></li>
+                                        <li><a href="#">Services </a></li>
+                                        <li><a href="#">Privacy</a></li>
+                                        <li><a href="#">Terms & Condition</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end single footer -->
+                        <div class="col-md-3 col-sm-4 col-xs-12">
+                            <div class="footer-content last-content">
+                                <div class="footer-head">
+                                    <h4>Information</h4> 
+                                    <div class="footer-contacts">
+										<p><span>Tel :</span> 9983898799</p>
+										<p><span>Email :</span> billsoftware.com</p>
+										<p><span>Location :</span> Carnival 1, Infopark, Kakkanad</p>
+									</div> 
+                                    <div class="footer-icons">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-pinterest"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-instagram"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-area-bottom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- End Footer area -->
+        
+		
+		<!-- all js here -->
+
+		<!-- jquery latest version -->
+		<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+		<!-- bootstrap js -->
+		<script src="static/assets/js/bootstrap.min.js"></script>
+		<!-- owl.carousel js -->
+		<script src="static/assets/js/owl.carousel.min.js"></script>
+		  <!-- stellar js -->
+        <script src="static/assets/js/jquery.stellar.min.js"></script>
+		<!-- magnific js -->
+        <script src="static/assets/js/magnific.min.js"></script>
+        <!-- wow js -->
+        <script src="static/assets/js/wow.min.js"></script>
+        <!-- meanmenu js -->
+        <script src="static/assets/js/jquery.meanmenu.js"></script>
+		<!-- Form validator js -->
+		<script src="static/assets/js/form-validator.min.js"></script>
+		<!-- plugins js -->
+		<script src="static/assets/js/plugins.js"></script>
+		<!-- main js -->
+		<script src="static/assets/js/main.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Staff Sign Up </title>
+    <meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="shortcut icon" type="image/png" href="{% static 'img/logo/logo3.png' %}" />
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="static/assets/fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="static/assets/csslog/style.css">
+    <style>
+        .custom-select {
+            position: relative;
+            display: inline-block;
+        }
+    
+        .custom-select select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: none;
+            width: 100%;
+            padding: 15px; /* Add some padding to make it look better */
+            box-sizing: border-box;
+            background-color: transparent; /* Make the background transparent */
+        }
+    
+        .select-arrow {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #000; /* Set the arrow color */
+        }
+    
+        .underline {
+            position: relative;
+            width: 300px;
+            border-bottom: 1px solid #000; /* Set the underline style */
+            margin-bottom: 5px; /* Adjust the space between the underline and dropdown arrow */
+        }
+        #fname::placeholder {
+            color: black;
+        }
+        #lname::placeholder {
+            color: black;
+        }
+        #email::placeholder {
+            color: black;
+        }
+        #username::placeholder {
+            color: black;
+        }
+        #phoneno::placeholder {
+            color: black;
+        }
+        #pass::placeholder {
+            color: black;
+        }
+        #re_pass::placeholder {
+            color: black;
+        }
+        #companycode::placeholder {
+            color: black;
+        }
+    
+    </style>
+</head>
+<body style="background-color: orange;">
+
+    <div class="main" style="background-color: rgba(225, 155, 24, 0.563); margin-top: 60px;" >
+        {% if messages %}
+        {% for message in messages %}
+            <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 50%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px; margin-left: 16vw; ">{{message}}</label>
+        {% endfor %}
+     {% endif %}
+        <!-- Sign up form -->
+        <section class="signup">
+            <div class="container">
+                <h2 class="form-title" style="margin-left: 20px;">Register Staff</h2>
+                <div class="signup-content">
+                    <div class="signup-form"  style="margin-top: -50px;">
+                        
+                        <form class="register-form" id="register-form" class="mt-2" method="post" action="{% url 'staff_registraction' %}" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="fname"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" name="fname" id="fname" placeholder="Enter First Name" required/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lname"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" name="lname" id="lname" placeholder="Enter Last Name" required/>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email"><i class="zmdi zmdi-email"></i></label>
+                                <input type="email" name="email" id="email" placeholder="Enter Email" pattern="[a-zA-Z0-9._%+-]+@gmail\.com" required/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" name="username" id="username" placeholder="Enter User Name" required/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phoneno"><i class="zmdi zmdi-phone"></i></label>
+                                <input type="text" name="phoneno" id="phoneno" placeholder="Enter Phone Number" pattern="\d{10}" title="Phone number must be 10 digits"/>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                                <input type="password" name="pass" id="pass" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" placeholder="Enter Password" required/>
+                            </div>
+
+                            <p class="text-primary" style="font-size: 12px; margin-top: -10px; color: rgba(32, 32, 228, 0.807);" >*password must be at least 8 characters long and include uppercase , lowercase, special characters and numbers.</p>
+
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                                <input type="password" name="re_pass" id="re_pass" placeholder="Repeat your password" required/>
+                            </div>
+
+                            <span id='message' style="margin-top: 0px; padding-top: 0px;"></span>
+
+                            <div class="form-group" style="margin-top: 15px;">
+                                <label for="companycode"><i class="zmdi zmdi-code"></i></label>
+                                <input type="text" class="companycode" name="companycode" id="companycode" placeholder="Company Code" required/>
+                            </div>
+                            
+
+                            <div class="form-group">
+                                <label for="re-pass"><i class="zmdi zmdi-file"></i></label>
+                                <input type="file" id="image" name="image" accept="image/*" class="form-control">
+                            </div>
+                            
+                            {% comment %} <div class="form-group">
+                                <input type="checkbox" name="agree-term" id="agree-term" class="agree-term" />
+                                <label for="agree-term" class="label-agree-term"><span><span></span></span>I agree all statements in  <a href="#" class="term-service">Terms of service</a></label>
+                            </div> {% endcomment %}
+                            <div class="form-group form-button">
+                                <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    <div class="signup-image">
+                        <figure><img src="static/img/logreg/signup-image.jpg" alt="sing up image"></figure>
+                        <a href="{% url 'login' %}" class="signup-image-link">I am already member</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#pass, #re_pass').on('keyup', function () {
+                if ($('#pass').val() == $('#re_pass').val()) {
+                    $('#message').html('Password Is Matching').css('color', 'green');
+                } else {
+                    $('#message').html('Password Is Not Matching').css('color', 'red');
+                }
+            });
+        });
+    </script>
+
+    <!-- JS -->
+    <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="static/assets/js/main.js"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>

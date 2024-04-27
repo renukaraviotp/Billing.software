@@ -1,0 +1,1545 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<style>
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    
+    .switch input { 
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+    
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+    
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(26px);
+    }
+    
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+    
+    .slider.round:before {
+      border-radius: 50%;
+    }
+
+
+
+
+    .form-control {
+        border: 1px solid lightblue;
+        transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: #007bffb1;
+    }
+    .table>:not(caption)>*>* {
+        padding: 16px 5px !important;
+    }
+    .form-control{
+        padding: 8px 7px;
+    }
+
+    .save-button {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+        margin-right: 1rem;
+    }
+
+
+    .save-button:hover {
+        background-color: #fff;
+        color: #007bff;
+    }
+    
+    .selectize-input {
+        height: 5vh;
+        border-color: #54B4D3;
+        border-radius: 5px;
+    }
+    </style>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<form method="POST" action="{% url 'edit_save_sales_invoice' getinoice.id %}"  enctype="multipart/form-data" novalidate id="forms" class="p-5" style="background-color: rgb(130, 144, 199);">
+    {% csrf_token %}
+    <div class="body-wrapper"style=" margin-top: 3vw; background-color: rgb(130, 144, 199);height: 100%;width:100%; margin-left:1vw">
+        <div class="d-flex justify-content-end"style=" margin-top: 3vw; background-color: rgb(130, 144, 199);height: 100%;width:100%">
+            <div class="ml-auto" style="margin-top: 3vh;"style=" margin-top: 3vw; background-color: rgb(130, 144, 199);height: 100%;width:100%">
+                <a href="{% url 'sales_invoice_list' %}" style="font-size: x-large; color: black;" title="Close">
+                    <i class="fa fa-times-circle fs-6 tb close_pad mt-4 "  aria-hidden="true" ></i>
+                </a>
+            </div>
+        </div>
+        <div class="container-fluid" style="margin-left: 20vw; margin-top: 3vw; background-color: rgb(130, 144, 199);height: 100%;width:100%">
+            <div class="col-md-6" style="margin-bottom: 5vh;margin-left: -4.5vw;">
+                <a class="text-dark" style="font-size: 2rem;">Edit Sales Invoice</a>
+            </div>
+           
+            <div style="background-color: white;border-radius: 15px 15px 15px 15px;box-shadow: 5px 5px 5px 5px gray;width: 100%;width: 85%;margin-left: -8vh;">
+        <div id="partyDetailsContainer">
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="col-form-label"  style="margin-left: 1vw;">Party</label>
+                    <div class="d-flex ">
+                        <select style="color: black; width: 21.5vw; margin-left: 1vw;" class="form-control me-2 border-secondary" id="partySelect" name="partyname" required>
+                            <option value="{{getinoice.party.party_name}}" selected hidden>{{getinoice.party_name}}</option>
+                            {% for i in Party %}
+                                <option value="{{ i.party_name }}" data-phone="{{ i.phone_number }}" data-address="{{ i.billing_address }}">{{ i.party_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn " style="background-color: rgb(165, 217, 250);" data-toggle="modal" data-target="#customercreation"><span class="fa fa-plus " style="color: #161515;" ></span></button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="partyPhonebox">
+                        <label class="col-form-label">Phone No</label>
+                        <input style="color: black; width: 21.5vw;" class="form-control bg-light border-secondary  " type="number" value="{{getinoice.contact}}"
+                            placeholder="Phone No" autocomplete="off" name="contact" id="partyPhone" readonly>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="partyAddressbox">
+                        <label class="col-form-label" style="margin-left: 1vw;">Address</label>
+                        <input style="color: black; width: 21.5vw; margin-left: 1vw;" class="form-control bg-light border-secondary" type="text"
+                            placeholder="Address" autocomplete="off" name="address" id="partyAddress"  value="{{getinoice.address}}" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                
+                <div class="col-md-4" style="margin-left: 1vw;">
+                    <label class="col-form-label">Invoice No</label>
+                    <input id="invoiceInput" style="color: black; width: 21.5vw; margin-left: 0;" class="form-control bg-light fw-bolder border-secondary"
+                        type="text" placeholder="Invoice No" autocomplete="off" name="invoiceno" value=" {{ getinoice.invoice_no }} " readonly>
+                    <br>
+            </div>
+            <div class="col-md-4" style="margin-left: -1vw;">
+                <label class="col-form-label">Date</label>
+            <input style="color: black;  width: 21.5vw; " class="form-control  bg-light border-secondary" type="date"
+                placeholder="Date" autocomplete="off" name="date" id="current-date" >
+            </div>
+            <div class="col-md-4" >
+                <label class="col-form-label" style=" width: 21.5vw; margin-left: 1vw;">State of supply</label>
+            <select style="color: black; width: 21.5vw; margin-left: 1vw;" class="form-control  bg-light me-2  border-secondary" id="state_of_supply"
+                name="state_of_supply">
+                <option value="{{getinoice.state_of_supply}}">{{getinoice.state_of_supply}}</option>
+                <option value="state">State</option>
+                <option value="other_state">Other State</option>
+
+            </select>
+        </div>
+        </div>
+                
+        </div>
+        
+                            <div class="row">
+                                
+                                
+                                
+                            </div>
+                            
+                            <div class="row ">
+                                <div class="col-md-4" style="margin-bottom: 5vh;">
+                                <label class="col-form-label" style="margin-left: 1vw;" >Payment Type</label>
+                                <select style="color: black; width: 21.5vw; margin-left: 1vw;" class="form-control bg-light  me-2 border-secondary" id="bank" name="bank"  onchange="handlePaymentType()" >
+                                    <option value="{{getinoice.paymenttype}}">{{getinoice.paymenttype}}</option>
+                                    <option value="Cash">Cash</option>
+                                    <option value="Cheque">Cheque</option>
+                                    <option value="UPI">UPI</option>
+                                    <option value="Bank">Bank</option>
+                                    
+                                    
+                                </select>
+                                </div>
+                                <div class="col-md-4">
+                                <div id="chequeNumberBox" style="display: none; width: 21.5vw;">
+                                    <label class="col-form-label" >Cheque ID</label>
+                                    <input type="text" id="chequeNumber" name="chequeNumber" class="form-control bg-light me-2 border-secondary" placeholder=" Cheque Number">
+                                </div>
+              
+                                <div id="upiNumberBox" style="display: none; width: 21.5vw;">
+                                    <label class="col-form-label" >UPI ID</label>
+                                    <input type="text" id="upiNumber" name="upiNumber" class="form-control  bg-light me-2 border-secondary" placeholder=" UPI Number">
+                                </div>
+            
+            
+                                <div id="bankAccountBox" style="display: none; width: 21.5vw;">
+                                    <label class="col-form-label" >Bank Account</label>
+                                    <input type="text" id="accountNumber" name="accountNumber" class="form-control  bg-light me-2 border-secondary" placeholder=" Account Number " readonly>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="row " style="margin-top: 6rem;margin-left: -5vw;">
+                                <div class="col-md-12 table-responsive-md">
+                                    <table class="table table text-dark" style="width: 81%; background-color: white;border-radius: 15px 15px 15px 15px;box-shadow: 5px 5px 5px 5px gray;"
+                                    id="tab_logic" >
+                                        <thead>
+                                            <tr>
+                                                <th class="text-right" style="width: 5%;background-color:rgb(61, 68, 101);color: white;">#</th>
+                                                <th style="width: 20%;background-color:rgb(61, 68, 101);color: white;">Item</th>
+                                                <th class="text-righ" style="width: 15%;background-color:rgb(61, 68, 101);color: white;">Hsn</th>
+                                                <th class="text-righ" style="width: 15%;background-color:rgb(61, 68, 101);color: white;">Qty</th>
+                                                <th class="text-righ" style="width: 15%;background-color:rgb(61, 68, 101);color: white;">Price</th>
+                                                <th class="text-righ" style="width: 10%;background-color:rgb(61, 68, 101);color: white;">Tax</th>
+                                                <th class="text-righ" style="width: 15%;background-color:rgb(61, 68, 101);color: white;">Discount</th>
+                                                <th class="text-righ" style="width: 15%;background-color:rgb(61, 68, 101);color: white;">Total</th>
+                                                <th style="background-color:rgb(61, 68, 101);color: white;""></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="items-table-body">
+                                            {% for i in getitem %}
+                                            <tr id='addr0'>
+                                                    <td class="nnum" style="text-align: center; color: black; "> {{ forloop.counter }}</td>
+                
+                                                    <td class="w-25">
+                                                        <div class="d-flex">
+                                                            
+                                                            <select name='product[]' id="product1" class="form-control border-secondary product" style="color: black; background-color: white;" required>
+                                                                <option value="{{i.item.id}}" selected hidden>{{i.item.item_name}}</option>
+                                                                {% for i in item %}
+                                                                <option value="{{ i.id }}" data-item-name="{{ i.item_name }}" data-item-hsn="{{ i.item_hsn }}" data-item-unit="{{ i.item_unit }}" data-item-price="{{ i.item_sale_price }}" data-item-gst="{{ i.item_gst }}" data-item-igst="{{ i.item_igst }}">{{ i.item_name }}</option>
+
+                                                                {% endfor %}
+                                                            </select> &nbsp;&nbsp;&nbsp;
+                                                            <button type="button" class="btn " style="background-color: rgb(165, 217, 250);" data-toggle="modal" data-target="#newitem"><span class="fa fa-plus " style="color: #161515;" ></span></button>
+                                                        </div>
+                                                    </td>
+                
+                                                    <td >
+                                                        <input type="text" name='hsn[]' class="form-control HSNCODE" value="{{i.item.item_hsn}}" style="color: black; background-color: white;" readonly />
+                                                    </td>
+                
+                                                    <td >
+                                                        <input type="number" name='qty[]' id="qty"  class="form-control  qty mb-1" step=0 min=0 style="color: black; background-color: white;" value="{{i.quantity}}" required/>
+                                                    </td>
+                                                     
+                                                    <td >
+                                                        <input type="number" name='price[]' id="unit" class="form-control  price" step="0.00" min="0" style="color: black; background-color: white;" readonly value="{{i.item.item_sale_price}}" />
+                                                    </td>
+                                                    
+                                                    <td >
+                                                        
+                                                        <input type="text" id="intrataxval{{ forloop.counter }}" value="{{i.item.item_gst}}" hidden>
+                                                        <input type="text" id="intertaxval{{ forloop.counter }}" value="{{i.item.item_igst}}" hidden>
+                                                        {% if getinoice.state_of_supply  == 'state'  %}
+                                                            <input type="text" name='tax[]' id="tax{{ forloop.counter }}" class="form-control border-secondary tax" style="color: black; background-color: white; width: 120px;" value="{{i.item.item_gst}}"  readonly />
+                                                        {% else %}
+                                                            <input type="text" name='tax[]' id="tax{{ forloop.counter }}" class="form-control border-secondary tax" style="color: black; background-color: white; width: 120px;" value="{{i.item.item_igst}}"  readonly />
+                                                        {% endif %}
+                                                        
+                                                    </td>
+
+                
+                                                    <td >
+                                                        <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc" value="{{i.discount}}" class="form-control  disc" step=0 min=0 style="  color: black; background-color: white;"  />
+                                                    </td>
+                                                    
+                                                    <td >
+                                                        
+                                                        <input type="number" name='total[]' id="total" class="form-control  total" value="{{i.totalamount}}" readonly style="color: black; background-color: white; width: 120px;"  />
+                                                    </td>                                                                                                         
+                                                    <td>
+                                                       <button type="button" class="btn  delete-row"  style="color: #ff0000;" ></span>X</button>
+                                                    </td>
+                                                    <td hidden><input type="number" name='taxamount[]' id="taxamount1" class="taxamount">
+                                                    </td>
+                                                </tr>
+                                                
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        <button type="button" class="btn btn-primary" id="addRow"><span class="fa fa-plus " style="color: #161515;" ></span></button>
+                                        <div class="clearfix" style="margin-top: 10px">
+                                            <div class="row"  style="margin-right: 10vw;">
+                                                <div class="col-sm-5 d-flex flex-column mt-2">
+                                                    <label for="" style="color: black;">Description</label>
+                                                    <textarea class="form-control bg-light" name="description" id="" cols="15" rows="5" placeholder=" " style="background-color: white;border-radius: 15px 15px 15px 15px;box-shadow: 5px 5px 5px 5px gray;">{{getinoice.description}}</textarea>
+
+                                                </div>
+                                                <div class="col-sm-6" id="tab_logic_total" style="color: black; border: 1px solid rgba(128, 128, 128, 0.6);background-color: white;border-radius: 15px 15px 15px 15px;box-shadow: 5px 5px 5px 5px gray;" >
+                                                    <div class="p-1">
+                                                        <div class="row container-fluid p-1 m-0">
+                                                            <div class="col-sm-4 mt-2"><label class="text-center">Sub Total</label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                                <input type="number" step="any" name='subtotal' value="{{getinoice.subtotal}}" readonly style="color: black; background-color: white;" class="form-control border-secondary" id="sub_total">
+                                                            </div>
+                                                        </div>
+                            
+                                                        <div class="row container-fluid p-2 m-0" id="igstdiv" style="display: none;">
+                                                            <div class="col-sm-4 mt-2"><label class="text-center">IGST :</label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                                <input type="number" step="any" name='igst' id="igst" value="{{getinoice.igst}}" readonly style="color: black; background-color: white;" class="form-control border-secondary" >
+                                                            </div>
+                                                        </div>
+                                                    
+                                                        
+                                                        </div>
+                                                        <div class="row container-fluid p-2 m-0" id="sgstdiv" style="display: none;">
+                                                            <div class="col-sm-4 mt-2"><label class="text-center">CGST :   </label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                                <input type="number" step="any" name='subtotal' value="{{getinoice.cgst}}" readonly style="color: black; background-color: white;" class="form-control border-secondary" id="sub_total">
+                                                            </div>
+                                                        </div>
+                            
+                                                        <div class="row container-fluid p-2 m-0" id="sgstdiv" style="display: none;">
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">SGST</label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                            <input type="number" name='sgst' step="any" id="sgst" value="{{getinoice.sgst}}" readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                                                            </div>
+                                                            <div class="col-sm-4 m-0 p-0"></div>
+                                                        </div>
+                            
+                                                        <div class="row container-fluid p-2 m-0">
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                            <input type="number" step="any" name='taxamount' id="tax_amount" value="{{getinoice.total_taxamount}}" readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                                                            </div>
+                                                            <div class="col-sm-4 m-0 p-0"></div>
+                                                        </div>
+                            
+                                                        <div class="row container-fluid p-2 m-0">
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                            <input type="number" step="any" name='adj' id="adj" value="{{getinoice.adjustment}}" class="form-control border-secondary" style="color: black; background-color: white;"/>
+                                                            </div>
+                                                            <div class="col-sm-4 m-0 p-0"></div>
+                                                        </div>
+                                                        
+                                                        <div class="row container-fluid p-2 m-0">
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">Grand Total</label></div>
+                                                            <div class="col-sm-1 mt-2">:</div>
+                                                            <div class="col-sm-7">
+                                                                <input type="number" name='grandtotal' id="grandtotal" value="{{getinoice.grandtotal}}" readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                            
+                                            <div class="row" style="margin-right: 10vw;">
+                                                <div class="col-sm-5 d-flex flex-column mt-2">
+                                                    
+                                                </div>
+                                                <div class="col-sm-6 mt-4" style="color: black; border: 1px solid rgba(128, 128, 128, 0.6);background-color: white;border-radius: 15px 15px 15px 15px;box-shadow: 5px 5px 5px 5px gray;">
+                                                    <div class="row container-fluid  m-0">
+                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Paid Off</label></div>
+                                                        <div class="col-sm-1 mt-2">:</div>
+                                                        <div class="col-sm-7">
+                                                            <input type="number" step="any" name='advance' id="advance" value="{{getinoice.paidoff}}" class="form-control border-secondary" style="color: black; background-color: white;margin-top: 2vh;"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row container-fluid m-0">
+                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Balance</label></div>
+                                                        <div class="col-sm-1 mt-2">:</div>
+                                                        <div class="col-sm-7">
+                                                            <input type="number" name='balance' id="balance" value="{{getinoice.totalbalance}}" readonly style="color: black; background-color: white;margin-bottom: 2vh;margin-top: 2vh;"  class="form-control border-secondary" readonly />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                            
+                            
+                            
+                                            <div class="col-md-5 mt-4">
+                                                <input type="submit" class="btn btn-primary save-button" name="save" value="Save" style="background-color: #3d4465;color: white;margin-left: 10vw;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'">
+                                            </div>
+                            
+                                        </div>
+                                    </div>
+                                </form>
+                                        
+                                        <script>
+                                             function handleStateOfSupply() {
+        var stateOfSupply = document.getElementById('state_of_supply').value;
+
+        // Display or hide CGST, SGST, IGST based on the state_of_supply value
+        document.getElementById('cgstdiv').style.display = (stateOfSupply === 'state') ? 'block' : 'none';
+        document.getElementById('sgstdiv').style.display = (stateOfSupply === 'state') ? 'block' : 'none';
+        document.getElementById('igstdiv').style.display = (stateOfSupply === 'other_state') ? 'block' : 'none';
+    }
+
+    // Attach the handleStateOfSupply function to the change event of the state_of_supply dropdown
+    document.getElementById('state_of_supply').addEventListener('change', handleStateOfSupply);
+
+    // Call the handleStateOfSupply function initially to set the initial visibility
+    handleStateOfSupply();
+                                            function handlePaymentType() {
+                                                var selectedPaymentType = $("#bank").val();
+                                        
+                                                // Hide all payment-related input fields
+                                                $("#chequeNumberBox, #upiNumberBox, #bankAccountBox").hide();
+                                        
+                                                // Show the relevant input field based on the selected payment type
+                                                if (selectedPaymentType === "Cheque") {
+                                                    $("#chequeNumberBox").show();
+                                                } else if (selectedPaymentType === "UPI") {
+                                                    $("#upiNumberBox").show();
+                                                } else if (selectedPaymentType === "Bank") {
+                                                    $("#bankAccountBox").show();
+                                                }
+                                            }
+                                            </script>
+                                            <script>
+                                                // Event handler for deleting rows
+                                                $(document).on('click', '.delete-row', function () {
+                                                    // Find the closest <tr> and remove it
+                                                    $(this).closest('tr').remove();
+                                            
+                                                    // Re-calculate totals after row deletion
+                                                    calculateTotals();
+                                                });
+                                            </script>
+                                        <!-- <script>
+                                            document.getElementById('addRow').addEventListener('click', function() {
+                                                // Clone the first row
+                                                var newRow = document.getElementById('addr01').cloneNode(true);
+                                                
+                                                // Update the row number
+                                                var rowCount = document.getElementById('tab_logic').getElementsByTagName('tbody')[0].getElementsByTagName('tr').length;
+                                                newRow.querySelector('.nnum').textContent = rowCount + 1;
+                                        
+                                                // Clear input values in the new row
+                                                newRow.querySelectorAll('input, select').forEach(function(element) {
+                                                    element.value = '';
+                                                });
+                                        
+                                                // Append the new row to the table body
+                                                document.getElementById('items-table-body').appendChild(newRow);
+                                            });
+                                        </script> -->
+                                        
+                                        <script>
+                                            $(document).ready(function () {
+                                                $('#partySelect').change(function () {
+                                                    var selectedOption = $(this).find(':selected');
+                                                    var phoneInput = $('#partyPhone');
+                                                    var addressInput = $('#partyAddress');
+                    
+                                                    phoneInput.val(selectedOption.attr('data-phone') || '');
+                                                    addressInput.val(selectedOption.attr('data-address') || '');
+                                                });
+                                            });
+                                        </script>
+                                        <script>
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                var currentDateField = document.getElementById('current-date');
+                                                
+                                                // Get the current date in the format YYYY-MM-DD
+                                                var currentDate = new Date().toISOString().split('T')[0];
+                                                
+                                                // Set the value of the date field to the current date
+                                                currentDateField.value = currentDate;
+                                            });
+                                        </script>
+                                       
+                                       <script>
+                                        // Function to update row details when a product is selected
+                                        function updateRowDetails(row, selectedItem, stateOfSupply) {
+                                            // Assuming 'item' has properties like 'item_name', 'item_hsn', 'item_unit', 'item_price', 'item_gst', and 'item_igst'
+                                            var itemName = selectedItem.data('item-name');
+                                            var itemHsn = selectedItem.data('item-hsn');
+                                            var itemUnit = selectedItem.data('item-unit');
+                                            var itemSalePrice = selectedItem.data('item-price');
+                                            var itemGST = selectedItem.data('item-gst');
+                                            var itemIGST = selectedItem.data('item-igst');
+                                    
+                                            // Get tax rate based on the state of supply
+                                            var taxRate = (stateOfSupply === 'state') ? itemGST : itemIGST;
+                                    
+                                            // Update the row with the selected item details
+                                            row.find('.HSNCODE').val(itemHsn);
+                                            row.find('.qty').val(0);
+                                            row.find('.price').val(itemSalePrice);
+                                            row.find('.tax').val(taxRate);
+                                            row.find('.disc').val(0);
+                                    
+                                            // Show or hide tax rate input field based on the state of supply
+                                            var taxField = row.find('.tax');
+                                            if (stateOfSupply === 'other_state') {
+                                                taxField.prop('readonly', false);
+                                                taxField.attr('placeholder', 'IGST RATE');
+                                            } else {
+                                                taxField.prop('readonly', true);
+                                                taxField.attr('placeholder', 'GST RATE');
+                                            }
+                                    
+                                            // Trigger the calculation of total price
+                                            calculateTotal(row);
+                                        }
+                                    
+                                        // Event handler for product selection
+                                        $(document).on('change', '.product', function () {
+                                            var selectedOption = $(this).find('option:selected');
+                                            var row = $(this).closest('tr');
+                                            var stateOfSupply = $('#state_of_supply').val(); // Assuming the state of supply is in a select element with ID 'state_of_supply'
+                                            updateRowDetails(row, selectedOption, stateOfSupply);
+                                        });
+                                    
+                                        // Function to calculate the total price for a row
+                                        function calculateTotal(row) {
+                                            var qty = parseFloat(row.find('.qty').val()) || 0;
+                                            var price = parseFloat(row.find('.price').val()) || 0;
+                                            var disc = parseFloat(row.find('.disc').val()) || 0;
+                                    
+                                            var total = (qty * price) - disc;
+                                            row.find('.total').val(total);
+                                        }
+                                    
+                                        // Initial update for the first row
+                                        var firstRow = $('#addr01');
+                                        var firstSelectedItem = firstRow.find('.product option:selected');
+                                        var initialStateOfSupply = $('#state_of_supply').val(); // Assuming the state of supply is in a select element with ID 'state_of_supply'
+                                        updateRowDetails(firstRow, firstSelectedItem, initialStateOfSupply);
+                                    
+                                    
+                                               
+                                               
+                                               
+                                               
+                                        function calculateTotals() {
+    // Iterate through each row in the table
+    $('#tab_logic tbody tr').each(function (index) {
+        var row = $(this);
+
+        // Update row number
+        row.find('.nnum').text(index + 1);
+
+        // Get values from the current row
+        var qty = parseFloat(row.find('.qty').val()) || 0;
+        var price = parseFloat(row.find('.price').val()) || 0;
+        var discount = parseFloat(row.find('.disc').val()) || 0;
+
+        // Calculate total
+        var total = (qty * price) - discount;
+        row.find('.total').val(total.toFixed(2)); // Adjust to the desired number of decimal places
+    });
+
+    // Calculate sub total and total GST percentage
+    var subTotal = 0;
+    var totalGSTPercentage = 0;
+
+    $('.total').each(function () {
+        subTotal += parseFloat($(this).val()) || 0;
+
+        // Fetch GST value for the selected product
+        var gstValue = parseFloat($(this).closest('tr').find('.tax').val().match(/\d+/)[0]) || 0; // Extract the numeric part from the selected GST value
+        totalGSTPercentage += gstValue;
+    });
+
+    // Display SGST and CGST only if the state of supply is 'state'
+    var stateOfSupply = $('#state_of_supply').val();
+    if (stateOfSupply == 'state') {
+        $('#igstdiv').hide();
+        $('#cgstdiv, #sgstdiv').show();
+
+        // Calculate CGST and SGST based on the total GST percentage
+        var cgstPercentage = totalGSTPercentage / 2;
+        var sgstPercentage = totalGSTPercentage / 2;
+
+        $('#cgst').val((subTotal * cgstPercentage / 100).toFixed(2));
+        $('#sgst').val((subTotal * sgstPercentage / 100).toFixed(2));
+
+        // Initialize IGST to 0
+        $('#igst').val('0.00');
+    } else {
+        $('#igstdiv').show();
+        $('#cgstdiv, #sgstdiv').hide();
+
+        // Calculate IGST based on the total GST percentage
+        var igstPercentage = totalGSTPercentage;
+        $('#igst').val((subTotal * igstPercentage / 100).toFixed(2));
+
+        // Initialize CGST and SGST to 0
+        $('#cgst').val('0.00');
+        $('#sgst').val('0.00');
+    }
+
+    // Calculate tax amount
+    var taxAmount = subTotal * (totalGSTPercentage / 100);
+    $('#tax_amount').val(taxAmount.toFixed(2));
+    var grandTotal = subTotal + parseFloat($('#tax_amount').val()) - adjustment;
+    $('#sub_total').val(subTotal.toFixed(2));
+    $('#grandtotal').val(grandTotal.toFixed(2));
+
+    // Calculate Balance
+    var balance = grandTotal - parseFloat($('#advance').val());
+    $('#balance').val(balance.toFixed(2));
+
+    // Calculate adjustment
+    var adjustment = parseFloat($('#adj').val()) || 0;
+
+    // Example: Calculate Grand Total
+    var grandTotal = subTotal + parseFloat($('#tax_amount').val()) + adjustment;
+    $('#sub_total').val(subTotal.toFixed(2));
+    $('#grandtotal').val(grandTotal.toFixed(2));
+
+    // Calculate Balance
+    var balance = grandTotal - parseFloat($('#advance').val());
+    $('#balance').val(balance.toFixed(2));
+}
+// Event handler for input changes
+$(document).on('change keyup', '#tab_logic input, #tab_logic select', function () {
+    calculateTotals();
+});
+
+// Event handler for adjusting the adjustment amount
+$('#adj').on('change keyup', function () {
+    calculateTotals();
+});
+
+// Event handler for paying off the balance
+$('#advance').on('change keyup', function () {
+    calculateTotals();
+});
+
+// Event handler for adding rows
+$('#addRow').on('click', function () {
+    // Clone the last row
+    var newRow = $('#tab_logic tbody tr:last').clone();
+
+    // Find all input/select elements in the cloned row and reset their values
+    newRow.find('input, select').val('');
+
+    // Update row number
+    var newIndex = $('#tab_logic tbody tr').length + 1;
+    newRow.find('.nnum').text(newIndex);
+
+    // Append the cloned row to the table
+    $('#tab_logic tbody').append(newRow);
+
+    // Re-calculate totals
+    calculateTotals();
+});
+
+// Initial calculation
+calculateTotals();
+
+
+
+
+
+
+
+
+                                               </script>
+                                    
+                                    
+                                    
+                                    
+
+                                    
+
+                                    </div>
+                                </div>
+                            </form>
+
+
+
+                            <div class="modal fade" id="customercreation">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color: rgb(130, 144, 199);">
+                                            <h3 class="m-3 text" style="color:white;">ADD PARTY</h3>
+                                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                                        </div>
+                                        <div class="modal-body" style="background-color: rgb(130, 144, 199);">
+                                            <form  method="POST" autocomplete="off" id="modalCustomer" style="background-color: white; padding: 30px; border-radius: 15px;box-shadow: 4px 3px 4px gray;">
+                                                {% csrf_token %}
+                                            <div class="container col-md-10">
+                                                
+                                        
+                                                <div class="form-group row">
+                                                    <div class="col-md-4">
+                                                        <label for="partyname" style="color: #161515;">Party Name:</label>
+                                                        <input type="text" class="form-control" id="partyname" name="partyname" style="color: black;" placeholder="Party Name" required>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="partyphno" style="color: #161515;">Phone Number:</label>
+                                                        <input type="number" class="form-control" id="partyphno" name="partyphno" style="color: black;" onchange="checkphone(this)" placeholder="Phone Number" required>
+                                                        <div class="text-danger m-2" id="warnphone"></div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="modalgsttype" style="color: #161515;">GST Type:</label>
+                                                        <select class="form-control" id="modalgsttype" name="modalgsttype" onchange="toggleGstInput()">
+                                                            <option value="">Select GST Type</option>
+                                                            <option value="Registered Party">Registered Party</option>
+                                                            <option value="Unregistered or Consumer">Unregistered or Consumer</option>
+                                                            <option value="Registered Business or Commission">Registered Business or Commission</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                        
+                                                
+                                        
+                                                <div class="row form-group">
+                                        
+                                                    
+                                                    <div class="col-md">
+                                                        <label for="" style="color: #161515;">State</label>
+                                                        <select class="form-control" name="splystate" id="splystate" style="color: black; background-color: white;">
+                                                                <option value="">--Select State--</option>
+                                                                <option value="Andhra Pradesh">Andhra Pradesh</option>
+                                                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                                                <option value="Assam">Assam</option>
+                                                                <option value="Bihar">Bihar</option>
+                                                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                                                <option value="Goa">Goa</option>
+                                                                <option value="Gujarat">Gujarat</option>
+                                                                <option value="Haryana">Haryana</option>
+                                                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                                                <option value="Jharkhand">Jharkhand</option>
+                                                                <option value="Karnataka">Karnataka</option>
+                                                                <option value="Kerala">Kerala</option>
+                                                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                                                <option value="Maharashtra">Maharashtra</option>
+                                                                <option value="Manipur">Manipur</option>
+                                                                <option value="Meghalaya">Meghalaya</option>
+                                                                <option value="Mizoram">`Mizoram</option>
+                                                                <option value="Nagaland">Nagaland</option>
+                                                                <option value="Odisha">Odisha</option>
+                                                                <option value="Punjab">Punjab</option>
+                                                                <option value="Rajasthan">Rajasthan</option>
+                                                                <option value="Sikkim">Sikkim</option>
+                                                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                                                <option value="Telangana">Telangana</option>
+                                                                <option value="Tripura">Tripura</option>
+                                                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                                                <option value="Uttarakhand">Uttarakhand</option>
+                                                                <option value="West Bengal">West Bengal</option>
+                                                                
+                                                            </select>
+                                                    </div>
+                                        
+                                                    <div class="col-md"><label for="" style="color: #161515;">Email:</label><input type="email" class="form-control" id="partyemail" name="partyemail" style="color: black; background-color: white;" placeholder="Email" required></div>
+                                                    <div class="col-md"><label for="" style="color: #161515;">Date</label><input type="date" class="form-control" id="partydate" name="partydate" style="color: black; background-color: white;"  value="{{tod}}" placeholder="Date"></div>
+                                         
+                                                </div><br>
+                                        
+                                                <div class="row form-group">
+                                                    <div class="col-md-6">
+                                                        <label for="" style="color: #161515;">Billing Address</label>
+                                                        <textarea class="form-control " name="baddress" id="baddress" rows="6" type="text" style="color: black; background-color: white;" placeholder="Billing Address"></textarea>
+                                                    </div>
+                                                    <div class="col-md-4" id="gstinContainer">
+                                                        <label for="gstin" style="color: #161515;">GSTIN:</label>
+                                                        <input type="text" class="form-control" onchange="checkgst(this)" id="gstin" name="gstin" style="color: black;" placeholder="29APPCK7465F1Z1">
+                                                        <div class="text-danger m-2" id="warngst"></div>
+                                                        <small>#27ABCDE1234F1Z5</small>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                <div class="row form-group">
+                                                    <div class="col-md-4">
+                                                        <label for="" style="color: #161515;">Balance</label>
+                                                        <input type="number" class="form-control" id="openbalance"  name="openbalance" style="color: black; background-color: white;" value="0">
+                                                    </div>
+                                                </div>
+                                                <div class="row form-group radio ml-1">
+                                                    <div class="col-2">
+                                                        <input type="radio" class="radio-input" id="toPayRadio" name="paymentType" value="To Pay">
+                                                        <label for="toPayRadio" style="color: black;">To Pay</label>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <input type="radio" class="radio-input border-secondary" id="toReceiveRadio" name="paymentType" value="To Receive">
+                                                        <label for="toReceiveRadio" style="color: black;">To Receive</label>
+                                                    </div>
+                                                </div>
+                                                <br>
+                                                
+                                        
+                                                
+                                                    <center>
+                                                        
+                                                        <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " value="old" name="buttonn" data-dismiss="modal" type="button" id="customersave">Save </button> 
+                                                    </center>
+                                                
+                                               
+                                        
+                                            </div>
+                                        
+                                        </form><br><br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="modal fade" id="newitem">
+                                <div class="modal-dialog modal-xl">
+                                    <div class="modal-content">
+                                        <div class="modal-header" style="background-color: #8290c7;">
+                                            <h3 class="text ms-3" style="color:white;">ADD ITEM</h3>
+                                            <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                       
+                                            <form  method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem" >
+                                                {% csrf_token %}
+                                    
+                                                <div class="main" >
+                                                  {% if messages %}
+                                                  {% for message in messages %}
+                                                      <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 50%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px; margin-left: 16vw; ">{{message}}</label>
+                                                  {% endfor %}
+                                               {% endif %}
+                                                      
+                                                        <div class=" bs p-4 rounded mb-5" style="background-color: #8290c7;">
+                                                              
+                                                          <br>
+                                                          <div id="main_form_div">
+                                                            
+                                                            <div class="row">
+                                                              <div class="col-md-3 ">
+                                                                <label class="col-form-label" style="color: black;">TYPE</label>
+                                                                <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" required>
+                                                                    <option selected value="" hidden>Select Type</option>
+                                                                    <option value="Goods">Products</option>
+                                                                    <option value="Services">Services</option>
+                                                                </select>
+                                                            </div>
+                                    
+                                                                <div class="col-md-3">
+                                                                    <label class="col-form-label" style="color: black;">ITEM NAME</label>
+                                                                    <input style="color: black;" class="form-control border-dark " type="text" placeholder="ITEM NAME" autocomplete="off" id="item_name" name="item_name" required>
+                                                                </div>
+                                    
+                                                                <div class="col-md-3">
+                                                                    <label class="col-form-label" style="color: black;">ITEM HSN</label>
+                                                                    <input style="color: black;" class="form-control border-dark" type="number" placeholder="ITEM HSN" id="hsn" name="hsn" onchange="checkhsn(this)" required>
+                                                                <div class="text-danger m-2" id="warnhsn"></div>
+                                                                </div>
+                                    
+                                                                <div class="col-md-3">
+                                                                    <label class="col-form-label" style="color: black;">ITEM UNIT</label>
+                                                                    <div class="d-flex">
+                                                                        <select style="color: black;" class="form-control border-dark bg-light" id="unit" name="unit" required>
+                                                                            <option value="" hidden>Select a unit</option>
+                                                                            <option value="NOS">NOS</option>
+                                                                            <option value="BOX">BOX</option>
+                                                                            <option value="PACKET">PACKET</option>
+                                                                            {% for i in item_units %}
+                                                                            <option value="{{ i.unit_name }}">{{ i.unit_name }}</option>
+                                                                            {% endfor %}
+                                                                        </select>&nbsp;&nbsp;&nbsp;
+                                                                        <button type="button" class="btn " style="background-color:rgb(60, 61, 101); height:6vh;" data-toggle="modal" data-target="#addUnitModal"><span class="fa fa-plus " style="color: #ffffff;" ></span></button>
+                                                                    </div>
+                                                                    </div>                                                    
+                                                            </div>
+                                                          
+                                                            <div class="container">
+                                                              <div class="row justify-content-center">
+                                                                  <div class="col-md-12">
+                                                                      <!-- PRICING CARD -->
+                                                                      <div class="custom-card" style="background-color: white;margin-bottom: 5vh;height: 65.5vh;margin-top: 5vh;border-radius: 10px;margin-left: vw;">
+                                                                          <div class="text-center mb-4">
+                                                                              <h2 class="fw-bold">PRICING</h2>
+                                                                          </div>
+                                                                          <div class="text-center pt-5">
+                                                                            <label class=" tb fs-5" for="item_tax_1" style=" user-select: none; color: black;">Taxable</label>
+                                                                            <input class="me-3" name="taxref" type="radio" id="inclusive" value="Taxable" required>
+                                                                            <label class="tb fs-5" for="item_tax_2" style=" user-select: none; color: black;">Non Taxable</label>
+                                                                            <input name="taxref" type="radio" value="Non Taxable" id="check" required>
+                                                                        </div>
+                                                                        <br>
+                                                                        <div id="taxdiv" style="display: none;">
+                                                                            <div class="d-flex">
+                                                                                <div class="w-50 me-3" style="margin-left: 1vw;">
+                                                                                    <label class="tb " for="" style="color: black;">GST</label><br>
+                                                                                    <select style="color: black;background-color: white;width: 32vw;" class="form-control fw- " id="intra_st" name="intra_st" >
+                                                                                    <option value="GST0[0%]" selected>GST0[0%]</option>
+                                                                                    <option value="GST3[3%]">GST3[3%]</option>
+                                                                                    <option value="GST5[5%]">GST5[5%]</option>
+                                                                                    <option value="GST12[12%]">GST12[12%]</option>
+                                                                                    <option value="GST18[18%]">GST18[18%]</option>
+                                                                                    <option value="GST28[28%]">GST28[28%]</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                <div class="w-50" style="margin-left: -1vw;">
+                                                                                    <label class="tb " for="" style="color: black;">IGST</label><br>
+                                                                                    <select style="color: black;background-color: white;width: 32vw;" class="form-control fw-tb " id="inter_st" name="inter_st" >
+                                                                                    <option value="IGST0[0%]" selected>IGST0[0%]</option>
+                                                                                    <option value="IGST3[3%]">IGST3[3%]</option>
+                                                                                    <option value="IGST5[5%]">IGST5[5%]</option>
+                                                                                    <option value="IGST12[12%]">IGST12[12%]</option>
+                                                                                    <option value="IGST18[18%]">IGST18[18%]</option>
+                                                                                    <option value="IGST28[28%]">IGST28[28%]</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                            </div>
+                                                                            <br>
+                                                                        </div>
+                                                                          <div class="row">
+                                                                              <div class="col-md-6" style="margin-left: -15px;width: 5vw;">
+                                                                                
+                                                                                  <label class="col-form-label" style="color: #000000;margin-left: 2vw;">SALES PRICE</label>
+                                                                                  <input style="color: black;background-color: white;width: 32vw;margin-left: 2vw;" id="saleprice" class="form-control fw-normal" type="number" name="saleprice" value="0">
+                                                                              </div>
+                                                                              <div class="col-md-6" style="margin-left: 15px;">
+                                                                                  <label class="col-form-label" style="color: black;width: 32vw;">PURCHASE PRICE</label>
+                                                                                  <input style="color: black;background-color: white;width: 32vw;" id="purprice" class="form-control fw-normal" type="number" name="purprice" value="0">
+                                                                              </div>
+                                                                          </div>
+                                                                      </div>
+                                                          
+                                                                      <!-- STOCKS CARD -->
+                                                                      <div class="custom-card">
+                                                                          <div class="text-center mb-4">
+                                                                              <h2 class="fw-bold">STOCKS</h2>
+                                                                          </div>
+                                                                          <div class="row">
+                                                                              <div class="col-md-6" style="margin-left: -1vw;">
+                                                                                  <label class="tb " for="opn_stock_" style="color: #000000;">STOCK IN HAND</label>
+                                                                                  <input style="color: black;background-color: white;" id="stock" class="form-control fw-normal " type="number" name="stock" value="0">
+                                                                              </div>
+                                                                              <div id="at_price_div" class="col-md-6" style="visibility: hidden;">
+                                                                                  <label class="tb " for="at_price" style="color: #000000;">AT PRICE</label>
+                                                                                  <input style="color: black;background-color: white" id="itmprice" class="form-control fw-normal " type="number" name="itmprice" value="0">
+                                                                              </div>
+                                                                          </div>
+                                                                          <div class="row">
+                                                                          <div class="col-md-6 mt-4" style="margin-left: -10px;">
+                                                                              <label class="tb " for="itmdate" style="color: #000000;">DATE</label>
+                                                                              <input style="color: black;background-color: white" id="itmdate" class="form-control fw-normal " type="date" required name="itmdate" value="{{tod}}">
+                                                                          </div>
+                                                                          <div class="w-50">
+                                                                            <label class="tb " for="minstock" style="color: black; margin-top: 2.2vw;">MINIMUM STOCK TO MAINTAIN</label><br>
+                                                                            <input style="color: black;background-color: white" id="minstock" class="form-control fw-normal " type="number" name="minstock" value="0">
+                                                                            </div></div>
+                                                                          <div class="text-center mt-4">
+                                                                              
+                                                                              <button class="btn btn-custom" type="submit" name="itemsave" value="itemsave" id="itemsave" data-dismiss="modal">SAVE</button>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                              </div>
+                                                          </div>
+                                                          </div>
+                                              </form>
+                                        </div> 
+                                    </div> 
+                                </div>
+
+                                    
+                                            <!-- modal start -->
+                                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                              <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                  <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">ADD UNIT</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                  </div>
+                                                  <div class="modal-body mb-1 pb-1">
+                                                    <form class="mb-0" action="" method="POST" id="unit_form">
+                                                      {% csrf_token %}
+                                                      <div class="mb-3">
+                                                        <label for="recipient-name" class="col-form-label">UNIT</label>
+                                                        <input type="text" class="form-control border-dark" id="item_unit_name_id" placeholder="ENTER UNIT HERE.." name="item_unit_name" required>
+                                                      </div>
+                                                      <div class="m-0 text-center">
+                                                        <label for="message-text" class="col-form-label  text-secondary fw-lighter">Example : PCS/BOX/LITER</label>
+                                                        <!-- <textarea class="form-control" id="message-text"></textarea> -->
+                                                      </div>
+                                                      <input hidden id="submit_unit_creation" type="submit">
+                                                    </form>
+                                                  </div>
+                                                  <div class="modal-footer d-flex justify-content-center mt-1">
+                                                    <button id="modal_cls_btn" type="button" class="btn btn-secondary ps-5 pe-5" data-bs-dismiss="modal">Close</button>
+                                                    <button id="add_btn_" type="button" class="btn btn-primary ps-5 pe-5" onclick="submit_unit_creation_fn()">ADD</button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <!-- modal end -->
+                                    
+                                            
+                                            
+                                          
+                            <script>
+    
+    
+
+
+
+
+
+                                // Function to show/hide radio buttons based on the balance value
+                                function toggleRadioButtons() {
+                                    var balanceInput = document.querySelector('[name="balance"]');
+                                    var radioButtonsContainer = document.querySelector('.radio-buttons');
+                            
+                                    if (parseFloat(balanceInput.value) > 0) {
+                                        radioButtonsContainer.style.display = 'block';
+                                    } else {
+                                        radioButtonsContainer.style.display = 'none';
+                                    }
+                                }
+                            
+                                // Initial state on page load
+                                toggleRadioButtons();
+                            
+                                // Bind the function to the input's input event
+                                document.querySelector('[name="balance"]').addEventListener('input', toggleRadioButtons);
+                            
+                                
+                            // ------------------------------------------------------------------------------------------------------------
+                            
+                            
+                                    function validateGSTIN() {
+                                        // Get the input value
+                                        var gstinInput = document.getElementById('gstinInput').value.trim();
+                            
+                                        // Define the GSTIN pattern
+                                        var gstinPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9]{1}Z[0-9]{1}$/;
+                            
+                                        // Check if the input matches the pattern
+                                        if (!gstinPattern.test(gstinInput)) {
+                                            // Set a custom validation message
+                                            document.getElementById('gstinInput').setCustomValidity('Please enter a valid GSTIN number.');
+                                        } else {
+                                            // Clear the custom validation message
+                                            document.getElementById('gstinInput').setCustomValidity('');
+                                        }
+                                    }
+                                
+                            // ------------------------------------------------------------------------------------------------------------
+                            
+                            </script>
+                            <script>
+                                $(document).on("submit","#unit_form",function(e){
+                                  e.preventDefault();
+                                $.ajax({
+                                  
+                                  type : 'POST',
+                                  url:"",
+                              
+                                  data:{
+                                    item_unit_name : $("#item_unit_name_id").val(),
+                                      
+                                      csrfmiddlewaretoken: '{{ csrf_token }}'
+                                      
+                                    },
+                                  
+                                    success: function() {
+                                      
+                                    },
+                                    
+                                });  
+                                $('#modal_cls_btn').click()
+                                var a = ''+$('#item_unit_name_id').val()
+                                a.toUpperCase()
+                                $('#load_new_unit').val(a)
+                                $('#load_new_unit').text(a) 
+                                $('#load_new_unit').prop('selected',true) 
+                                $('#load_new_unit').attr('hidden',false)
+                              });
+                                $(document).ready(function () {
+                                  if ($('#flexSwitchCheckChecked').prop('checked')) {
+                                    $('#lbl2').css({ 'color': 'blue' })
+                                  }
+                                  else{
+                                    $('#lbl1').css({ 'color': 'blue' })
+                                  }
+                                  $('#flexSwitchCheckChecked').on('change load', function () {
+                                    if ($('#flexSwitchCheckChecked').prop('checked')) {
+                                      $('#lbl2').css({ 'color': 'blue' })
+                                      $('#lbl1').css({ 'color': 'inherit' })
+                                    }
+                                    else {
+                                      $('#lbl1').css({ 'color': 'blue' })
+                                      $('#lbl2').css({ 'color': 'inherit' })
+                                    }
+                                  })
+                                })
+                                $(document).ready(function(){
+                                  $('#item_tax_1').on('click',function(){
+                                    if($(this).prop('checked'))
+                                    {
+                                      $('#taxable_hide').attr('hidden',false)
+                                    }
+                                  })
+                                })
+                                // page loading start
+                                $(document).ready(function(){
+                                  $('#item_tax_2').on('click',function(){
+                                    if($(this).prop('checked'))
+                                    {
+                                      $('#taxable_hide').attr('hidden',true)
+                                    }
+                                  })
+                                })
+                                $(document).ready(function(){
+                                  $('#prc_').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+                                  $('#stk_ a').removeClass('text-dark')
+                                  $('#prc_ a').addClass('text-dark')
+                                  $('#stk_').css({'border-bottom': 'none'})
+                                  $('#pricing_template').attr('hidden',false)
+                              
+                              
+                                  $('#prc_').on('click',function(){
+                                    $(this).css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+                                    $('#stk_ a').removeClass('text-dark')
+                                    $('#prc_ a').addClass('text-dark')
+                                    $('#stk_').css({'border-bottom': 'none'})
+                                    $('#pricing_template').attr('hidden',false)
+                                    $('#stock_template').attr('hidden',true)
+                                  })
+                                })
+                                $(document).ready(function(){
+                                  $('#stk_').on('click',function(){
+                                    $('#stk_').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+                                    $('#prc_ a').removeClass('text-dark')
+                                    $('#stk_ a').addClass('text-dark')
+                                    $('#prc_').css({'border-bottom': 'none'})
+                                    $('#pricing_template').attr('hidden',true)
+                                    $('#stock_template').attr('hidden',false)
+                                  })
+                                })
+                                $(document).ready(function(){
+                                  $('#next_btn').on('click',function(){
+                                    $('#stk_').click()
+                                  })
+                                })
+                                $(document).ready(function(){
+                                  $('#prev_btn').on('click',function(){
+                                    $('#prc_').click()
+                                  })
+                                })
+                                // $(document).ready(function(){
+                                //   $('#prc_').on('click',function(){
+                                //     alert('asdsad')
+                                //   })
+                                // })
+                                // $(document).ready(function(){
+                                //   $('#prc_').on('click',function(){
+                                //     alert('asdsad')
+                                //   })
+                                // })
+                                // page loading end
+                                $('#opn_stock_').on('keyup click',function(){
+                                  if($(this).val()>'0')
+                                  {
+                                    $('#at_price_div').css({'visibility':'visible',
+                                                            'transition':'all 0.2s linear'})
+                                  }
+                                  else{
+                                    $('#at_price_div').css({'visibility':'hidden',
+                                                            'transition':'all 0.2s linear'})
+                                    $('#at_price').val('')
+                                  }
+                                })
+                                $(document).ready(function(){
+                                  $('#item_tax_1').on('click',function(){
+                                    $('#taxable_result').val('Taxable')
+                                  })
+                                })
+                                $(document).ready(function(){
+                                  $('#item_tax_2').on('click',function(){
+                                    $('#taxable_result').val('Non Taxable')
+                                  })
+                                })
+                                function submit_unit_creation_fn()
+                                {
+                                  $('#submit_unit_creation').click()
+                                }
+                                // set today start
+                                $(document).ready(function(){
+                                      var currentDate = new Date();
+                                      var year = currentDate.getFullYear();
+                                      var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+                                      var day = String(currentDate.getDate()).padStart(2, "0");
+                                      var formattedDate = year + "-" + month + "-" + day;
+                                      $("#date_").val(formattedDate);
+                                  })
+                                  // set today end
+                                  $(document).on("click", "#customersave", function() {
+                                    var pay;
+                                    if ($('#toPayRadio').is(':checked')) {
+                                        pay = $('#toPayRadio').val();
+                                    } else {
+                                        pay = $('#toReceiveRadio').val();
+                                    }
+
+                                    // Check if the required fields are not entered
+                                    if ($('#partyname').val() === '' || $('#partyphno').val() === '' || $('#baddress').val() === '' ) {
+                                        alert('Please fill in all the required fields (Party Name, Phone Number, Address, GST Number) before saving.');
+                                        return; // Exit the function if required fields are not entered
+                                    }else{
+
+                                        $.ajax({
+                                    type: 'POST',
+                                    url: "{% url 'savecustomer' %}",
+                                    data: {
+                                                name : $('#partyname').val(),
+                                                email : $("#partyemail").val(),
+                                                mobile :$("#partyphno").val(),
+                                                splystate : $("#splystate").val(),
+                                                baddress : $("#baddress").val(),
+                                                gsttype :$("#modalgsttype").val(),
+                                                gstin :$("#gstin").val(),
+                                                partydate : $("#partydate").val(),
+                                                paytype : pay,
+                                                openbalance : $("#openbalance").val(),
+
+                                                csrfmiddlewaretoken: '{{ csrf_token }}',
+                                            },
+                                    success: function(data) {
+                                        document.getElementById("modalCustomer").reset();
+                                        $('#customercreation').modal('hide');
+
+                                        var customerSelect = $('#customer');
+                                        
+                                        // Store the currently selected party ID before clearing options
+                                        selectedPartyId = customerSelect.val();
+
+                                        customerSelect.empty();
+
+                                        // Add "Select" option
+                                        customerSelect.append(selectedPartyId);
+
+                                        // Add new options based on the Ajax response
+                                        $.each(data.party_list, function(index, partyobj) {
+                                            customerSelect.append('<option value="' + partyobj.id + '">' + partyobj.name + '</option>');
+                                        });
+
+                                        // Select the option with the stored party ID
+                                        if (selectedPartyId) {
+                                            customerSelect.val(selectedPartyId);
+                                        }
+                                    }
+                                });
+                            }
+                            });
+
+                            function checkphone(element) {
+        var phoneinput = element.value;
+        var phoneregexp = "[0-9]{10}";
+        if (phoneinput.match(phoneregexp)) {
+            document.getElementById('warnphone').innerHTML = '';
+        } else {
+            document.getElementById('warnphone').innerHTML = 'Please provide a valid Phone Number';
+            alert('Please provide a valid Phone Number')
+        }
+    }
+
+    $('#partyphno').blur(function() {
+        var phone_number = $(this).val();
+        $.ajax({
+            url: 'check_phone_number_exists',
+            data: {
+                'phone_number': phone_number
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.exists) {
+                    $('#warnphone').text('Phone number already exists!');
+                } else {
+                    $('#warnphone').text('');
+                }
+            }
+        });
+    });
+    function toggleGstInput() {
+        var gstType = document.getElementById('modalgsttype').value;
+        var gstinContainer = document.getElementById('gstinContainer');
+
+        if (gstType === 'Unregistered or Consumer') {
+            gstinContainer.style.display = 'none';
+        } else {
+            gstinContainer.style.display = 'block';
+        }
+    }
+
+    function checkgst(element) {
+        var gstinput = element.value;
+        var gstregexp = /^[0-9]{2}[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}[1-9A-Za-z]{1}[Z]{1}[0-9a-zA-Z]{1}$/;
+        if (gstinput.match(gstregexp)) {
+            document.getElementById('warngst').innerHTML = '';
+        } else {
+            document.getElementById('warngst').innerHTML = 'Please provide a valid GST Number';
+            alert('Please provide a valid GST Number');
+        }
+    }
+    
+    $(document).ready(function() {
+        $('#gstin').blur(function() {
+            var gstin = $(this).val();
+            var gsttype = document.getElementById("modalgsttype").value;
+            $.ajax({
+                url: 'check_gstin_exists',
+                data: {
+                    'gstin': gstin,
+                    'gsttype': gsttype
+                },
+                dataType: 'json',
+                success: function(data) {
+                    if (data.exists) {
+                        $('#warngst').text('GSTIN number already exists!');
+                    } else {
+                        $('#warngst').text('');
+                    }
+                }
+            });
+        });
+    });
+    $(document).on("click","#itemsave",function(){
+        var item_name = document.getElementById('item_name').value;
+
+        if ($('#inclusive').prop('checked')) {
+            tax= $('#inclusive').val();
+        } 
+        else{
+            tax = $('#check').val();
+        }
+
+        if (item_name === ''){
+            alert('Please provide an Item Name');
+        }else{
+            $.ajax({
+                type : 'POST',
+                url:"{% url 'salesinvoice_saveitem' %}",
+                data:{
+                    name : $("#item_name").val(),
+                    unit : $("#unit").val(),
+                    hsn : $("#hsn").val(),
+                    taxref : tax,
+                    sell_price : $("#saleprice").val(),
+                    cost_price : $("#purprice").val(),
+                    intra_st : $("#intra_st").val(),
+                    inter_st : $("#inter_st").val(),
+                    itmdate : $("#itmdate").val(),
+                    stock : $("#stock").val(),
+                    itmprice : $("#itmprice").val(),
+                    minstock : $("#minstock").val(),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                },
+            
+                success: function(response) {
+                    document.getElementById("modalItem").reset();
+                    $('#newitem').modal('hide');
+                    reloadItem();
+                },
+            });  
+        }      
+    });
+
+    function reloadItem() {
+        $.ajax({
+            url: "{% url 'salesinvoice_item_dropdown' %}",
+            type: "GET",
+            dataType: "json",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
+            success: function(data) {
+                
+
+                id_list = data.id_list;
+                product_list = data.product_list;
+    
+                // Assuming you have a select element with id 'productDropdown'
+                // var selectElement = document.getElementById('productDropdown');
+
+                $('#items-table-body tr').each(function(){
+                    var currentRow = $(this).html();
+
+                    if(currentRow!=""){
+                        var selectElement = $(this).find('.product');
+
+                        var itmValue = $(this).find('.product').val();
+
+                        selectElement.empty();
+
+                        selectElement.append(`<option value="">Select Product</option>`);
+
+                        $.each(data, function(key, value){
+                            var ID = value[0]
+                            var itemName = value[1]
+                            var hsn = value[2]
+                            var price = value[3]
+                            var gst =  value[4]
+                            var igst = value[5]     
+
+                            selectElement.append(`<option value="${ID}" data-item-name="${itemName}" data-item-hsn="${hsn}"  data-item-price="${price}"  data-item-gst="${gst }" data-item-igst="${igst }">${itemName}</option>`);
+                            // <option value="{{ i.id }}" data-item-name="{{ i.item_name }}" data-item-hsn="{{ i.item_hsn }}" data-item-unit="{{ i.item_unit }}" data-item-price="{{ i.item_sale_price }}" data-item-gst="{{ i.item_gst }}" data-item-igst="{{ i.item_igst }}">{{ i.item_name }}</option>
+                            // selectElement.append(`<option></option>`).val(value[0])
+                            
+                            
+                        })
+                        console.log('item value..',itmValue)
+                        if (itmValue != ""){
+                            $(this).find('.product').val(itmValue)
+                        }
+                    }
+                })
+
+                
+    
+                // Clear existing options
+                // selectElement.options.length = 0;
+                
+    
+                // Add new options
+                /* for (let i = 0; i < id_list.length; i++) {
+                    var option = new Option(product_list[i], id_list[i]);
+                    selectElement.add(option);
+                }*/
+            },
+            error: function(xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+
+
+
+
+
+
+    function refreshIndex(){
+        
+        var slNo = 1;
+        var $rows = $("#items-table-body tr");
+
+        for (var i = 0; i < $rows.length; i++) {
+            $rows.eq(i).attr('id', 'tab_row'+slNo)
+            $rows.eq(i).find('[id]').each(function() {
+                var oldId = $(this).attr('id');
+                var newId = oldId.replace(/\d+/, slNo);
+                $(this).attr('id', newId );
+            });
+
+            $rows.eq(i).find('.nnum').text(slNo);
+            slNo++;
+            
+        }
+        
+    }
+    var checkbox1 = document.getElementById('inclusive');
+    checkbox1.addEventListener('click', function () {
+        if (checkbox1.checked) {
+            document.getElementById('taxdiv').style.display = 'block';
+            document.getElementById('check').checked = false;
+        } else {
+            document.getElementById('taxdiv').style.display = 'none';
+            document.getElementById('intra_st').value = ' ';
+            document.getElementById('inter_st').value = ' ';
+        }
+    });
+
+    var checkbox = document.getElementById('check');
+    checkbox.addEventListener('click', function () {
+        if (checkbox.checked) {
+            document.getElementById('taxdiv').style.display = 'none';
+            document.getElementById('inclusive').checked = false;
+            document.getElementById('intra_st').value = ' ';
+            document.getElementById('inter_st').value = ' ';
+        } 
+
+    });
+    function checkhsn(element){
+        var hsninput = element.value;
+        var gstregexp = "[0-9]{6}";
+        if (hsninput.match(gstregexp)) {
+            document.getElementById('warnhsn').innerHTML = '';
+        } else {
+            document.getElementById('warnhsn').innerHTML = 'Please provide a valid HSN Number';
+            alert('Please provide a valid HSN Number');
+        }
+    }
+     
+    $('#hsn').blur(function() {
+        var item_hsn = $(this).val();
+        $.ajax({
+            url: 'check_hsn_exists',
+            data: {
+                'hsn': item_hsn  // Change 'item_hsn' to 'hsn'
+            },
+            dataType: 'json',
+            success: function(data) {
+                if (data.exists === 'true') {
+                    $('#warnhsn').text('HSN already exists!');
+                } else {
+                    $('#warnhsn').text('');
+                }
+            }
+        });
+    });
+
+            function updateUnitDropdown(newUnit) {
+            $('#unit').append($('<option>', {
+                value: newUnit.toUpperCase(),
+                text: newUnit.toUpperCase()
+            }));}
+            $('#stock').on('keyup click',function(){
+      if($(this).val()>'0')
+      {
+        $('#at_price_div').css({'visibility':'visible',
+                                'transition':'all 0.2s linear'})
+      }
+      else{
+        $('#at_price_div').css({'visibility':'hidden',
+                                'transition':'all 0.2s linear'})
+        $('#at_price').val('')
+      }
+    })
+                              </script>
+
+                            {% endblock %}

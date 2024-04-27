@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<div class="content-body">
+    <div class="container-fluid">
+        <!-- row for image and content -->
+        <div class="row">
+            <!-- column for image -->
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card">
+                    <img style="mix-blend-mode: multiply;" src="{% static 'images/debit.jpg' %}" class="img-fluid" alt="">
+                </div>
+            </div>
+            <!-- column for content -->
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="card" style="margin-top:300px;"> <!-- Adjust the margin-bottom value as needed -->
+                    <div class="stat-widget-two card-body">
+                        <div class="stat-content">
+                            <h3><img src="{% static 'img/logo/logo3.png' %}" alt="billing-software">MultiUser Billing Software</h3><br>
+                            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Aut quo, sit quaerat consectetur doloribus molestias dicta. Deserunt officia libero fugiat accusamus. Repellat aperiam, ipsa ad sed eum dolorem corrupti ipsam.</p>
+                            <a href="{% url 'parties_add_page'%}" class="btn btn-primary">Add a party</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,383 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+
+<!-- Include jQuery.table2excel plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Include jsPDF-AutoTable plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Add these links to include the required libraries -->
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+
+
+
+<style>
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+    td{
+        padding: 5px 10px;
+        font-size: larger;
+        
+    }
+    td a{
+        text-decoration: none;
+    }
+    #thirdTable label,#thirdTable span,#detailsTable td{
+        color: black;
+    }
+    #partyTable th{
+        color: black;
+        font-size: large;
+    }
+    .search-results li {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .search-results li:hover {
+      background-color: #f0f0f0;
+    }
+    #myInput1{
+        box-shadow: 1px 1px  gray;
+        
+    }
+    #myInput1:hover{
+        box-shadow: none;
+    }
+    #detailsTable th{
+        color: black;
+        font-size: larger;
+    }
+    #editt{
+        color: rgb(58, 15, 214);
+        /* display: inline-flex; */
+        padding: 0;
+
+    }
+    #editt:hover{
+        color: rgb(9, 62, 186);
+    }
+    #filterDropDown a{
+        color: black;
+    }
+
+
+  #partyTableScroll::-webkit-scrollbar {
+    width: 1px;
+    height: 0px;
+  }
+
+  #partyTableScroll::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+  }
+
+  #partyTableScroll::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    width: 2px;
+    
+  }
+
+  #partyTableScroll::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    width: 2px;
+  }
+
+  /* For Firefox */
+  #partyTableScroll {
+    scrollbar-width: 2px;
+    scrollbar-color: #888 #f1f1f1;
+  }
+
+  /* For IE/Edge */
+  #partyTableScroll {
+    -ms-overflow-style: none;
+    scrollbar-width: 2px;
+    scrollbar-color: #888 #f1f1f1;
+  }
+
+  /* Hide the scrollbar in Firefox and IE/Edge */
+  #partyTableScroll {
+    overflow: auto;
+  }
+
+</style>
+
+<div class="container col-md-10 mr-1" style="background-color: rgb(130, 144, 199);min-height: 100vh;"><br><br><br><br><br><br>
+    <div class="col-11 container mr-1">
+
+
+        <div class="row">
+            <!-- ------------party table ------------------->
+
+            <div class="col-11 table-responsive" style="background-color: white;padding: 30px;border-radius: 15px;box-shadow: 3px 3px 3px gray;">
+                
+                <div class="row">
+                    
+                        <h3>PARTY </h3> <div class="dropdown ml-2">
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Filter
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="filterDropDown">
+                              <a class="dropdown-item" style="cursor: pointer;" onclick="filterTableForPartyBalance('all')">All</a>
+                              <a class="dropdown-item" style="cursor: pointer;" onclick="filterTableForPartyBalance('pay')">To Pay</a>
+                              <a class="dropdown-item" style="cursor: pointer;" onclick="filterTableForPartyBalance('receive')">To Receive</a>
+                            </div>
+                            
+                          </div> 
+                    
+
+
+                    
+                        <!-- ==-=================-search bar-=============================== -->
+
+                    <div class="search-bar ml-auto w-40" ><br>
+                        <div class="input-group" >
+                          
+                          <input type="text" autocomplete="off" id="myInput1" onkeyup="filter(this);" onclick="myFunction1()" class="form-control" placeholder="search"  />
+                          
+                          <a href="{% url 'parties_add_page' %}" style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn col-2 ml-2" ><i class="fa-solid fa-plus"></i></a>
+
+                          
+                        </div>
+                      </div>
+
+                    <!-- ====================================================== -->
+                   
+                    
+                </div>
+                <br>
+                      
+            
+                      
+                      
+                      
+
+                    <!-------- party table---------  -->
+                    <!-- style="max-height: 50vh;overflow-y: scroll;" id="partyTableScroll" -->
+                <div class="row"  >
+                    
+                    <table class="table " id="partyTable" >
+                        
+                        <thead>
+                            <th class="col-4">PARTY</th>
+                            <th class="col-4">BALANCE </th>
+                            <th class="col-4">ACTION</th>
+                            
+                        </thead>
+                        {% for i in parties %}
+                        <tr>
+                            <td class="col-4">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <!-- onclick="filterPartyRows('{{i.party_name}}','{{i.phone_number}}','{{i.total_amount}}')" -->
+                                        <a id="filterByName" title="Show" style="color: black;cursor: pointer;" href="{% url 'party_details' i.phone_number i.party_name %}" >{{i.party_name}}</a> 
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a title="Edit Profile" style="display: inline-block;" id="editt" class="dropdown-item" href="{% url 'party_edit' pk=i.phone_number id=i.party_name %}" ><small>Edit <i class="fa-solid fa-pen-to-square"></i></small> </a>
+                                    </div>
+                                </div>
+                            </td>
+                            {% if i.total_amount > 0 %}
+                            <td hidden style="color: black;">receive</td>
+                            {% elif i.total_amount == 0 %}
+                            <td hidden style="color: black;">-</td>
+                            {% else %}
+                            <td hidden style="color: black;">pay</td>
+                            {% endif %}
+
+                            <td hidden> </td>
+                            
+                            {% if i.total_amount >= 0 %}
+                            <td class="col-4" style="color: rgb(71, 216, 71)  ">{{i.total_amount}}</td>
+                            {% else %}
+                            <td class="col-4" style="color: crimson ">{{i.total_amount}}</td>
+                            {% endif %}
+                            <td class="col-4">
+                                <div class="row">
+                                    <div class="col"> 
+                                        <a style="color: gray;" onmouseover="this.style.color='black'" onmouseout="this.style.color='gray'" href="{% url 'parties_history' pk=i.phone_number id=i.party_name %}" title="{{ i.party_name }}'s History"><i class="fa-solid fa-clock-rotate-left"></i> {{ i.party_name }}'s History</a>
+                                    </div>
+
+                                    <div class="dropdown show col" >
+                                        <a title="Delete {{ i.party_name }}"  class="dropdown partyy" href="#" role="button" id="dropdownMenuLink"  data-toggle="dropdown" style="color: gray;" onmouseover="this.style.color='red'" onmouseout="this.style.color='gray'"  aria-haspopup="true" aria-expanded="false">
+                                            <!-- <i class="fa-solid fa-ellipsis-vertical"></i> -->
+                                            <i style="color: red;" class="fa-solid fa-trash"></i> Delete
+                                        </a>
+                                      
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="padding: 0;background-color: rgba(255, 0, 0, 0.317);">
+                                          
+                                          <center><a onmouseover="this.style.color='red'" onmouseout="this.style.color='black'" style="padding: 0;" class="dropdown-item" href="{% url 'party_delete' pk=i.phone_number %}" >Delete {{i.party_name}} ? <i style="color: red;" class="fa-solid fa-trash"  ></i></a></center>
+                                          
+                                          
+                                        </div>
+                                      </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                
+                </div>
+               
+        </div>
+    </div><br><br>
+            <!-- ----------------------------------------- -->
+    
+            <br><br><br>
+
+    </div>
+</div>
+
+<script>
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------------------
+
+// filter table -- 
+
+
+// function filterPartyRows(partyName, phoneNumber,totalAmount) {
+//     // Show/hide rows in the second table based on the selected party name
+//     var partyRows = document.querySelectorAll('.party-row');
+//     var index = 1; // Initialize the index
+
+//     partyRows.forEach(function (row) {
+//         var rowPartyName = row.querySelector('td:nth-child(2)').textContent.trim();
+//         var rowMobileNumber = row.querySelector('td:nth-child(4)').textContent.trim();
+
+//         // Check if both party name and mobile number match the selected value
+//         var shouldShowRow = rowPartyName === partyName && rowMobileNumber === phoneNumber;
+//         row.style.display = shouldShowRow ? '' : 'none';
+
+//         if (shouldShowRow) {
+//             // Update the content in the first column with the index
+//             row.querySelector('td:first-child').textContent = index++;
+
+//             // Get details from the second table row
+//             // var number = row.querySelector('#detailsTable td:nth-child(2)').textContent.trim();
+//             var email = row.querySelector('#detailsTable td:nth-child(9)').textContent.trim();
+//             var address = row.querySelector('#detailsTable td:nth-child(10)').textContent.trim();
+//             var gstin = row.querySelector('#detailsTable td:nth-child(11)').textContent.trim();
+            
+
+//             // Update the content in the third table
+//             document.getElementById('namee').innerHTML = partyName.toUpperCase();
+//             document.querySelector('#number').textContent = phoneNumber;
+
+//             // Check if address is empty
+//             if (address.trim() === '') {
+//                 // Display link & icon
+//                 document.querySelector('#address').innerHTML = "<a href=''><i class='fa-solid fa-location-dot'></i> No Address</a>";
+//             } else {
+//                 // Display address
+//                 document.querySelector('#address').textContent = address;
+//             }
+
+//             // Check if GSTIN is empty
+//             if (gstin.trim() === '') {
+//                 // Display link & icon
+//                 document.querySelector('#gstin').innerHTML = '<a href=""><i class="fa-solid fa-calculator"></i> No GSTIN</a>';
+//             } else {
+//                 // Display GSTIN
+//                 document.querySelector('#gstin').textContent = gstin;
+//             }
+
+//             // Check if email is empty
+//             if (email.trim() === '') {
+//                 // Display link with envelope icon
+//                 document.querySelector('#email').innerHTML = '<a href=""><i class="fa-solid fa-envelope"></i> No Email</a>';
+//             } else {
+//                 // Display email
+//                 document.querySelector('#email').textContent = email;
+//             }
+//             document.querySelector('#balance').textContent = totalAmount;
+           
+//         }
+//     });
+// }
+
+
+
+// ---------------------------------------------------------------
+// party search function -----------------------------
+
+                function filter(input) {
+                                var filterValue = input.value.toLowerCase();
+                                var tableRows = document.querySelectorAll('#partyTable tbody tr');
+
+                                tableRows.forEach(function(row) {
+                                var cells = row.querySelectorAll('#filterByName');
+                                var isVisible = false;
+
+                                for (var i = 0; i < cells.length; i++) {
+                                    var cellValue = cells[i].textContent || cells[i].innerText;
+                                    if (cellValue.toLowerCase().indexOf(filterValue) > -1) {
+                                    isVisible = true;
+                                    break;
+                                    }
+                                }
+
+                                if (isVisible) {
+                                    row.style.display = "table-row";
+                                } else {
+                                    row.style.display = "none";
+                                }
+                                });
+                            }
+
+
+// -------------------------------------------------------------
+// filter for pay and receive
+
+function filterTableForPartyBalance(filTer) {
+                        table = document.getElementById("partyTable");
+                        tr = table.getElementsByTagName("tr");
+                            
+                        for (i = 0; i < tr.length; i++) {
+                            
+                            td = tr[i].getElementsByTagName("td")[1]; // Change the index to match the column you want to filter
+                            if (td) {
+                                txtValue = td.textContent || td.innerText;
+                                if (filTer === 'all' || (filTer === 'pay' && txtValue.toUpperCase() === 'PAY') || (filTer === 'receive' && txtValue.toUpperCase() === 'RECEIVE')) {
+                                    tr[i].style.display = "";
+                                } else {
+                                    tr[i].style.display = "none";
+                                }
+                                }
+                            }
+                        }
+
+
+</script>
+
+
+
+{% endblock %}

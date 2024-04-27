@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load custom_filters %}
+{% load static %}
+
+<style>
+    table td, table th {
+        color: black;
+        padding: 15px 25px; /* Add space between table cells */
+        border-bottom: 1px solid #ddd; /* Add line separation between rows */
+    }
+
+    table td {
+        font-size: 17px;
+    }
+
+    body {
+        background-color: rgb(130, 144, 199);
+    }
+
+    .container-fluid {
+        padding-right: 15px;
+        padding-left: 15px;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    .content-body {
+        display: flex;
+        justify-content: center; /* Center the content horizontally */
+        align-items: center; /* Center the content vertically */
+        height: 100vh; /* Full height of the viewport */
+    }
+
+    .custom-container {
+        background-color: rgb(130, 144, 199);
+        min-height: 100vh;
+        padding: 50px;
+        transition: margin-left 0.5s; /* Add transition for smooth animation */
+    }
+
+    .transaction-container {
+        box-shadow: 3px 3px 3px gray;
+        border-radius: 15px;
+        padding: 20px;
+        background-color: white;
+    }
+
+    .btn-back {
+        background-color: #3d4465;
+        color: white;
+    }
+
+    .btn-back:hover {
+        background-color: #480ceb;
+    }
+
+    @media (max-width: 768px) {
+        .custom-container {
+            margin-left: 0;
+            padding: 20px;
+        }
+    }
+
+    /* Hide the navbar */
+    .navbar {
+        width: 0;
+    }
+</style>
+
+<div class="content-body">
+    <div class="custom-container col-md-10 mr-1">
+        <div class="transaction-container col-md-12">
+            <h2>Transaction History
+                <div style="float: right;">
+                    <a class="btn btn-back" href="{% url 'sales_invoice_list' %}">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </h2>
+            <div class="col-md-12">
+                <table class="table-responsive">
+                    <thead>
+                        <tr>
+                            <th style="font-size: larger;">DATE</th>
+                            <th style="font-size: larger;">ACTION</th>
+                            <th style="font-size: larger;">DONE BY</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if history %}
+                            {% for i in history %}
+                            <tr>
+                                <td class="text-center tb">{{ i.date }}</td>
+                                <td class="text-center tb">{{ i.action }}</td>
+                                <td class="text-center tb">{{staff.first_name|upper}} {{staff.last_name|upper}}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td><p class="text-center tb fw-5">No Data is Available</p></td>
+                                <td><p class="text-center tb fw-5">No Data is Available</p></td>
+                                <td><p class="text-center tb fw-5">No Data is Available</p></td>
+                            </tr>
+                        {% endif %}
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

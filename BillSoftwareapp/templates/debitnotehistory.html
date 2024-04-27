@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<style>
+    .bs {
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm {
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    .tablediv {
+        margin: auto;
+        overflow: auto;
+        max-height: 60vh;
+        width: 80vh;
+    }
+
+    h4 {
+        text-align: left;
+        margin-top: 2vh;
+        margin-bottom: 2vh;
+        margin-left: 1vh;
+    }
+
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .tablediv {
+            width: auto;
+            max-width: 100%;
+        }
+    }
+</style>
+
+
+<div class="quixnav ">
+    <div class="quixnav-scroll">
+        <ul class="metismenu" id="menu">
+            <li>
+                {% if staff.position == 'company' %}
+                <a href="{% url 'homepage' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span
+                class="nav-text">Dashboard</span></a></li>
+                {% else %}
+                <a href="{% url 'staffhome' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span
+                    class="nav-text">Dashboard</span></a>
+                    {% endif %}
+                </li>
+
+            <!-- <li><a href="/" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span></a></li> -->
+            <li><a href="{% url 'parties_table' %}" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span> </a> <a style="display: flex;position:absolute ;left: 195px;background-color: transparent; "  href="{% url 'parties_add_page' %}"><i style="font-size: 25px;" class="fa-solid fa-circle-plus "></i></a></li>
+                    
+                    <div class="position-relative nav-text">
+                       
+                            <div class="position-absolute end-0 bottom-0" style="z-index: 1; margin-top: 8px; margin-right: 0.9rem; margin-left: 14vw;">
+                                <a style="color: black; margin-top: -2px; width: 20px;" href="{% url 'add_item' %}">
+                                    <span>
+                                        <i class="fa fa-plus fa-stack-.5x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </div>
+
+                    </div>
+                    
+                      <li class="sidebar-item">
+                        <a class="sidebar-link mt-2" href="{% url 'view_item'  %}" aria-expanded="false">
+                          <span>
+                            <b style="margin-left: 10px;"><i class="fa fa-th"></i></b>
+                          </span>
+                          <span class="hide-menu nav-text"><b>Items</b></span>
+                        </a>
+                      </li>
+
+                      
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                        class="icon icon-app-store"></i><span class="nav-text">Sales</span></a>
+                <ul aria-expanded="false">
+                  <li style="display: flex; align-items: center;">
+                    <a href="{% url 'sales_invoice' %}">Invoice</a>
+                    <a href="{% url 'sales_invoice_add' %}"  style="margin-left: 50px;">
+                      <span>
+                        <i class="fa fa-plus fa-stack-.1x fa-inverse"></i>
+                    </span></a>
+                </li>
+                <li style="display: flex; align-items: center;">
+                  <a href="{% url 'transactiontable' %}" style="text-decoration: none;">Credit Note</a>
+                  <a href="{% url 'credit_add' %}" id="" style="color: white; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-left: 10px;" class="btn col-md-1">
+                      <i class="fa-solid fa-plus" id="addRowIcon"></i>
+                  </a>
+              </li>
+                </ul>
+            </li>
+
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false" style="background-color: slateblue; color: white;"><i
+                class="icon icon-credit-card "></i><span class="nav-text">Purchase</span></a>
+        <ul aria-expanded="false">
+          <li><a href="{% url 'view_purchasebill' %}">Purchase Bill  &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></a></li>
+  
+          
+          <li><a href="{% url 'view_purchasedebit' %}">Purchase Return/Dr.Note<i class="fa fa-plus"></i></a></li>
+        </ul>
+    </li>
+
+            <li><a href="widget-basic.html" aria-expanded="false"><i class="icon icon-globe-2"></i><span
+                class="nav-text">Stock Report</span></a></li>
+            
+        </ul>
+    </div>
+
+
+</div>
+
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="p-3 text-center" style="display: flex; justify-content: center;">
+            <div class="card" style="background-color: white; width: 90%; box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h4 class="text-primary">DEBIT NOTE NO: {{ id }}</h4>
+                    </div>
+                    <div class="col-md-7"></div>
+                    <div class="col-md-1">
+                        <a href="{% url 'view_purchasedebit' %}" style="text-align: right; font-size: large;"><i class="fa fa-times mt-3 mr-4" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                <div class="tablediv">
+                    <table class="table table-bordered table-striped tb" style="text-align: center;">
+                        <thead>
+                            <tr class="fs-2 tb">
+                                <th class="text-white" style="width: 40%; background-color: darkslateblue;">DATE</th>
+                                <th class="text-white" style="width: 40%; background-color: darkslateblue;">STAFF NAME</th>
+                                <th class="text-white" style="width: 40%; background-color: darkslateblue;">ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for h in hsty %}
+                            <tr>
+                                <td style="color: black;">{{ h.transactiondate | date:'d-m-Y' }}</td>
+                                <td style="color: black;">{{ staff.first_name }} {{ staff.last_name }}</td>
+                                {% if h.action == 'Created' %}
+                                <td style="color: red;">{{ h.action }}</td>
+                                {% else %}
+                                <td style="color: #154c79;">{{ h.action }}</td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

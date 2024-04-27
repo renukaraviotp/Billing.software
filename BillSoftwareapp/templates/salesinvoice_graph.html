@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="chart-container" style="width: 70%; margin-left: 25vw; margin-top: 15vh;">
+    <div class="d-flex justify-content-end">
+      <div class="ml-auto">
+          <a href="{% url 'sales_invoice_list' %}" style="font-size: x-large; color: black;" title="Close">
+              <i class="fa fa-times-circle fs-6 tb close_pad mt-4 "  aria-hidden="true" ></i>
+          </a>
+      </div>
+    </div>
+  
+    
+  
+    <!-- Canvas for the chart -->
+    <canvas id="salesInvoiceChart" width="100" height="50"></canvas>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const ctx = document.getElementById('salesInvoiceChart').getContext('2d');
+    const myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ chart_data.labels|safe }},
+            datasets: [{
+                label: 'Total Sales',
+                data: {{ chart_data.sales|safe }},
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+
+{% endblock %}

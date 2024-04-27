@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+
+<!-- Include jQuery.table2excel plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Include jsPDF-AutoTable plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Add these links to include the required libraries -->
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+
+
+
+<style>
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+    td{
+        padding: 5px 10px;
+        font-size: larger;
+        
+    }
+    td a{
+        text-decoration: none;
+    }
+    #thirdTable label,#thirdTable span,#detailsTable td{
+        color: black;
+    }
+    #itemTable th{
+        color: black;
+        font-size: large;
+    }
+    .search-results li {
+      padding: 8px;
+      cursor: pointer;
+    }
+
+    .search-results li:hover {
+      background-color: #f0f0f0;
+    }
+    #myInput1{
+        box-shadow: 1px 1px  gray;
+        
+    }
+    #myInput1:hover{
+        box-shadow: none;
+    }
+    #detailsTable th{
+        color: black;
+        font-size: larger;
+    }
+    #editt{
+        color: rgb(58, 15, 214);
+        /* display: inline-flex; */
+        padding: 0;
+
+    }
+    #editt:hover{
+        color: rgb(9, 62, 186);
+    }
+    #filterDropDown a{
+        color: black;
+    }
+
+
+  #itemTableScroll::-webkit-scrollbar {
+    width: 1px;
+    height: 0px;
+  }
+
+  #itemTableScroll::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+  }
+
+  #itemTableScroll::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 10px;
+    width: 2px;
+    
+  }
+
+  #itemTableScroll::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
+    width: 2px;
+  }
+
+  /* For Firefox */
+  #itemTableScroll {
+    scrollbar-width: 2px;
+    scrollbar-color: #888 #f1f1f1;
+  }
+
+  /* For IE/Edge */
+  #itemTableScroll {
+    -ms-overflow-style: none;
+    scrollbar-width: 2px;
+    scrollbar-color: #888 #f1f1f1;
+  }
+
+  /* Hide the scrollbar in Firefox and IE/Edge */
+  #itemTableScroll {
+    overflow: auto;
+  }
+
+</style>
+{% if allitem %}
+<div class="content-body" style="background-color: white;">
+    <!-- row -->
+    <div class="container-fluid">
+
+<!-- <div class="container col-md-10 mr-1" style="background-color: white; min-height: 100vh;"><br><br><br><br><br><br>
+    <div class="col-11 container "> -->
+
+
+        <div class="row">
+            <!-- ------------party table ------------------->
+
+            <div class="col-12 table-responsive" style="background-color: rgb(130, 144, 199);padding: 30px;border-radius: 15px;box-shadow: 3px 3px 3px gray;">
+                
+                <div class="row">
+                    
+                        <h3>ITEM </h3> <div class="dropdown ml-2">
+                           
+                          </div> 
+                    
+                    
+                        <!-- ==-=================-search bar-=============================== -->
+
+                    <div class="search-bar ml-auto w-40" ><br>
+                        <div class="input-group" >
+                          
+                          <input type="text" autocomplete="off" id="myInput1" onkeyup="filter(this);" onclick="myFunction1()" class="form-control" placeholder="search"  />
+                          
+                          <a href="{% url 'add_item' %}" style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn col-2 ml-2" ><i class="fa fa-plus"></i></a>
+                        </div>
+                      </div>
+
+                    <!-- ====================================================== -->
+                   
+                    
+                </div>
+                <br>
+                      
+            
+                      
+                      
+                      
+
+                    <!-------- party table---------  -->
+                <div class="row"  >
+                    
+                    <table class="table " id="itemTable" >
+                        
+                        <thead>
+                            <th class="col-4">ITEM</th>
+                            <th class="col-4">QUANTITY </th>
+                            <th class="col-4">ACTION</th>
+                            
+                        </thead>
+                        {% for i in allitem %}
+                        <tr>
+                            <td class="col-4">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <a id="filterByName" title="Show" style="color: black;cursor: pointer;" href="{% url 'view_items' i.pk %}" >{{ i.item_name|capfirst }}</a> 
+                                    </div>
+                                    <div class="col-md-8">
+                                        <a title="Edit Profile" style="display: inline-block; margin-left: 20px;" id="editt" class="fa fa-edit" href="{% url 'edit_item' i.pk %}" ><small>Edit <i class="fa-solid fa-pen-to-square"></i></small> </a>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="col-4">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <a  style="color: black;" > {{ i.item_current_stock }}</a> 
+                                    </div>
+                    
+                                </div>
+                            </td>
+                           
+                            <td class="col-4">
+                                <div class="row">
+                                    <div class="col"> 
+                                        <a style="color: black;" onmouseover="this.style.color='gray'" onmouseout="this.style.color='black'" href="{% url 'itemhistory' i.pk %}" title="{{ i.item_name }}'s History"><i class="fa-solid fa-clock-rotate-left"></i> {{ i.item_name }}'s History</a>
+                                    </div>
+
+                                    <div class="dropdown show col" >
+                                        <a title="Delete {{ i.item_name }}"  class="dropdown partyy" href="#" role="button" id="dropdownMenuLink"  data-toggle="dropdown" style="color: black;" onmouseover="this.style.color='red'" onmouseout="this.style.color='black'"  aria-haspopup="true" aria-expanded="false">
+                                            <!-- <i class="fa-solid fa-ellipsis-vertical"></i> -->
+                                            <i style="color: red;" class="fa fa-trash"></i> Delete
+                                        </a>
+                                      
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" style="padding: 0;background-color: rgba(255, 0, 0, 0.317);">
+                                          
+                                          <center><a onmouseover="this.style.color='red'" onmouseout="this.style.color='black'" style="padding: 0;" class="dropdown-item" href="{% url 'item_delete' i.pk %}" >Delete {{i.item_name}} ? <i style="color: red;" class="fa-solid fa-trash"  ></i></a></center>
+                                          
+                                          
+                                        </div>
+                                      </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                
+                </div>
+               
+        </div>
+    </div><br><br>
+            <!-- ----------------------------------------- -->
+    
+            <br><br><br>
+
+    </div>
+</div>
+
+{% else %}
+
+<div class="content-body" style="background-color: white;">
+    <!-- row -->
+    <div class="container-fluid">
+    <div class="p-5 text-center" style="display: flex;justify-content: center;">
+        <div class="card " style="background-color: rgb(130, 144, 199); width:50rem;box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <img height="450vw" src="{{'static/images/billingsystemimg.jpg'}}" class="card-img" alt="no img">
+                    <!-- <div class="card-img-overlay">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                        <p class="card-text"><small>Last updated 3 mins ago</small></p>
+                    </div> -->
+                </div>
+                <div class="col-sm-12 col-md-6 ps-4 pe-4">
+                    <div class="p-1 rounded" style="border: 1px solid rgba(0, 0, 0, 0);border-bottom: none;">
+                        <p style="margin-bottom: 4rem;"></p>
+                        <img width="50vw" src="{% static 'img/logo/logo3.png' %}" alt="no img">
+                        <p></p>
+                        <h1 style="font-weight:900;color:rgba(0, 0, 0, 0.644);font-size: 1.5rem;">MultiUser Billing Software</h1>
+                        <!-- <h5 class="card-title">Card title</h5> -->
+                        <p style="margin-bottom: 1.5rem;"></p>
+                        <p class="card-text" style="color: black;">Welcome to MultiUser Billing Software</p>
+                        <p style="color: rgb(0, 89, 10);font-weight: light;" class="card-text">Please create your first Item</p>
+                        <p class="mt-4"></p>
+                        <a class="btn btn-lg " style="background-color: #3d4465; color: white;" href="{% url 'add_item' %}">Create Item</a>
+                        <p style="margin-bottom: 4rem;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+{% endif %}
+
+
+<script>
+
+
+
+
+
+// -----------------------------------------------------------------------------------------------------------------
+
+
+
+// ---------------------------------------------------------------
+// party search function -----------------------------
+
+                function filter(input) {
+                                var filterValue = input.value.toLowerCase();
+                                var tableRows = document.querySelectorAll('#itemTable tbody tr');
+
+                                tableRows.forEach(function(row) {
+                                var cells = row.querySelectorAll('#filterByName');
+                                var isVisible = false;
+
+                                for (var i = 0; i < cells.length; i++) {
+                                    var cellValue = cells[i].textContent || cells[i].innerText;
+                                    if (cellValue.toLowerCase().indexOf(filterValue) > -1) {
+                                    isVisible = true;
+                                    break;
+                                    }
+                                }
+
+                                if (isVisible) {
+                                    row.style.display = "table-row";
+                                } else {
+                                    row.style.display = "none";
+                                }
+                                });
+                            }
+
+
+// -------------------------------------------------------------
+// filter for pay and receive
+
+function filterTableForPartyBalance(filTer) {
+                        table = document.getElementById("itemTable");
+                        tr = table.getElementsByTagName("tr");
+                            
+                        for (i = 0; i < tr.length; i++) {
+                            
+                            td = tr[i].getElementsByTagName("td")[1]; // Change the index to match the column you want to filter
+                            if (td) {
+                                txtValue = td.textContent || td.innerText;
+                                if (filTer === 'all' || (filTer === 'pay' && txtValue.toUpperCase() === 'PAY') || (filTer === 'receive' && txtValue.toUpperCase() === 'RECEIVE')) {
+                                    tr[i].style.display = "";
+                                } else {
+                                    tr[i].style.display = "none";
+                                }
+                                }
+                            }
+                        }
+
+
+</script>
+
+
+
+{% endblock %}

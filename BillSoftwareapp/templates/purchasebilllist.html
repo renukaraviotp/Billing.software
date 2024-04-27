@@ -1,0 +1,779 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+
+
+
+<style>
+    .tableBody{
+        height:2%;
+    }
+    
+
+    body{
+        background-color:rgb(130, 144, 199);
+    }
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    
+    #billtable tbody{
+        cursor: pointer;
+    }
+
+    #emptyMessage {
+        display: none;
+        font-size: x-large;
+        font-weight: bold;
+        color: red;
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1;
+        width: 15%;
+    }
+
+    .dropdown-content label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-content input {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    .tplus{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+    
+    
+    .tequal{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+
+    .tj{
+        color:#E4A11B;
+    }
+
+    .th{
+        color: rgb(12, 79, 234);
+    }
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+
+        #calcdiv{
+            visibility: visible;
+            margin-top: -30vh;
+            margin-left: -9vh;
+            margin-bottom: 30vh;
+        }
+
+        #billtable{
+            margin-top: 20vh;
+            margin-bottom: 20vh;
+        }
+
+        #billtable th{
+            font-size: medium;
+        }
+
+        .extra{
+            display: none;
+        }
+    }
+    
+    ::-webkit-scrollbar{
+        display: none
+    }
+</style>
+<br><br><br>
+
+<div class="body-wrapper" style="margin-left:20%;">
+    <br><br><br>
+    
+    <p></p>
+    <div class="row ps-3 pe-3 m-0" >
+        <div class="col-sm-12 ps-2 pe-3" >
+            <div class="row pt-0 m-0" >
+                <div class="card p-0 bg-light bs" style="width:98%;margin-left:1%;"><br>
+                    <div class="row">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-3" style="margin-left: 7vh;">
+                                    <div class="form-group" style="margin-left:10%;">
+                                        <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date:</label>
+                                        <input type="date" class="form-control h-100 border-secondary" id="fromDate" style="color: black; background-color: white;" onchange="filterDates()"> 
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                        <input type="date" class="form-control h-100 border-secondary" id="toDate" style="color: black; background-color: white;" onchange="filterDates()">
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-3 text-right" style="margin-left: 2vh;">
+                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;">
+                                        <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: small; font-weight: bold;">Excel</span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                        <span><img width="30px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: small; font-weight: bold;">Print</span>
+                                    </button>
+
+                                   
+                                   
+                                </div>
+                                    <br><br><br><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div><br><br>
+                    
+                    
+
+            <div class="row pt-0 m-0">
+                <div class="card p-0 bg-light bs" style="height: 36rem;">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-md-8" style="margin-left:5%;">
+                            <h4 class="tb fw-bolder pt-55" style="rgb(61, 68, 101); margin-right:36vh;">PURCHASE BILLS</h4>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input id="search_input" style="padding-inline-start: 2rem; margin-left: 10vh; " class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" Search">
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-2" style="margin-left:-5%;">
+                            <a class="btn"  href="{% url 'add_purchasebill' %}" style="color: white;background-color:rgb(61, 68, 101);margin-right:3%;"> 
+                                <i class="fa fa-plus border-dark " aria-hidden="true" style="color: white;"></i> &nbsp;Add Purchase Bill
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12" style="margin-left: 2vh;">
+                            <div class="mt-3" style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
+                                <table class="table tb " id="billtable"  style="text-align: center;margin-left:5%;width:91%;">
+                                    <thead style="width:20%;">
+                                        <tr class="fs-2 tb">
+                                            <th class="text-white" style="background-color:rgb(61,68,101); width:16%;">
+                                                DATE 
+                                                <a class="extra text-white" onclick="toggleDropdown(0)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent0" style="width:120px;">
+                                                    <label for="filterInput0" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="date" id="filterInput0"   />
+                                                    <a class="btn" style="background-color:rgb(61,68,101);" onclick="cleardropdown(0)">Clear</a> <br><br>
+                                                    &nbsp;<a class="btn" style="background-color:rgb(61,68,101);" onclick="filterTable(0)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class=" text-white"  style="background-color:rgb(61,68,101);width:14%;">
+                                                BILL NO 
+                                                <a class="extra text-white" onclick="toggleDropdown(1)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent1"  style="width:90px;">
+                                                    <label for="filterInput1" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput1"  />
+                                                    <a class="btn" style="background-color:rgb(61,68,101);" onclick="cleardropdown(1)">Clear</a> <br>
+                                                    &nbsp;<a class="btn" style="background-color:rgb(61,68,101);" onclick="filterTable(1)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class="text-white" style="background-color:rgb(61,68,101);width:18%;">
+                                                PARTY NAME 
+                                                <a class="extra text-white" onclick="toggleDropdown(2)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent2" style="width:130px;">
+                                                    <label for="filterInput2" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput2"  />
+                                                    <a class="btn" style="background-color:rgb(61,68,101);" onclick="cleardropdown(2)">Clear</a> <br><br>
+                                                    &nbsp;<a class="btn" style="background-color:rgb(61,68,101);" onclick="filterTable(2)">Apply</a>
+                                                </div>
+                                            </th>
+                                          
+                                            <th class="text-white" style="background-color:rgb(61,68,101);width:14%;">
+                                                AMOUNT
+                                                <a class="extra text-white" onclick="toggleDropdown(3)">&nbsp;<i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent3" style="width:100px;">
+                                                    <label for="filterInput4" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput3" />
+                                                    <a class="btn " style="background-color:rgb(61,68,101);" onclick="cleardropdown(3)">Clear</a> <br><br>
+                                                    &nbsp;<a class="btn " style="background-color:rgb(61,68,101);" onclick="filterTable(3)">Apply</a>
+                                                </div>
+                                            </th>
+                                            
+                                            <th class="text-white extra" style="background-color:rgb(61,68,101);width:14%;">
+                                                ACTION
+                                                &nbsp; <a onclick="toggleDropdown(4)"><i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent4" style="width:90px;">
+                                                    <label for="filterInput4" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput4" />
+                                                    <a class="btn" style="background-color:rgb(61,68,101);" onclick="cleardropdown(4)">Clear</a> <br>
+                                                    &nbsp;<a class="btn " style="background-color:rgb(61,68,101);" onclick="filterTable(4)">Apply</a>
+                                                </div>
+                                            </th>
+                                            <th class=" text-white extra" style="background-color:rgb(61,68,101);width:18%;">
+                                                BY
+                                                &nbsp; <a onclick="toggleDropdown(5)"><i class="fa fa-filter" aria-hidden="true"></i></a>
+                                                <div class="dropdown-content" id="dropdownContent5" style="width:130px;">
+                                                    <label for="filterInput5" style="color: black; text-align: left;">Equal To</label>
+                                                    <input type="text" id="filterInput5" />
+                                                    <a class="btn " style="background-color:rgb(61,68,101);" onclick="cleardropdown(5)">Clear</a> <br><br>
+                                                    &nbsp;<a class="btn " style="background-color:rgb(61,68,101);" onclick="filterTable(5)">Apply</a>
+                                                </div>
+                                            </th>
+                                           
+                                            <th class=" text-white " style="background-color:rgb(61,68,101);width:10%;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody >
+                                        {% for p in pbill %}
+                                        <tr class="no-space-after-row">
+                                            
+                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.billdate | date:'d-m-Y'}}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.billno}}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.party.party_name}}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_purchasebill/{{ p.id }}">{{p.grandtotal}}</td>
+                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}"></td>
+
+                                            <td class="clickable-row extra" style="color: black;" data-href="details_purchasebill/{{ p.id }}"></td>
+                                            <td class="pt-3 m-0 extra">
+                                                <div class="btn-group">
+                                                    <button style="border: none;background: none;" type="button" class="dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="fa fa-ellipsis-v text-dark  ps-"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" id="tableDropdown">
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'details_purchasebill' p.id %}"><span class="fa fa-eye pe-2 tg"></span> View </a></li>
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'edit_purchasebill' p.id %}"><span class="fa fa-edit pe-2 tj"></span> Edit</a></li>
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'history_purchasebill' p.id %}"><span class="fa fa-history pe-2 th"></span> History</a></li>
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_d" href="{% url 'delete_purchasebill' p.id %}"><span class="fa-solid fa-trash" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem; color:red;"></span> Delete</a></li>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                            
+                                <p id="emptyMessage" style="text-align: center;">
+                                    <br><br><br>
+                                    No Transactions to Show
+                                </p>
+
+                                <table id="excelbilltable" hidden>
+                                    <thead >
+                                        <tr class="fs-2 tb" >
+                                            <th> DATE </th>
+                                            <th> BILL NO </th>
+                                            <th> PARTY NAME </th>
+                                            
+                                            <th> AMOUNT </th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for p in pbill %}
+                                        <tr>
+                                            <td>{{p.billdate | date:'d-m-Y'}}</td>
+                                            <td>{{p.billno}}</td>
+                                            <td>{{p.party.party_name}}</td>
+                                            
+                                            <td>{{p.grandtotal}}</td>
+                                            
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+
+                                <table id="billtablemodel" hidden>
+                                    <thead>
+                                        <tr>
+                                            <th>Customer Name</th>
+                                            <th>Customer Email</th>
+                                            <th>Bill Date</th>
+                                            <th>Supply State</th>
+                                            
+                                            <th>Payment No</th>
+                                            <th>Adjustment</th>
+                                            <th>Advance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>State/Other State</td>
+                                            <td>Cash/Cheque/UPI/Bank Name</td>
+                                            <td>Cheque ID/UPI ID/Bank no</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table id="billtableitemmodel" hidden>
+                                    <thead>
+                                        <tr>
+                                            <th>Purchase Bill</th>
+                                            <th>Product Name</th>
+                                            <th>Product HSN</th>
+                                            <th>Quantity</th>
+                                            <th>Discount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Corresponding Row no from PurchaseBillModel </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+        </div>
+    </div>
+        
+    <div class="modal" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="excelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excelModalLabel">Upload File
+                    <label for="" style="color: red; font-size: x-small;" >* Refer Downloaded Sheet For Format </label><br></h5>
+                    <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="excelForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="file" style="color: black;">Choose Excel File for Purchase Bill- </label> <br>
+                            <input type="file" class="form-control-file" id="billfile" name="billfile" accept=".xls, .xlsx"><br><br>
+                            
+
+                            <label for="file" style="color: black;">Choose Excel File for Purchase Bill Products- </label> <br>
+                            <input type="file" class="form-control-file" id="prdfile" name="prdfile" accept=".xls, .xlsx"><br>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadFile()" data-dismiss="modal">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    document.getElementById('fromDate').addEventListener('change', updateMinDate);
+    function updateMinDate() {
+        var selectedDate = document.getElementById('fromDate').value;
+        document.getElementById('toDate').min = selectedDate;
+    }
+</script>
+
+
+<script>
+    var table = document.getElementById('billtable');
+    var rows = table.getElementsByTagName('tr');
+    for (var i = 1; i < rows.length; i++) {
+        var pid = rows[i].getElementsByTagName('td')[1].innerText;
+        findhistory(i,pid)            
+    }
+    function findhistory( rowid,pid){
+        $.ajax({
+            type : 'POST',
+            url: "{% url 'billhistory' %}",
+            data: { 
+                id: pid ,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(data){
+                rows[rowid].getElementsByTagName('td')[4].innerText=data.action;
+                rows[rowid].getElementsByTagName('td')[5].innerText=data.name;
+
+                if(data.action== 'Created'){
+                    rows[rowid].getElementsByTagName('td')[4].style.color = 'Red'
+                }else{
+                    rows[rowid].getElementsByTagName('td')[4].style.color = '#154c79'
+                }
+            }
+        });
+    }
+</script>
+
+<script>
+    function uploadFile() {
+        const form = document.getElementById('excelForm');
+        const formData = new FormData(form);
+        fetch('import_purchase_bill', {
+            method: 'POST',
+            body: formData
+        })
+        .then(data => {
+            swal({
+                title: "Imported !",
+                text: "Purchase Bill Import Successfull!",
+                icon: "success",
+                buttons: false,
+            })
+        })
+        .then(response => {
+            setTimeout(function () {
+                location.reload();
+            }, 1250);
+        })
+        .catch(error => {
+            swal({
+                title: "Error !",
+                text: "Purchase Bill Import Unuccessfull!",
+                icon: "warning",
+                buttons: false,
+            })
+        });
+    }
+</script>
+
+<script>
+    function printfunction() {
+        // Clone the table to avoid modifying the original
+        var $tableClone = $('#tablediv').clone();
+
+        // Remove the filter session and keep only specific columns
+        $tableClone.find('.dropdown-content').remove();
+        $tableClone.find('th:not(:contains("DATE"),:contains("BILL NO"),:contains("PARTY NAME"),:contains("AMOUNT"),:contains("ACTION"),:contains("BY"))').remove();
+        $tableClone.find('td:not(:nth-child(1),:nth-child(2),:nth-child(3),:nth-child(4),:nth-child(5),:nth-child(6))').remove();
+
+        // Create a new window for printing
+        var printWindow = window.open('', '_blank');
+        printWindow.document.write('<html><head><title>Print</title>');
+        printWindow.document.write('<style>');
+        printWindow.document.write('/* Add any print-specific styling here */');
+        printWindow.document.write('h1 { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid black;  font-size: 16px; }');
+        printWindow.document.write('table { border-collapse: collapse; width: 90%; font-size: 12px; margin-top: 10px; }');
+        printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; color: black; }');
+        printWindow.document.write('th:last-child, td:last-child { width: auto !important; }');
+        printWindow.document.write('</style>');
+        printWindow.document.write('</head><body>');
+
+        // Add the heading "Purchase Bills" before the table with a styled boundary
+        printWindow.document.write('<h1>Purchase Bills</h1>');
+
+        // Add the cloned table content
+        printWindow.document.write($tableClone[0].outerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+
+        // Trigger the print dialog in the new window
+        printWindow.print();
+    }
+</script>
+
+
+
+<script>
+    calculatetotal()
+
+    function calculatetotal(){
+        var table = document.getElementById('billtable');
+        var rows = table.getElementsByTagName('tr');
+        tpaid = 0;
+        tunpaid = 0;
+        ttotal = 0; 
+        for (var i = 1; i < rows.length; i++) {
+            if(rows[i].style.display !='none'){
+                var pcells = rows[i].getElementsByTagName('td')[9];
+                var ptextValue = pcells.textContent || pcells.innerText;
+                tpaid += parseFloat(ptextValue)
+
+               
+
+                var tcells = rows[i].getElementsByTagName('td')[4];
+                var ttextValue = tcells.textContent || tcells.innerText;
+                ttotal += parseFloat(ttextValue)
+            }
+        }
+        document.getElementById('paidval').textContent = tpaid
+        document.getElementById('unpaidval').textContent = tunpaid
+        document.getElementById('totalval').textContent = ttotal
+    }
+</script>
+
+<script>
+    function cleardropdown(index){
+        if(index == 0){
+            document.getElementById('filterInput'+index).value = '';
+        }else{
+            document.getElementById('filterInput'+index).value = null;
+        }
+    }
+
+    function toggleDropdown(index) {
+        var dropdownContent = document.getElementById('dropdownContent' + index);
+        var isVisible = dropdownContent.style.display === 'block';
+        var allDropdowns = document.querySelectorAll('.dropdown-content');
+        allDropdowns.forEach(function (dropdown) {
+            dropdown.style.display = 'none';
+        });
+        dropdownContent.style.display = isVisible ? 'none' : 'block';
+    }
+
+    function filterTable(index) {
+        var input;
+        document.getElementById('dropdownContent' + index).style.display = 'none';
+        if (index === 0) {
+            input = document.getElementById('filterInput' + index).value;
+        } else {
+            input = document.getElementById('filterInput' + index).value.toUpperCase();
+        }
+        var table = document.getElementById('billtable');
+        var rows = table.getElementsByTagName('tr');
+        var emptyMessage = document.getElementById('emptyMessage');
+        var isEmpty = true;
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            var cell = cells[index];
+            if (cell) {
+                var textValue = cell.textContent || cell.innerText;
+                if (index === 0) {
+                    if (input==''){
+                        rows[i].style.display = 'table-row';
+                            isEmpty = false;
+                    }else{
+                        dateval  = textValue.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2-$1-$3");
+                        inputval  = input.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2-$1-$3");
+                        const formattedDate = formatDateString(input);
+                        if (dateval === formattedDate) {
+                            rows[i].style.display = 'table-row';
+                            isEmpty = false;
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                } else {
+                    if (textValue.toUpperCase().includes(input)) {
+                        rows[i].style.display = 'table-row';
+                        isEmpty = false;
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+        emptyMessage.style.display = isEmpty ? 'block' : 'none';
+        calculatetotal()
+    }
+
+    function formatDateString(inputDate) {
+        const parsedDate = new Date(inputDate);
+        const day = parsedDate.getDate();
+        const month = parsedDate.getMonth() + 1;
+        const year = parsedDate.getFullYear();
+        const formattedDate = `${month < 10 ? '0' : ''}${month}-${day < 10 ? '0' : ''}${day}-${year}`;
+        return formattedDate;
+    }
+</script>
+
+<script>
+    function filterDates() {
+        var fromDate = document.getElementById("fromDate").value;
+        var selectedDate = new Date(fromDate);
+        selectedDate.setDate(selectedDate.getDate() - 1);
+        var toDate = document.getElementById("toDate").value;
+        var table = document.getElementById("billtable");
+        var rows = table.getElementsByTagName("tr");
+        var emptyMessage = document.getElementById('emptyMessage');
+        var isEmpty = true;
+        for (var i = 1; i < rows.length; i++) {
+            var currentDate = rows[i].getElementsByTagName("td")[0].innerText;
+            var date = new Date(currentDate.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2/$1/$3"));
+            if ((fromDate && date >= selectedDate) || !fromDate) {
+                if ((toDate && date <= new Date(toDate)) || !toDate) {
+                    rows[i].style.display = "table-row";
+                    isEmpty = false;
+                } else {
+                    rows[i].style.display = "none";
+                }
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+        emptyMessage.style.display = isEmpty ? 'block' : 'none';
+        calculatetotal()
+    }
+</script>
+
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+
+<script>
+    function deletepbill(Id)
+    {
+        swal({
+            title: "Confirmation !",
+            text: "Do you want to Delete this Purchase Bill?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: "Deleted !",
+                    text: "Purchase Bill Deleted Successfully!",
+                    icon: "success",
+                    buttons: false,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        window.location.href = "{% url 'delete_purchasebill' 0 %}".replace('0', Id);
+                    } else {
+                        window.location.href = "{% url 'delete_purchasebill' 0 %}".replace('0', Id);
+                    }
+                });
+            } else {
+                swal("Action Cancelled!");
+            }
+        });
+    }
+</script>
+
+<script>
+    document.getElementById("search_input").addEventListener("input", function() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search_input");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("billtable");
+        tr = table.getElementsByTagName("tr");
+        var emptyMessage = document.getElementById("emptyMessage");
+        var anyMatch = false;
+        for (i = 1; i < tr.length; i++) {
+            tr[i].style.display = "table-row";
+            var found = false;
+            for (td of tr[i].getElementsByTagName("td")) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().includes(filter)) {
+                    found = true;
+                    anyMatch = true;
+                    break;
+                }
+            }
+            if (!found) {
+                tr[i].style.display = "none";
+            }
+        }
+        emptyMessage.style.display = anyMatch ? "none" : "block";
+        calculatetotal()
+    });
+</script>
+
+<script>
+    function ExportToExcel(){
+        const table = document.querySelector('#excelbilltable');
+        const ws = XLSX.utils.table_to_sheet(table);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'PurchaseBill.xlsx');
+    }
+</script>
+
+<script>
+    function excelmodel(){
+        const table1 = document.querySelector('#billtablemodel');
+        const ws1 = XLSX.utils.table_to_sheet(table1);
+        const wb1 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb1, ws1, 'Sheet1');
+        XLSX.writeFile(wb1, 'PurchaseBillModel.xlsx');
+
+        const table2 = document.querySelector('#billtableitemmodel');
+        const ws2 = XLSX.utils.table_to_sheet(table2);
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, ws2, 'Sheet1');
+        XLSX.writeFile(wb2, 'PurchaseBillItemModel.xlsx');
+    }
+</script>
+
+{% endblock  %}

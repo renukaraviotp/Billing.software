@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign In </title>
+    <meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="shortcut icon" type="image/png" href="{% static 'img/logo/logo3.png' %}" />
+
+    <!-- Font Icon -->
+    <link rel="stylesheet" href="static/assets/fonts/material-icon/css/material-design-iconic-font.min.css">
+
+    <!-- Main css -->
+    <link rel="stylesheet" href="static/assets/csslog/style.css">
+</head>
+<body style="background-color: orange;">
+
+    <div class="main" style="background-color: rgba(225, 155, 24, 0.563)">
+
+        {% if messages %}
+        {% for message in messages %}
+            <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 30%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px; margin-left: 52vw; ">{{message}}</label>
+        {% endfor %}
+     {% endif %}
+
+        <!-- Sign in form -->
+        <section class="sign-in">
+            <div class="container">
+                <div class="signin-content">
+                    <div class="signin-image">
+                        <figure><img src="static/img/logreg/signin-image.jpg" alt="sing up image"></figure>
+                        {% comment %} <a href="#" class="signup-image-link">Create an account</a> {% endcomment %}
+                    </div>
+
+                    <div class="signin-form">
+                        <h2 class="form-title">Sign In</h2>
+                        <form class="login-form" id="login-form" class="mt-2" method="post" action="{% url 'loginurl' %}" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" name="username" id="username" placeholder="Enter User Name"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+                                <input type="password" name="pass" id="pass" placeholder=" Enter Password"/>
+                            </div>
+                            <div class="form-group">
+
+							
+                            </div>
+                            <div class="form-group form-button">
+                                <input type="submit" name="signin" id="signin" class="form-submit" value="Log in"/>
+                            </div>
+                        </form>
+                        <!-- <div class="social-login">
+                            <span class="social-label">Or login with</span>
+                            <ul class="socials">
+                                <li><a href="#"><i class="display-flex-center zmdi zmdi-facebook"></i></a></li>
+                                <li><a href="#"><i class="display-flex-center zmdi zmdi-twitter"></i></a></li>
+                                <li><a href="#"><i class="display-flex-center zmdi zmdi-google"></i></a></li>
+                            </ul>
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- JS -->
+    <script src="static/assets/vendor/jquery/jquery.min.js"></script>
+    <script src="static/assets/js/main.js"></script>
+</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</html>

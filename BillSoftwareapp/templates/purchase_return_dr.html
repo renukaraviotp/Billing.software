@@ -1,0 +1,898 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+
+
+
+
+<style>
+    body{
+        background-color:rgb(130, 144, 199);
+    }
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+
+    .paiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        border: 2px solid black;
+        margin-left: 7vh;
+        border-radius: 8px;
+    }
+
+
+
+    .unpaiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        border: 2px solid black;
+        margin-left: 7vh;
+        border-radius: 8px;
+    }
+
+    .totaldiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        border: 2px solid black;
+        margin-left: 7vh;
+        border-radius: 8px;
+    }
+
+    #debittable tbody{
+        cursor: pointer;
+    }
+
+    #emptyMessage {
+        display: none;
+        font-size: x-large;
+        font-weight: bold;
+        color: red;
+    }
+    
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .filter-dropdown {
+        display: none;
+        position: absolute;
+        background: blue;
+        border: 1px solid #ccc;
+        padding: 10px;
+        z-index: 1;
+        border-radius: 10%;
+    }
+    .filter-option,
+    .filter-value {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 1px;
+    }
+
+    .filter-buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .filter-buttons button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1;
+        width: 15%;
+    }
+
+    .dropdown-content label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-content input {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+
+
+
+
+
+    /* .apply-filter {
+        background-color: #4caf50;
+        color: white;
+    }
+
+    .clear-filter {
+        background-color: #f44336;
+        color: white;
+    } */
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+
+        #calcdiv{
+            visibility: visible;
+            margin-top: -30vh;
+            margin-left: -5vh;
+        }
+
+        #debittable{
+            margin-top: 20vh;
+        }
+
+        .extra{
+            display: none;
+        }
+
+        .filter-button {
+            display: none !important;
+        }
+
+    }
+
+</style>
+<br><br><br>
+
+<div class="body-wrapper" style="margin-left:20%;">
+    <br><br><br>
+    
+    <p></p>
+    <div class="row ps-3 pe-3 m-0" >
+        <div class="col-sm-12 ps-2 pe-3" >
+            <div class="row pt-0 m-0" >
+                <div class="card p-0 bg-light bs" style="width:98%;margin-left:1%;"><br>
+                    <div class="row">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-3" style="margin-left: 7vh;">
+                                    <div class="form-group" style="margin-left:10%;">
+                                        <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date:</label>
+                                        <input type="date" class="form-control h-100 border-secondary" id="fromDate" style="color: black; background-color: white;" onchange="filterDates()"> 
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                        <input type="date" class="form-control h-100 border-secondary" id="toDate" style="color: black; background-color: white;" onchange="filterDates()">
+                                    </div>
+                                </div>
+                                <div class="col-md-2"></div>
+                                <div class="col-md-3 text-right" style="margin-right: 2vh;">
+                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;">
+                                        <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
+                                        <br><span style="color: black; font-size: small; font-weight: bold;">Excel</span>
+                                    </button>
+
+                                    <button class="btn mt-3" type="button" onclick="printfunction()">
+                                        <i class="fa fa-print" aria-hidden="true" style="font-size:22px;color: red;"></i>
+                                        <br><span style="color: black; font-size: small; font-weight: bold;">Print</span>
+                                    </button>
+                         
+
+                                   
+                                   
+                                </div>
+                                    <br><br><br><br>
+                                </div>
+                            </div>
+                        </div>
+                    </div><br><br>
+
+    
+
+                    <div class="row pt-0 m-0">
+                        <div class="card p-0 bg-light bs" style="height: 36rem;">
+                            <div class="row m-0 p-0 pt-3">
+                                <div class="col-md-8" style="margin-left:5%;">
+                                    <h4 class="tb fw-bolder pt-55" style="color:rgb(61, 68, 101); margin-right:36vh;">DEBIT NOTE</h4>
+                                </div>
+                            </div>
+        
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <input id="search_input" style="padding-inline-start: 2rem; margin-left: 10vh;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder="Search">
+                                </div>
+                                <div class="col-md-6"></div>
+                                <div class="col-md-2">
+                                    <a class="btn" href="{% url 'add_debitnote' %}" style="color: white;background-color:rgb(61, 68, 101); margin-left: -5%; margin-right: 3%;"> 
+                                        <i class="fa fa-plus border-dark" aria-hidden="true" style="color: white;"></i> &nbsp;Add Debit Note
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row mt-3" style="margin-left: 8vh; margin-right: 6vh;">
+                                <div class="col-md-12">
+                                    <div class="table-responsive" style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
+                                        <table class="table table-bordered tb" id="debittable" style="text-align: center;">
+                                    <thead>
+                                        <tr class="fs-2 tb" >
+                                            <th class="text-white" style="width: 10%; background-color: rgb(61,68,101);">#</th>
+                                            <th class="text-white"style="width: 16%; background-color: rgb(61,68,101);">DATE &nbsp; <i class="fas fa-filter filter-button"style="color:white;"></i>
+                                                <div class="filter-dropdown">
+                                                    <select class="filter-option">
+                                                        <option value="exact-match" selected>Equal to</option>
+                                                        
+                                                    </select><br><br>
+                                                    <input type="text" class="filter-value" ><br><br>
+                                                    
+                                                   
+                                                        <button class="apply-filter btn btn-primary">Apply</button>
+                                                        <button class="clear-filter btn btn-info">Clear</button>
+                                                    
+                                                </div>
+                                               </th>
+                                            <th class="text-white"style="width: 16%; background-color: rgb(61,68,101);">REF.NO &nbsp; <i class="fas fa-filter filter-button"style="color:white;"></i>
+                                                <div class="filter-dropdown">
+                                                    <select class="filter-option">
+                                                        <option value="equal-to" selected>Equal to</option>
+                                                        
+                                                    </select><br><br>
+                                                    <input type="number" class="filter-value" ><br><br>
+                                                    
+                                                   
+                                                        <button class="apply-filter btn btn-primary">Apply</button>
+                                                        <button class="clear-filter btn btn-info">Clear</button>
+                                                    
+                                                </div></th>
+                                            <th class="text-white"style="width: 16%; background-color: rgb(61,68,101);">PARTY NAME &nbsp;<i class="fas fa-filter filter-button"style="color:white;"></i>
+                                                <div class="filter-dropdown">
+                                                    <select class="filter-option">
+                                                        <option value="contains" selected>Equal to</option>
+                                                        
+                                                    </select><br><br>
+                                                    <input type="text" class="filter-value" ><br><br>
+                                                    
+                                                   
+                                                        <button class="apply-filter btn btn-primary">Apply</button>
+                                                        <button class="clear-filter btn btn-info">Clear</button>
+                                                    
+                                                </div></th>
+
+                                            <th class="text-white"style="width: 17%; background-color: rgb(61,68,101);">TYPE &nbsp;<i class="fas fa-filter filter-button"style="color:white;"></i>
+                                                <div class="filter-dropdown">
+                                                    <select class="filter-option">
+                                                        <option value="contains" selected>Equal to</option>
+                                                        
+                                                    </select><br><br>
+                                                    <input type="text" class="filter-value" ><br><br>
+                                                    
+                                                   
+                                                        <button class="apply-filter btn btn-primary">Apply</button>
+                                                        <button class="clear-filter btn btn-info">Clear</button>
+                                                    
+                                                </div></th>
+                                            <th class="text-white"style="width:17%; background-color: rgb(61,68,101);">TOTAL &nbsp;<i class="fas fa-filter filter-button"style="color:white;"></i>
+                                                <div class="filter-dropdown">
+                                                    <select class="filter-option">
+                                                        <option value="equal-to" selected>Equal to</option>
+                                                        
+                                                    </select><br><br>
+                                                    <input type="number" class="filter-value"><br><br>
+                                                    
+                                                   
+                                                        <button class="apply-filter btn btn-primary">Apply</button>
+                                                        <button class="clear-filter btn btn-info">Clear</button>
+                                                    
+                                                </div>
+                                            </th>
+                                
+                           
+                                                <th class="text-white" style="width: 12%; background-color: rgb(61,68,101);"></th>
+                                            </tr>
+                                        </thead>
+                                    <tbody style="background-color: white;">
+                                        {% for p in pdebt %}
+                                        <tr>
+                                            <td class="clickable-row" style="color: black;" data-href="details_debitnote/{{ p.pdebitid }}" >{{forloop.counter}}</td>
+                                            <td class="clickable-row" style="color:black;" data-href="details_debitnote/{{ p.pdebitid }}">{{p.debitdate}}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_debitnote/{{ p.pdebitid }}">{{p.pdebitid}}</td>
+                                            <td class="clickable-row" style="color: black;" data-href="details_debitnote/{{ p.pdebitid }}">{{p.party.party_name}}</td>
+                                            
+                                            <td class="clickable-row" style="color: black;" data-href="details_debitnote/{{ p.pdebitid }}">Debit Note</td>
+                                
+                                            <td class="clickable-row" style="color: black;" data-href="details_debitnote/{{ p.pdebitid }}">{{p.grandtotal}}</td>
+                                            <td class="pt-3 m-0 extra" >
+                                                <div class="btn-group">
+                                                    <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                        <span class="fa fa-ellipsis-v text-dark  ps-"></span>
+                                                    </button>
+                                                
+                                                   
+                                                    <ul class="dropdown-menu">
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'details_debitnote' p.pdebitid  %}"><span class="fa fa-eye pe-2 tg"></span> View </a></li>
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'edit_debitnote' p.pdebitid  %}"><span class="fa fa-edit pe-2 tj"></span> Edit</a></li>
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" href="{% url 'history_debitnote' p.pdebitid  %}"><span class="fa fa-history pe-2 th"></span> History</a></li>
+                                                        <li><a class="dropdown-item fw-bold tb hide_table_text_v" style="color: black;" onclick="deletedebt('{{p.pdebitid}}')"><span class="fa fa-times" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;color: red;"></span> Delete</a></li>
+
+                                                    </ul>
+                                                 
+                                                    
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        
+                                        {% endfor %}
+                                    
+                                    </tbody>
+                                
+                                </table>
+                            
+                                <p id="emptyMessage" style="text-align: center;">
+                                    <br><br><br>
+                                    No Datas to Show
+                                </p>
+                                <table id="excelordertable" hidden>
+                                    <thead>
+                                        <tr class="fs-2 tb" >
+                                             <th>#</th>
+                                            <th>DATE</th>
+                                            <th> REF.NO </th>
+                                            <th> PARTY NAME </th>
+                                            <th>TYPE</th>
+                                            <th> TOTAL </th>
+                                           
+                                          
+                                            <th></th>
+                                            
+                                            
+                                         
+                                        </tr>
+                                       
+                                    </thead>
+                                    <tbody>
+                                        {% for p in pdebt %}
+                                        <tr>
+                                            <td>{{forloop.counter}}</td>
+                                            <td>{{p.debitdate}}</td>
+                                            <td>{{p.pdebitid}}</td>
+                                            <td>{{p.party.party_name}}</td>
+                                            
+                                            <td>Debit Note</td>                 
+                                            <td>{{p.grandtotal}}</td>
+                                            
+                                            
+                                            
+                                            
+                                            <td></td>
+                                          
+                                            
+                                        </tr>
+                                         
+                                            
+                                        
+                                        {% endfor %}
+                                    </tbody>
+                                </table> 
+
+                                <table id="debittablemodel" style="display: none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Customer Name</th>
+                                            <th>Customer Email</th>
+                                            <th>Debit Date</th>
+                                            <th>Supply State</th>
+                                            <th>Adjustment</th>
+                                            <th>Advance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>State/Other State</td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table id="debitnotemmodel" style="display: none;">
+                                    <thead>
+                                        <tr>
+                                            <th>Debit Note</th>
+                                            <th>Product Name</th>
+                                            <th>Product HSN</th>
+                                            <th>Quantity</th>
+                                            <th>Tax</th>
+                                            <th>Discount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Corresponding Row no from DebitNote Model </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>GST_[_%]/IGST_[_%]</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                           </div>
+                        </div>
+                    </div>                        
+                </div>
+            </div>
+            </div>
+        </div>
+   
+    
+    
+        
+        
+    <div class="modal" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="excelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excelModalLabel">Upload File
+                    <label for="" style="color: red; font-size: x-small;" >* Refer Downloaded Sheet For Format </label><br></h5>
+                    <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="excelForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="file" style="color: black;">Choose Excel File for Debi Note- </label> <br>
+                            <input type="file" class="form-control-file" id="billfile" name="billfile" accept=".xls, .xlsx"><br><br>
+                            
+
+                          
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadFile()" data-dismiss="modal">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script>
+    document.getElementById('fromDate').addEventListener('change', updateMinDate);
+    function updateMinDate() {
+        var selectedDate = document.getElementById('fromDate').value;
+        document.getElementById('toDate').min = selectedDate;
+    }
+</script>
+
+
+<script>
+    function printfunction() {
+        var tablediv = document.getElementById('tablediv');
+        var whatToPrint = document.getElementById('whatToPrint');
+        var printContents;
+
+        if (tablediv.style.display !== 'none') {
+            printContents = getPrintableContent(tablediv);
+        } else {
+            printContents = getPrintableContent(whatToPrint);
+        }
+
+        var $printerDiv = $('<div class="printContainer" id="printContainer"></div>');
+        $printerDiv.html(printContents);
+
+        // Remove the 9th and 10th columns from the printed content
+        $printerDiv.find('tr').each(function () {
+            $(this).find('th:eq(6)').remove();
+            $(this).find('td:eq(6)').remove();
+        });
+
+        // Apply white-space: nowrap style for printing
+        $printerDiv.find('td, th').css('white-space', 'nowrap');
+
+        $('body').append($printerDiv).addClass('printingContent');
+        var h1Element = document.createElement('h1');
+        h1Element.textContent = 'Debit Note';
+        h1Element.style.textAlign = 'center';
+        h1Element.style.marginTop = '120px';
+        var head = document.getElementById('printContainer');
+        head.insertBefore(h1Element, head.firstChild);
+        window.print();
+        $printerDiv.remove();
+        $('body').removeClass('printingContent');
+    }
+
+    function getPrintableContent(element) {
+        return element.innerHTML;
+    }
+</script>
+
+
+
+<script>
+    function ExportToExcel(){
+        const table = document.querySelector('#excelordertable');
+        const ws = XLSX.utils.table_to_sheet(table);
+        ws['!cols'] = [
+            { wch: 12 }, // #
+            { wch: 15 }, // DATE
+            { wch: 20 }, // REF NO.
+            { wch: 15 }, // TRANSCATION
+            { wch: 15 }, // PARTY NAME
+            { wch: 15 }, // TOTAL
+        ];
+
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'Debitnote.xlsx');
+    }
+</script>
+
+ 
+<script>
+    $(document).ready(function() {
+      $('.filter-button').on('click', function() {
+        $(this).closest('th').find('.filter-dropdown').toggle();
+      });
+  
+      $('.apply-filter').on('click', function() {
+        const $table = $('#debittable');
+        const columnIndex = $(this).closest('th').index();
+        const filterOption = $(this).siblings('.filter-option').val();
+        const filterValue = $(this).siblings('.filter-value').val().trim();
+  
+        $table.find('tbody tr').hide();  // Hide all rows
+  
+        if (filterOption === 'equal-to') {
+            applyEqualToFilter($table, columnIndex, filterValue);
+        } 
+        else (filterOption === 'contains')
+         {
+            applyContainsFilter($table, columnIndex, filterValue);
+         } 
+        
+  
+        // Close the filter dropdown
+        $(this).closest('.filter-dropdown').hide();
+      });
+  
+      $('.clear-filter').on('click', function() {
+        $('#debittable tbody tr').show();
+        $(this).siblings('.filter-option').val('contains');
+        $(this).siblings('.filter-value').val('');
+  
+        // Close the filter dropdown
+        $(this).closest('.filter-dropdown').hide();
+      });
+    });
+  
+    function applyExactMatchFilter($table, columnIndex, filterValue) {
+      $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function() {
+        if ($(this).text().trim() === filterValue) {
+          $(this).parent().show();
+        }
+      });
+    }
+  
+    function applyContainsFilter($table, columnIndex, filterValue) {
+      $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function() {
+        if ($(this).text().toLowerCase().includes(filterValue.toLowerCase())) {
+          $(this).parent().show();
+        }
+      });
+    }
+  
+    function applyEqualToFilter($table, columnIndex, filterValue) {
+      $table.find(`tbody tr td:nth-child(${columnIndex + 1})`).each(function() {
+        if (parseFloat($(this).text().trim()) === parseFloat(filterValue)) {
+          $(this).parent().show();
+        }
+      });
+    }
+  
+   
+  </script>
+ 
+
+
+
+ <script>
+    function deletedebt(Id)
+    {
+        swal({
+            title: "Confirmation !",
+            text: "Do you want to Delete this Debit Note?",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal({
+                    title: "Deleted !",
+                    text: "Debit Note Deleted Successfully!",
+                    icon: "success",
+                    buttons: false,
+                });
+                
+                // Close the SweetAlert dialog after 2 seconds (2000 milliseconds)
+                setTimeout(() => {
+                    window.location.href = "{% url 'delete_debit' 0 %}".replace('0', Id);
+                }, 2000);
+            } else {
+                swal("Action Cancelled!");
+            }
+        });
+    }
+</script>
+
+
+
+<script>
+    document.getElementById("search_input").addEventListener("input", function() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("search_input");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("debittable");
+        tr = table.getElementsByTagName("tr");
+
+        var emptyMessage = document.getElementById("emptyMessage");
+        var anyMatch = false;
+
+        // Loop through only the body of the table (skipping the first row, which is the heading)
+        for (i = 1; i < tr.length; i++) {
+            // Show the row by default
+            tr[i].style.display = "table-row";
+
+            // Flag to check if any cell in the row contains the search input
+            var found = false;
+
+            // Loop through all cells in the row
+            for (td of tr[i].getElementsByTagName("td")) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().includes(filter)) {
+                    // Match found in any cell, set the flag to true
+                    found = true;
+                    anyMatch = true;
+                    break;
+                }
+            }
+
+            // If no match found in any cell, hide the row
+            if (!found) {
+                tr[i].style.display = "none";
+            }
+        }
+
+        // Show or hide the empty message based on search result
+        emptyMessage.style.display = anyMatch ? "none" : "block";
+    });
+    </script>
+
+<script>
+    function filterDates() {
+        var fromDate = document.getElementById("fromDate").value;
+        var selectedDate = new Date(fromDate);
+        selectedDate.setDate(selectedDate.getDate() - 1);
+        var toDate = document.getElementById("toDate").value;
+        var table = document.getElementById("debittable");
+        var rows = table.getElementsByTagName("tr");
+        var emptyMessage = document.getElementById('emptyMessage');
+        var isEmpty = true;
+        for (var i = 1; i < rows.length; i++) {
+            var currentDate = rows[i].getElementsByTagName("td")[1].innerText;
+            var date = new Date(currentDate.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2/$1/$3"));
+            if ((fromDate && date >= selectedDate) || !fromDate) {
+                if ((toDate && date <= new Date(toDate)) || !toDate) {
+                    rows[i].style.display = "table-row";
+                    isEmpty = false;
+                } else {
+                    rows[i].style.display = "none";
+                }
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+        emptyMessage.style.display = isEmpty ? 'block' : 'none';
+      
+    }
+</script>
+
+
+
+
+<script>
+    function excelmodel(){
+        const table1 = document.querySelector('#debittablemodel');
+        const ws1 = XLSX.utils.table_to_sheet(table1);
+        const wb1 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb1, ws1, 'Sheet1');
+        XLSX.writeFile(wb1, 'DebitNoteModel.xlsx');
+
+        const table2 = document.querySelector('#debitnotemmodel');
+        const ws2 = XLSX.utils.table_to_sheet(table2);
+        const wb2 = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb2, ws2, 'Sheet1');
+        XLSX.writeFile(wb2, 'debitnoteItemModel.xlsx');
+    }
+</script>
+<script>
+    function uploadFile() {
+        const form = document.getElementById('excelForm');
+        const formData = new FormData(form);
+        fetch('import_debitnote', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            swal({
+                title: "Imported !",
+                text: "Debit Note Import Successfull!",
+                icon: "Success",
+                buttons: false,
+            })
+        })
+        .catch(error => {
+            swal({
+                title: "Error !",
+                text: "Debit Note Import Unuccessfull!",
+                icon: "warning",
+                buttons: false,
+            })
+        });
+    }
+</script>
+
+<script>
+    function closeDropdown() {
+        // Find the parent dropdown menu and close it
+        var dropdownMenu = event.target.closest('.dropdown-menu');
+        if (dropdownMenu) {
+            dropdownMenu.classList.remove('show');
+        }
+    }
+</script>
+
+<script>
+    // Wait for the DOM content to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Get all the cells in the 'TOTAL' column
+        var totalCells = document.querySelectorAll("#debittable tbody tr td:nth-child(6)");
+
+        var totalSum = 0; // Initialize the total sum
+
+        // Iterate through each cell in the 'TOTAL' column
+        totalCells.forEach(function (cell) {
+            // Parse the text content of the cell as a float and add it to the total sum
+            totalSum += parseFloat(cell.textContent.trim());
+        });
+
+        // Create a new row for displaying the total sum
+        var totalRow = document.createElement("tr");
+        // Apply inline CSS styling to set the color of the total amount text to black
+        totalRow.innerHTML = `<td colspan="5" style="color:black;text-align:left; ">Total Amount:</td><td colspan="2" style="color: black;">${totalSum.toFixed(2)}</td>`;
+
+        // Append the total row to the table body
+        document.querySelector("#debittable tbody").appendChild(totalRow);
+    });
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function ($) {
+        $(document).on('click', '#pdflink', function (event) {
+            event.preventDefault();
+
+            // Hide the filter symbol
+            $('#filter-buttons').hide();
+
+            // Create a temporary element for generating the PDF
+            var tempElement = document.createElement('div');
+
+            // Create a heading element
+            var heading = document.createElement('h1');
+            heading.textContent = 'Debit Note';
+            // Apply CSS styles to center the heading
+            heading.style.textAlign = 'center';
+
+            // Append the heading to the temporary element
+            tempElement.appendChild(heading);
+
+            // Get the content from tablediv and append to the temporary element
+            var tableContent = document.getElementById('tablediv').innerHTML;
+            tempElement.innerHTML += tableContent;
+
+            var opt = {
+                margin: 1,
+                filename: 'DebitNote'+ '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait', }
+            };
+
+            // Generate PDF from the temporary element
+            html2pdf().set(opt).from(tempElement).save();
+
+            // Show the filter symbol again after generating the PDF
+            $('#filter-buttons').show();
+        });
+    });
+</script>
+
+
+
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+
+
+{% endblock  %}

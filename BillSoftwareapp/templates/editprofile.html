@@ -1,0 +1,519 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<style>
+
+    .save_btn{
+        background-color: rgb(218, 164, 48);
+        color: azure; 
+        padding: 3; 
+        margin-left: 200px; 
+        margin-top: 30px; 
+        width: 200px;
+        border-radius: 20px;
+        justify-content: center;
+        /* z-index: 1 !important; */
+    }
+.section-title {
+  font-size: 32px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  position: relative;
+  color: rgb(218, 164, 48);
+}
+.inputContainer {
+  position: relative;
+  height: 45px;
+  width: 90%;
+  margin-bottom: 17px;
+}
+/* Style the inputs */
+
+.input {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #DADCE0;
+  border-radius: 7px;
+  font-size: 16px;
+  padding: 0 20px;
+  outline: none;
+  background: none;
+  z-index: 1;
+    color: #c7cfd4;
+}
+
+/* Hide the placeholder texts (a) */
+
+::placeholder {
+  color: transparent;
+}
+.label {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 0 4px;
+ 
+  color: #c7cfd4;
+  font-size: 16px;
+  transition: 0.5s;
+  z-index: 0;
+}
+.submitBtn {
+  display: block;
+  margin-left: auto;
+  padding: 15px 30px;
+  border: none;
+  background-color:  #47b2e4;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 30px;
+}
+
+.submitBtn:hover {
+  background-color: rgb(51, 105, 131);
+  transform: translateY(-2px);
+}
+.input:focus + .label {
+  top: -7px;
+  left: 3px;
+  z-index: 10;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(211, 213, 219);
+}
+.input:focus {
+  border: 2px solid rgb(218, 164, 48);
+}
+.input:not(:placeholder-shown)+ .label {
+  top: -7px;
+  left: 3px;
+  z-index: 10;
+  font-size: 14px;
+  font-weight: 600;
+}
+/* Full-width inputs */
+input[type=text], input[type=password] ,input[type=email] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 2px solid #d4d1d1;;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Add a hover effect for buttons */
+button:hover {
+  opacity: 0.8;
+}
+.card-title{
+    width: 900px; 
+    margin-left: 300px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    background-color: #8290c7;
+    border-radius: 20px;
+    z-index: 2 !important;
+}
+
+@media (min-width: 400px)and ( max-width:900px) {
+    .containereditprof{
+        width: 390px; 
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+    }
+    .row{
+        width:100%
+    }
+    .btn{
+        padding: 1; 
+        margin-left: 25%; 
+        width: 100px;
+        justify-content: center;
+        height: auto;
+    }
+    h3{
+        margin-left: 25%;
+    }
+    .profimg{
+        margin-left: 25%;
+    }
+    .panel-body{
+      justify-content: center;
+      margin-left: 100px;
+      width: 300px;
+    }
+    .profile_table{
+      width: fit-content;
+    }
+}
+
+</style>
+
+
+
+<!-- <div class="container-fluid p-5 mt-5 " > -->
+
+ 
+            <div class="card-title">
+              <form method="post" action="{% url 'edit_profilesave' pk=company.pk %}" enctype="multipart/form-data" class="needs-validation mb-5" novalidate>
+                    {% csrf_token %}
+     
+                <center>
+                    <h3 class="mb-0" style="font-weight: bolder;color: rgb(218, 164, 48);">MY PROFILE</h3>
+                    {% if company.profile_pic %}
+                    <img src="{{ company.profile_pic.url }}" class="img img-fluid m-3"
+                    style="width: 150px; height: 150px; border-radius: 50%">
+                    {% else %}
+                    <img src="{% static 'img/default.png' %}"  class="img img-fluid m-3"
+                    style="width: 150px; height: 150px; border-radius: 50%" >
+                    {% endif %}
+                    <br>
+
+                    <input type="file" name="file" style="padding-left: 150px;">
+                 
+                </center>
+             
+                    <section style="padding-left: 170px;">
+                <table class="table-responsive profile_table">
+                  <tbody class="p-2 m-2">
+                      <tr class="personal">
+                          <td>
+                             <h4 class="m-4" style="color: rgb(218, 164, 48);"><u>Personal Details</u></h4>
+                           
+                       
+                          </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <div class="mb-3 mt-3 p-0" id ='fname'>
+                            <p style="color:azure ; margin-bottom: 0px;">First Name:</p>
+                            <div class="inputContainer" class="col-md-6">  
+                              <input type="text" class="input" name="f_name"  
+                              style="width: 280px; text-transform: capitalize; color: black;" value="{{ company.user.first_name }}"> 
+                          </div>
+                        </td>
+
+                        <td>
+                          <div class="mb-3 mt-3 p-0" >
+                          <p style=" color:azure ;margin-left: 92px; margin-bottom: 0px;">Last Name:</p>
+                          <div class="inputContainer">
+                            <input type="text"   class="input" name="l_name"  
+                            style="width: 280px; margin-left :92px ; text-transform: capitalize; color: black;" value="{{ company.user.last_name }}"> 
+                          </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                          <div class="mb-3 mt-3 p-0">
+                            <p style=" color:azure ; margin-bottom: 0px;">Email:</p>
+                            <div class="inputContainer">
+                              <input type="email" pattern="[a-zA-Z0-9._%+-]+@gmail\.com"  class="input" name = 'email' value="{{ company.user.email }}" 
+                              style="width: 280px; color: black;" >
+                          </div>
+                        </td>
+
+                        <td>
+                          <div class="mb-3 mt-3 p-0">
+                            <p style=" color:azure ;margin-left: 92px; margin-bottom: 0px;">Contact Number:</p>
+                            <div class="inputContainer">
+                              <input type="text" pattern="\d{10}"  class="input" name="cnum" value="{{ company.contact }}" 
+                              style="width: 280px; margin-left :92px ; color: black;" >
+                        </div>
+                        </td>
+                    </tr>
+                           
+                  <tr class="companydet"> 
+                      <td>
+                      <h4  class="m-4" style="color: rgb(218, 164, 48);"><u>
+                      Company  Details </u>
+                      </h4>
+                      </td>
+                  </tr>
+                      <tr>
+                          <td>
+                            <div class="mb-3 mt-3 p-0">
+                              <p style=" color:azure ; margin-bottom: 0px;">Company Name:</p>
+                              <div class="inputContainer">
+                                <input type="text" class="input" name = 'comp_name' value="{{ company.company_name }}" 
+                                style="width: 280px; color: black;" >
+                            </div>
+                          </td>
+                          <td>
+                            <div class="mb-3 mt-3 p-0">
+                              <p style=" color:azure ; margin-bottom: 0px; margin-left :92px ;">Company Code:</p>
+                              <div class="inputContainer">
+                                <input type="text" class="input" name = 'comp_email' value="{{ company.Company_code }}" 
+                                style="width: 280px; margin-left :92px ; color: black;" readonly>
+                            </div>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td>
+                            <div class="mb-3 mt-3 p-0">
+                              <p style=" color:#ccc ; margin-bottom: 0px;">Address:</p>
+                              <div class="inputContainer">
+                                <input type="text" class="input" name = 'ards' value="{{ company.address }}" 
+                                style="width: 280px; color: black;">
+                            </div>
+                          </td>
+                          <td>
+                            <div class="mb-3 mt-3 p-0">
+                              <p style=" color:#ccc; margin-bottom: 0px; margin-left :92px ;">City:</p>
+                              <div class="inputContainer">
+                                <input type="text" class="input" name = 'city' value="{{ company.city }}" 
+                                style="width: 280px; margin-left :92px ; color: black;">
+                            </div>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td><div class="mb-3 mt-3 p-0">
+                            <p style=" color:azure ; margin-bottom: 0px;">State:</p>
+                            <div class="inputContainer">
+                            <select type="text"   class="input" name = 'state' value="{{ company.state }}" 
+                              style="width: 280px; color: black;">
+                              <option value="" disabled selected style=" background-color:  white ">{{ company.state }}  </option>
+                              <option value="Andaman and Nicobar Islads" >Andaman and Nicobar Islads
+                              </option>
+                              <option value="Andhra Predhesh">Andhra Predhesh</option>
+                              <option value="Arunachal Predesh">Arunachal Predesh</option>
+                              <option value="Assam">Assam</option>
+                              <option value="Bihar">Bihar</option>
+                              <option value="Chandigarh">Chandigarh</option>
+                              <option value="Chhattisgarh">Chhattisgarh</option>
+                              <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                              <option value="Damn anad Diu">Damn anad Diu</option>
+                              <option value="Delhi">Delhi</option>
+                              <option value="Goa">Goa</option>
+                              <option value="Gujarat">Gujarat</option>
+                              <option value="Haryana">Haryana</option>
+                              <option value="Himachal Predesh">Himachal Predesh</option>
+                              <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                              <option value="Jharkhand">Jharkhand</option>
+                              <option value="Karnataka">Karnataka</option>
+                              <option value="Kerala">Kerala</option>
+                              <option value="Ladakh">Ladakh</option>
+                              <option value="Lakshadweep">Lakshadweep</option>
+                              <option value="Madhya Predesh">Madhya Predesh</option>
+                              <option value="Maharashtra">Maharashtra</option>
+                              <option value="Manipur">Manipur</option>
+                              <option value="Meghalaya">Meghalaya</option>
+                              <option value="Mizoram">Mizoram</option>
+                              <option value="Nagaland">Nagaland</option>
+                              <option value="Odisha">Odisha</option>
+                              <option value="Puducherry">Puducherry</option>
+                              <option value="Punjab">Punjab</option>
+                              <option value="Rajasthan">Rajasthan</option>
+                              <option value="Sikkim">Sikkim</option>
+                              <option value="Tamil Nadu">Tamil Nadu</option>
+                              <option value="Telangana">Telangana</option>
+                              <option value="Tripura">Tripura</option>
+                              <option value="Uttar Predesh">Uttar Predesh</option>
+                              <option value="Uttarakhand">Uttarakhand</option>
+                              <option value="West Bengal">West Bengal</option>
+                              <option value="Other Territory">Other Territory</option>
+                          </select>
+                          <div class="invalid-feedback">Please provide a valid State</div>
+                      </div>
+                  </div>
+              </div>
+                          </div></td>
+                          <td>
+                            <div class="mb-3 mt-3 p-0 ">
+                            <p style=" color:azure ; margin-bottom: 0px; margin-top: -10px;  margin-left :92px ;">Country:</p>
+                            <div class="inputContainer">
+                              <input type="text" class="input" name = 'country' value='{{ company.country }}'
+                              style="width: 280px; margin-left :92px ; color: black;">
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <!-- <td><div class="mb-3 mt-3 p-0">
+                          <p style=" color:azure ; margin-bottom: 0px;">State:</p>
+                          <input type="text" class="form-control" name = 'state' value="{{ company.state }}" 
+                            style="width: 280px;">
+                        </div></td> -->
+                        <td>
+                          <div class="mb-3 mt-3 p-0 ">
+                          <p style=" color:azure ; margin-bottom: 0px;">Pincode:</p>
+                          <div class="inputContainer">
+                            <input type="text" class="input" name = 'pinc' {% if company.pincode  == "NULL" %} value=0 {% else %} value='{{ company.pincode }}' {% endif %} 
+                            style="width: 280px; color: black;">
+                        </div>
+                      </td>
+                      <!-- <td><div class="mb-3 mt-3 p-0">
+                        <p style=" color:azure ; margin-bottom: 0px; margin-left :92px ;">Gst Type:</p>
+                        <div class="inputContainer">
+                          <input type="text" class="input" name = 'bname' value="{{ company.gst_type }}" 
+                          style="width: 280px; margin-left :92px ; color: black;">
+                      </div></td> -->
+
+                      <td><div class="mb-3 mt-3 p-0" id="gsttype">
+                        <p style=" color:azure ; margin-bottom: 0px; margin-left :92px ;">Gst Type:</p>
+                        <div class="inputContainer">
+                              <select type="text" class="input" name='gsttype' style="width: 280px; color: black; margin-left: 92px; margin-top: 10px;" value="{{ company.gst_type }}" >
+                                <option value="" disabled style="background-color: white;">Select GST Type</option>
+                                <option value="Registered Business - Regular" {% if company.gst_type == 'Registered Business - Regular' %}selected{% endif %}>Registered Business - Regular</option>
+                                <option value="Registered Business - Composition" {% if company.gst_type == 'Registered Business - Composition' %}selected{% endif %}>Registered Business - Composition</option>
+                                <option value="Unregistered Business" {% if company.gst_type == 'Unregistered Business' %}selected{% endif %}>Unregistered Business (Business that has not
+                                    been registered under GST)</option>
+                                <option value="Overseas" {% if company.gst_type == 'Overseas' %}selected{% endif %}>Overseas (Import/Export of supply outside India)</option>
+                                <option value="Consumer" {% if company.gst_type == 'Consumer' %}selected{% endif %}>Consumer</option>
+                            </select>
+                      <div class="invalid-feedback">Please provide a valid State</div>
+                  </div>
+              </div>
+          </div>
+                      </div></td>
+                    </tr>
+                    <tr>
+                      <td><div class="mb-3 mt-3 p-0" id="gstno">
+                        <p style=" color:azure ; margin-bottom: 0px;">GST Number:</p>
+                        <div class="inputContainer">
+                          <input type="text" class="input" name = 'gstno'  value="{{ company.gst_no }}" 
+                          style="width: 280px; color: black;" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$">
+                          <div class="invalid-feedback">Please provide a valid gst number</div>
+
+                      </div></td>
+                      <td>
+                        <div class="mb-3 mt-3 p-0 ">
+                        <p style=" color:azure ; margin-bottom: 0px; margin-left :92px ;">Pan Number:</p>
+                        <div class="inputContainer">
+                          <input type="text" class="input" name = 'pan' value='{{ company.pan_number }}'
+                          style="width: 280px; margin-left :92px ; color: black;" pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" >
+                          <div class="invalid-feedback">Please provide a valid pan number</div>
+
+                      </div>
+                    </td>
+                  </tr>
+
+                      
+                      
+                  </tbody>
+                </table>
+                <button type="submit"class="save_btn"> SAVE CHANGES</button>
+                       
+            </form>
+                
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+              </form>
+              </div>
+          </div>
+      </div>
+  </div>
+<!-- </div> -->
+
+   </section>
+
+   <script>
+    $(document).ready(function () {
+        // Initially hide the GST Number field
+        $('#gstno').hide();
+
+        // Check the GST Type value on page load
+        checkGstType();
+
+        // Bind a change event to the GST Type dropdown
+        $('select[name="gsttype"]').change(function () {
+            checkGstType();
+        });
+
+        // Function to show/hide GST Number field based on GST Type
+        function checkGstType() {
+            var selectedGstType = $('select[name="gsttype"]').val();
+            if (selectedGstType === 'Registered Business - Regular' || selectedGstType === 'Registered Business - Composition') {
+                $('#gstno').show();
+            } else {
+                $('#gstno').hide();
+            }
+        }
+    });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      // Function to validate email format
+      function validateEmail(email) {
+          var emailPattern = /[a-zA-Z0-9._%+-]+@gmail\.com/;
+          return emailPattern.test(email);
+      }
+
+      // Function to validate contact number format
+      function validateContactNumber(contactNumber) {
+          var contactPattern = /\d{10}/;
+          return contactPattern.test(contactNumber);
+      }
+
+      // Function to validate GST Number format
+      function validateGSTNumber(gstNumber) {
+          var gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/;
+          return gstPattern.test(gstNumber);
+      }
+
+      // Function to validate PAN Number format
+      function validatePANNumber(panNumber) {
+          var panPattern = /[A-Z]{5}[0-9]{4}[A-Z]{1}/;
+          return panPattern.test(panNumber);
+      }
+
+      // Validate form on submission
+      document.querySelector('form').addEventListener('submit', function (event) {
+          var emailInput = document.querySelector('input[name="email"]');
+          var contactInput = document.querySelector('input[name="cnum"]');
+          var gstInput = document.querySelector('input[name="gstno"]');
+          var panInput = document.querySelector('input[name="pan"]');
+
+          if (!validateEmail(emailInput.value)) {
+              alert('Please enter a valid email address.');
+              event.preventDefault();
+          }
+
+          if (!validateContactNumber(contactInput.value)) {
+              alert('Please enter a valid 10-digit contact number.');
+              event.preventDefault();
+          }
+
+          if (!validateGSTNumber(gstInput.value)) {
+              alert('Please enter a valid GST Number.');
+              event.preventDefault();
+          }
+
+          if (!validatePANNumber(panInput.value)) {
+              alert('Please enter a valid PAN Number.');
+              event.preventDefault();
+          }
+      });
+  });
+</script>
+
+
+
+
+   {% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<style>
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+
+
+    .tablediv{
+        margin-left: 1vh;
+        margin-right: 1vh;
+        margin-top: 1vh;
+    }
+
+    h4{
+        text-align: left; 
+        margin-top:2vh; 
+        margin-bottom: 2vh;
+        margin-left: 1vh;
+    }
+    td,tr,th,table{
+        border:2px 2px 2px 2px black;
+    }
+
+    ::-webkit-scrollbar{
+        display: none
+    }
+    
+</style>
+<br><br><br>
+<body>
+<div class="body-wrapper ">
+    <br><br>
+       <div class="p-3 text-center " style="display: flex;justify-content: center; margin-left:18%">
+        <div class="card col-md-9" style="background-color: white;width:50rem;box-shadow: 5px 5px 10px 5px rgb(61, 68, 101); ">
+            <div class="row">
+                <div class="col-md-4">
+                    <h4 style="color:rgb(61, 68, 101); ; font-weight:bold;text-align:center;margin-top:5%;">Transaction History</h4>
+                </div>
+                <div class="col-md-7"></div>
+                <div class="col-md-1">
+                    <a href="{% url 'view_purchasebill' %}" style="text-align: right; font-size: large;"><i class="fa fa-times mt-3 mr-4" aria-hidden="true"></i></a>
+                </div>
+            </div>
+            <div class="tablediv" style="overflow: scroll;height: 35rem; width: 81%; ">
+                <table class="table table-bordered  tb table-responsive w-100"   id="billtable"  style="text-align: center; margin-left:8%; ">
+                    <thead style="background-color:rgb(61, 68, 101); ">
+                        <tr style="width:35%; ">
+                            <th class=" text-black" style="width:8%; ">
+                                # 
+                            </th>
+                            <th class=" text-black">
+                                DATE 
+                            </th>
+                            <th class=" text-black">
+                                INVOICE NUMBER 
+                            </th>
+                            <th class="text-black" >
+                                NAME 
+                            </th>
+                            <th class=" text-black">
+                                AMOUNT
+                            </th>
+                            <th class="text-black">
+                                BY
+                            </th>
+                            <th class=" text-black">
+                                ACTION
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for h in hst %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td style="color: black;">{{ h.transactiondate | date:'d-m-Y' }}</td>
+                            <td style="color: black;">{{ h.purchasebill.billno }}</td>
+                            <td style="color: black;">{{ h.purchasebill.party.party_name }}</td>
+                            <td style="color: black;">{{ h.purchasebill.grandtotal }}</td>
+                            <td style="color: black;">
+                                {% if h.staff %}
+                                    {{ h.staff.first_name }} {{ h.staff.last_name }}
+                                {% else %}
+                                    {{ h.purchasebill.company.company_name }}
+                                {% endif %}
+                            </td>
+                            {% if h.action == 'Created' %}
+                            <td style="color: red;" >{{h.action}}</td>
+                        {% else %}
+                            <td style="color: #154c79;" >{{h.action}}</td>
+                        {% endif %}
+                           
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+{% endblock  %}

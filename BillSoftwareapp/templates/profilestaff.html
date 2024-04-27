@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0,shrink-to-fit=no">
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<style>
+    tbody tr td{
+        border: none;
+        border-top: none;
+        border-bottom: none;
+        border-style: none;
+        color:azure;
+        justify-content: center;
+    }
+    tr{
+        border: none;
+        border-top: none;
+        border-bottom: none;
+    }
+    .containerprof{
+        
+        width: 900px; 
+        margin-left: 300px;
+        margin-top: 100px;
+        margin-bottom: 20px;
+        background-color: #8290c7;
+        border-radius: 20px;
+        z-index: 2 !important;
+        /* background-color: #343957; */
+        
+    }
+    .editbtn{
+        background-color: rgb(218, 164, 48);
+        color: azure; 
+        padding: 3; 
+        margin-left: 250px; 
+        width: 200px;
+        border-radius: 20px;
+        justify-content: center;
+        /* z-index: 1 !important; */
+    }
+    h3{
+        text-align: center;
+        text-transform: capitalize;
+        color: azure;
+        margin-left: 150px;
+    }
+    .profimg{
+        width :100px; height: 100px; margin-left: 295px; border-radius: 80%;
+    }
+    @media (min-width: 600px)and ( max-width:1000px) {
+        .containerprof{
+        width: 100%; 
+        margin-left: 50px;
+        padding: 0;
+        justify-content: center;
+    }
+    .row{
+        width:100%
+    }
+    .btn{
+        padding: 1; 
+        margin-left: 50%; 
+        width: 100px;
+        justify-content: center;
+        height: auto;
+    }
+    h3{
+        margin-left: 30%;
+    }
+    .profimg{
+        margin-left: 50%;
+    }
+    } 
+
+ @media (min-width: 300px)and ( max-width:800px) {
+    .containerprof{
+        width: 375px; 
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+    }
+    .row{
+        width:100%
+    }
+    .editbtn{
+        padding: 1; 
+        margin-left: 25%; 
+        width: 100px;
+        justify-content: center;
+        height: auto;
+    }
+    h3{
+        margin-left: 25%;
+    }
+    .profimg{
+        margin-left: 25%;
+    }
+}
+    
+.panel-body{
+  justify-content: center;
+  margin-left: 50px;
+  width: 650px;
+}
+  
+</style>
+
+<!-- <div class="container p-5 mt-5 containerprof" > -->
+    <div class="row containerprof">
+        <div class="col-md-offset-1 col-md-10 mt-0">
+            
+                <div class="panel p-3">
+
+                <h3 class="text-center mt-3">
+                    <b>{{staff.first_name }} {{staff.last_name }} </b>
+                    
+                </h3>
+                <div class="m-5">
+                    {% if staff.img %}
+                    <img src="{{ staff.img.url }}" class="rounded profimg" >
+                    {% else %}
+                    <img src="{% static 'img/default.png' %}"  class = 'rounded profimg' >
+                    {% endif %}
+                </div>
+
+                <div class="panel-body table-responsive mt-5">
+                  
+                  <table class="table">
+                    <tbody style="border: none;">
+             
+                        <tr >
+                            <td style="border-bottom: none; border-top: none; border-color: none;">Username</td>
+                            <td style="border-bottom: none; border-top: none; border-color: none;">: {{ staff.user_name }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border-bottom: none; border-top: none; border-color: none;">Email</td>
+                            <td style="border-bottom: none; border-top: none; border-color: none;">: {{ staff.email }}</td>
+                        </tr>
+                        <tr >
+                            <td style="border-bottom: none; border-top: none; border-color: none;">Contact Number</td>
+                            <td style="border-bottom: none; border-top: none; border-color: none;">: {{ staff.contact }}</td>
+                        </tr>
+                    <tr><td style="border-bottom: none; border-top: none; border-color: none;"></td></tr>
+      
+                         
+
+                    </tbody>
+                   
+                  </table>
+                
+                  <a href="{% url 'editstaffprofile'  %}" role = "button" class = "editbtn btn btn-outline-dark mt-3">
+                  Edit profile</a>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+{% endblock %}
+ 

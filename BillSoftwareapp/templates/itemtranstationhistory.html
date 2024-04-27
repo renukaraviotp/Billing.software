@@ -1,0 +1,48 @@
+ 
+ 
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<style>
+    table td,table th{
+        color: black;
+    }
+    table td{
+        font-size: 17px;
+    }
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+    
+</style>
+
+<div class="content-body" style="background-color: white;">    
+   <div class="container col-md-11" style="box-shadow: 3px 3px 3px gray;border-radius: 15px;padding: 20px;background-color: rgb(130, 144, 199);">
+    <h2> History <div style="float: right;"><a style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " href="{% url 'item_create_new' %}"><i class="fa fa-plus"></i>  Add new Item</a> <a style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " href="{% url 'view_item' %}"><i class="fa fa-arrow-left"></i> Back</a> </div></h2>
+    <table class="table" >
+        <thead>
+            <tr>
+                <th style="font-size: larger;">ACTION</th>
+                <th style="font-size: larger;">DATE</th>
+                <th style="font-size: larger;">STAFF</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in history %}
+            <tr>
+                <td>{{i.action}}</td>
+                <td>{{i.date}}</td>
+                <td>{{i.staff.first_name}} {{i.staff.last_name}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   </div>
+
+</div>
+
+
+{% endblock %}

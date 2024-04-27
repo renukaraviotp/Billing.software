@@ -1,0 +1,3123 @@
+
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
+<!-- Include jQuery.table2excel plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Include jsPDF-AutoTable plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Add these links to include the required libraries -->
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+<!-- Add this to include Bootstrap Toggle -->
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+
+{% load my_extras %}
+
+<style>
+    #thirdTable label,#namee{
+        color: black;
+        font-size: large;
+    }
+    #thirdTable span{
+        color: black;
+        font-size: 17px;
+    }
+    #detailsTable th{
+        color: black;
+        font-size: large;
+    }
+    #detailsTable td{
+        color: black;
+        font-size: large;
+    }
+    #thirdTable a{
+        color: rgb(81, 6, 172);
+    }
+    #thirdTable a:hover{
+        color: rgba(128, 0, 128, 0.553);
+    }
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+
+</style>
+
+
+
+
+<div class="content-body" style="background-color: white;">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row" >
+                
+            <!-- --------------------name--------------------- -->
+        
+            <div class="col-11 " style="background-color: rgb(130, 144, 199);padding: 20px;border-radius: 15px;box-shadow: 3px 3px 3px gray; margin-left: 2vw;" >
+                <div class="row">
+                    <div class="col">
+                        <p class="tb fw-bolder fs-2" style="color: black;">{{ first_item.item_name|upper }} <span class="fa fa-share ps-1 tb"></span></p>
+                    <h3 id="namee" style="text-transform: uppercase;font-size: 25px;" ></h3></div>
+                 
+                        <button style="background-color: #3d4465; color: white; text-align: right; margin-left: 32vw;" id="modal_closing" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">ADJUSTMENT ITEM</button>
+                    
+                     <div style="text-align: right;" class="col"><a style="background-color: #3d4465; color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " href="{% url 'view_item' %}"><i class="fa fa-arrow-left"></i> Back</a></div> 
+                    </div><br>
+                     
+            <div class="row" id="thirdTable" style="color: black;">
+                <div class="col">
+                    <div class="">
+                        <p class="tb fw-bolder fs-2">SALE PRICE  <span class="ps-2 tg">: ₹{{ first_item.item_sale_price }}</span></p>
+                        <p class="tb fw-bolder fs-2">STOCK QUANTITY  <span class="ps-2 tg">: {{ first_item.item_current_stock }}</span></p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="" style="margin-left: 10vw;">
+                        <p class="tb fw-bolder fs-2">PURCHASE PRICE  <span class="ps-2 tg">: ₹{{ first_item.item_purchase_price }}</span></p>
+                        <p class="tb fw-bolder fs-2">STOCK VALUE  <span class="ps-2 tg">: ₹{{ first_item.item_current_stock|mul:first_item.item_purchase_price }}</span></p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            </div>
+        </div>
+            <!-- ------------------------------------------ -->
+            
+            <br>
+            
+            
+            <!-- -------------------transaction----------------------- -->
+        
+            <div class="row">
+                <div class="col-11" style="background-color: rgb(130, 144, 199); padding: 40px;border-radius: 15px;box-shadow: 3px 3px 3px gray; margin-left: 2vw;">
+                    <div class="row">
+                        <h3>Transactions</h3>
+                        
+                        <input type="text" style="box-shadow: 2px 2px 2px gray;" autocomplete="off" id="myInput1"  class="form-control col-3 ml-2" placeholder="search"/>
+        
+                        <div class="ml-auto ">
+                            
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " onclick="ExportAsPDF()">pdf <i class="fa fa-file-pdf"></i></button>
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " onclick="printTable()">print <i class="fa fa-print"></i></button>
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " onclick="exportAsExcel()">excel <i class="fa fa-file-excel"></i></button>
+                        </div>
+                    </div><br>
+        
+        
+        
+                    <div class="table table-responsive row" id="pdftable" >
+                        
+                            <table class="table" id="detailsTable">
+                                <thead>
+                                    <th class="text-center fs-2">TYPE </th>
+                                    <th class="text-center fs-2">INVOICE </th>
+                                    <th class="text-center fs-2">NAME</th>
+                                    <th class="text-center fs-2">DATE </th>
+                                    <th class="text-center fs-2">QUANTITY</th>
+                                    <th class="text-center fs-2">PRICE</th>
+                                    {% comment %} <th class="text-center fs-2">ACTION</span></th>
+                                    <th class="text-center ">BY</th> {% endcomment %}
+                                    <th class="text-center "></th>
+                                    
+                                </thead>
+                                <tbody>
+                                    {% for i in transactions %}
+                                    <tr  class="item-row">
+                                        <td class="text-center">{{i.trans_type}}</td>
+                                        <td class="text-center" ></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center">{{ i.trans_date|date:"d-m-Y" }}</td>
+                                        <td class="text-center">{{ i.trans_qty }}</td>
+                                        <td class="text-center">{{ i.trans_price }}</td>
+                                        {% comment %} <td class="text-center">{{ i.action }}</td>
+                                        <td class="text-center">{{ i.done_by_name }}</td> {% endcomment %}
+                                        <td class="text-center">
+                                            <a style="color: blue; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#myModal2"class="fa fa-edit tb hide_table_text_v" ><small>Edit</small></a>
+                                 
+                                                <a title="Delete Profile" style="color: red; " id="delete" class="fa fa-trash" href="{% url 'item_delete'  i.pk %}" ><small>Delete</small> </a>
+
+                                        
+                                        </td>
+                                        
+                                    </tr>
+                                   {% endfor %}
+
+                                   <tr class="item-row">
+                                       <td class="text-center">Opening Stock</td>
+                                       <td class="text-center" ></td>
+                                       <td class="text-center"></td>
+                                       <td class="text-center">{{ first_item.item_date|date:"d-m-Y" }}</td>
+                                       <td class="text-center">{{ first_item.item_stock_in_hand }}</td>
+                                       <td class="text-center">₹{{ first_item.item_at_price }}</td>
+                                       {% comment %} <td class="text-center">{{ first_item.action }}</td>
+                                       <td class="text-center">{{ first_item.done_by_name }}</td> {% endcomment %}
+                                       <td class="text-center">
+                                        
+                                               <a title="Edit Profile" style="color: blue;" id="editt" class="fa fa-edit" href="{% url 'edit_item' first_item.pk  %}" ><small>Edit <i class="fa fa-pen-to-square"></i></small> </a>
+                                               <a title="Delete Profile" style="color: red; " id="delete" class="fa fa-trash" href="{% url 'item_delete' first_item.pk %}" ><small>Delete</small> </a>
+
+                                       </td>
+                                       
+                                   </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- ------------------------------------------- -->
+        </div>
+        </div>
+
+        <table class="table" id="detailsTable1" hidden>
+            <thead>
+                <th class="text-center fs-2">TYPE </th>
+                <th class="text-center fs-2">INVOICE </th>
+                <th class="text-center fs-2">NAME</th>
+                <th class="text-center fs-2">DATE </th>
+                <th class="text-center fs-2">QUANTITY</th>
+                <th class="text-center fs-2">PRICE</th>
+   
+                
+            </thead>
+            <tbody>
+              
+                <tr  class="item-row">
+                    <td class="text-center">Opening Stock</td>
+                    <td class="text-center" ></td>
+                    <td class="text-center"></td>
+                    <td class="text-center">{{ item.item_date|date:"d-m-Y" }}</td>
+                    <td class="text-center">{{ item.item_stock_in_hand }}</td>
+                    <td class="text-center">₹{{ item.item_at_price }}</td>
+                    
+                </tr>
+              
+            </tbody>
+        </table>
+        
+   <!-- modal start -->
+   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-body pb-1" style="background-color: rgb(130, 144, 199);">
+            <form action="{% url 'ajust_quantity' first_item.pk %}" method="post" >
+                {% csrf_token %}
+                <div class="modal-header ps-4 pe-4 m-0">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: 900;">STOCK ADJUSTMENT</h1>
+                       
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                  
+                    <div class="ps-3 pe-3">
+                        <div class="row">
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Item Name</label>
+                            <h5 style="font-weight: 900;" class="pt-2">{{ item.item_name|upper }}</h3>
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+            
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Current Quantity</label>
+                            <input id="item_quantity" style="font-weight: 900;color: black;background-color: white;" value="{{ item.item_current_stock }}" disabled class="form-control fs-5" name="item_qty">
+                        </div>
+                      
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-check form-switch d-lg-flex d-sm-none mt-2">
+                            <label id="lbl1" class="form-check-label fw-bolder" for="toggleSwitch" style="color: black;">ADD STOCK</label>
+                            <input  type="checkbox" role="switch"  id="flexSwitchCheckChecked" name="trans_type" style="margin-top: 4px; margin-left: 5px;">
+                            <label id="lbl2" class="form-check-label fw-bolder" for="flexSwitchCheckChecked" style="color: black;">REDUCE STOCK</label>
+                            </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                       <div class="col-sm-12 col-lg-4">
+                        <label for="" style="color: black;"> Date</label>
+                        <input id="adj_date" style="font-weight: 900;color: black;" class="form-control" type="date" value="" name="trans_date">
+                        </div>
+                        <div id="add__qty" class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Add Quantity</label>
+                            <input id="add_quantity" style="font-weight: 900;color: black;" min="0" class="form-control fs-5" type="number" value="0" required name="added_qty">
+                        </div>
+                        <div id="red__qty" class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Reduce Quantity</label>
+                            <input id="reduce_quantity" style="font-weight: 900;color: black;" max="{{ item.item_current_stock }}" class="form-control fs-5" type="number" value="0" required name="reduced_qty">
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Adujst Quantity</label>
+                            <input id="adj_quantity" style="font-weight: 900;color: black;background-color: white;" class="form-control fs-5" type="number" value="{{ item.item_opening_stock }}" disabled required name="adjusted_qty">
+                        </div>
+                    </div>
+                    <!-- <input id="sbmt_btn" hidden type="submit"> -->
+                    
+                    <hr class="m-0 mt-4 p-0  ms-3 me-3">
+                        
+                </div>
+                <div class="modal-footer ps-4 pe-4 ">
+                    <button id="cls_btn" type="button" class="btn " style="background-color: #3d4465;" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn " style="background-color: #3d4465;" onclick="submit_function()">Save </button>
+                </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- modal end -->
+    
+<!-- Second Modal -->
+<div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-body pb-1" style="background-color: rgb(130, 144, 199);">
+            <form action="" method="post" >
+                {% csrf_token %}
+                <div class="modal-header ps-4 pe-4 m-0">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: 900;">STOCK ADJUSTMENT</h1>
+                       
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                  
+                    <div class="ps-3 pe-3">
+                        <div class="row">
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Item Name</label>
+                            <h5 style="font-weight: 900;" class="pt-2">{{ item.item_name|upper }}</h3>
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+            
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Current Quantity</label>
+                            <input id="item_quantity1" style="font-weight: 900;color: black;background-color: white;" value="{{ item.item_current_stock }}" disabled class="form-control fs-5" name="item_qty">
+                        </div>
+                      
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-check form-switch d-lg-flex d-sm-none mt-2">
+                            <label id="lbll1" class="form-check-label fw-bolder" for="toggleSwitch" style="color: black;">ADD STOCK</label>
+                            <input  type="checkbox" role="switch"  id="flexSwitchCheckChecked1" name="trans_type" style="margin-top: 4px; margin-left: 5px;">
+                            <label id="lbll2" class="form-check-label fw-bolder" for="flexSwitchCheckChecked1" style="color: black;">REDUCE STOCK</label>
+                            </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                       <div class="col-sm-12 col-lg-4">
+                        <label for="" style="color: black;"> Date</label>
+                        <input id="adj_date1" style="font-weight: 900;color: black;" class="form-control" type="date" value="{{ transaction.trans_date|date:'d-m-y' }}" name="trans_date">
+                        </div>
+                        <div id="add__qty1" class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Add Quantity</label>
+                            <input id="add_quantity1" style="font-weight: 900;color: black;" min="0" class="form-control fs-5" type="number" value="{{ item.item_current_stock }}" required name="added_qty">
+                        </div>
+                        <div id="red__qty1" class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Reduce Quantity</label>
+                            <input id="reduce_quantity1" style="font-weight: 900;color: black;" max="{{ transaction.item_current_stock }}" class="form-control fs-5" type="number" value="0" required name="reduced_qty">
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Adujst Quantity</label>
+                            {% comment %} <input id="adj_quantity1" style="font-weight: 900;color: black;background-color: white;" class="form-control fs-5" type="number" {% if transaction.trans_type == 'reduce stock' %}value="{{ transaction.trans_current_qty|sub:transaction.trans_qty }}"  {% else %} value="{{ transaction.trans_current_qty|add:transaction.trans_qty }}"  {% endif %} disabled required name="adjusted_qty"> {% endcomment %}
+                        </div>
+                    </div>
+                    <!-- <input id="sbmt_btn" hidden type="submit"> -->
+                    
+                    <hr class="m-0 mt-4 p-0  ms-3 me-3">
+                        
+                </div>
+                <div class="modal-footer ps-4 pe-4 ">
+                    <button id="cls_btn1" type="button" class="btn " style="background-color: #3d4465;" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn " style="background-color: #3d4465;" onclick="submit_function()">Save </button>
+                </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+
+  function submit_function(){  
+    $('#adj_quantity').attr('disabled',false)    
+    $('#item_quantity').attr('disabled',false)  
+    $('#cls_btn').click()
+    setInterval(function(){
+        $('#sbmt_btn').click()
+    },200)
+}
+$(document).ready(function () {
+    if ($('#flexSwitchCheckChecked').prop('checked')) {
+    $('#lbl2').css({ 'color': 'blue' })
+    }
+    else{
+        $('#lbl1').css({ 'color': 'blue' })
+    }
+    $('#flexSwitchCheckChecked').on('change load', function () {
+    if ($('#flexSwitchCheckChecked').prop('checked')) {
+        $('#lbl2').css({ 'color': 'blue' })
+        $('#lbl1').css({ 'color': 'inherit' })
+    }
+    else {
+        $('#lbl1').css({ 'color': 'blue' })
+        $('#lbl2').css({ 'color': 'inherit' })
+    }
+    })
+})
+$(document).ready(function(){
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
+    var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    var day = String(currentDate.getDate()).padStart(2, "0");
+    var formattedDate = year + "-" + month + "-" + day;
+    $("#adj_date").val(formattedDate);
+})
+$(document).ready(function(){
+    $('#add_quantity').on('input',function(){
+        var a = $('#add_quantity').val()
+        var b = $('#item_quantity').val()
+        if(a<0)
+        {
+            $('#add_quantity').val(0)
+            $('#adj_quantity').val(parseInt(b))
+        }
+        else{
+            $('#adj_quantity').val(parseInt(a)+parseInt(b))
+        }
+    })
+})
+$(document).ready(function(){
+    $('#reduce_quantity').on('input',function(){
+        var a = $('#reduce_quantity').val()
+        var b = $('#item_quantity').val()
+        if(a<0)
+        {
+            $('#reduce_quantity').val(0)
+            $('#adj_quantity').val(b)
+        }
+        if(parseInt(a)>parseInt(b))
+        {
+            $('#reduce_quantity').val(b)
+            $('#adj_quantity').val(0)
+        }
+        else{
+            $('#adj_quantity').val(parseInt(b)-parseInt(a))
+        }
+    })
+})
+$(document).ready(function(){
+    if(!$('#flexSwitchCheckChecked').prop('checked'))
+    {
+        $('#red__qty').attr('hidden',true)
+        $('#add__qty').attr('hidden',false)
+        $('#reduce_quantity').val(0)
+    }
+    else{
+        $('#add__qty').attr('hidden',true)
+        $('#red__qty').attr('hidden',false)
+        $('#add_quantity').val(0)
+    }
+    $('#flexSwitchCheckChecked').on('change',function(){
+        if(!$('#flexSwitchCheckChecked').prop('checked'))
+        {
+            $('#red__qty').attr('hidden',true)
+            $('#add__qty').attr('hidden',false)
+            $('#reduce_quantity').val('0')
+        }
+        else{
+            $('#add__qty').attr('hidden',true)
+            $('#red__qty').attr('hidden',false)
+            $('#add_quantity').val(0)
+        }
+    })
+})
+</script>
+
+
+<script>
+
+    function submit_function(){  
+      $('#adj_quantity1').attr('disabled',false)    
+      $('#item_quantity1').attr('disabled',false)  
+      $('#cls_btn1').click()
+      setInterval(function(){
+          $('#sbmt_btn1').click()
+      },200)
+  }
+  $(document).ready(function () {
+      if ($('#flexSwitchCheckChecked1').prop('checked')) {
+      $('#lbll2').css({ 'color': 'blue' })
+      }
+      else{
+          $('#lbl1').css({ 'color': 'blue' })
+      }
+      $('#flexSwitchCheckChecked1').on('change load', function () {
+      if ($('#flexSwitchCheckChecked1').prop('checked')) {
+          $('#lbll2').css({ 'color': 'blue' })
+          $('#lbll1').css({ 'color': 'inherit' })
+      }
+      else {
+          $('#lbll1').css({ 'color': 'blue' })
+          $('#lbll2').css({ 'color': 'inherit' })
+      }
+      })
+  })
+  $(document).ready(function(){
+      var currentDate = new Date();
+      var year = currentDate.getFullYear();
+      var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+      var day = String(currentDate.getDate()).padStart(2, "0");
+      var formattedDate = year + "-" + month + "-" + day;
+      $("#adj_date1").val(formattedDate);
+  })
+  $(document).ready(function(){
+      $('#add_quantity1').on('input',function(){
+          var a = $('#add_quantity1').val()
+          var b = $('#item_quantity1').val()
+          if(a<0)
+          {
+              $('#add_quantity1').val(0)
+              $('#adj_quantity1').val(parseInt(b))
+          }
+          else{
+              $('#adj_quantity1').val(parseInt(a)+parseInt(b))
+          }
+      })
+  })
+  $(document).ready(function(){
+      $('#reduce_quantity1').on('input',function(){
+          var a = $('#reduce_quantity1').val()
+          var b = $('#item_quantity1').val()
+          if(a<0)
+          {
+              $('#reduce_quantity1').val(0)
+              $('#adj_quantity1').val(b)
+          }
+          if(parseInt(a)>parseInt(b))
+          {
+              $('#reduce_quantity1').val(b)
+              $('#adj_quantity1').val(0)
+          }
+          else{
+              $('#adj_quantity1').val(parseInt(b)-parseInt(a))
+          }
+      })
+  })
+  $(document).ready(function(){
+      if(!$('#flexSwitchCheckChecked1').prop('checked'))
+      {
+          $('#red__qty1').attr('hidden',true)
+          $('#add__qty1').attr('hidden',false)
+          $('#reduce_quantity1').val(0)
+      }
+      else{
+          $('#add__qty1').attr('hidden',true)
+          $('#red__qty1').attr('hidden',false)
+          $('#add_quantity1').val(0)
+      }
+      $('#flexSwitchCheckChecked1').on('change',function(){
+          if(!$('#flexSwitchCheckChecked1').prop('checked'))
+          {
+              $('#red__qty1').attr('hidden',true)
+              $('#add__qty1').attr('hidden',false)
+              $('#reduce_quantity1').val('0')
+          }
+          else{
+              $('#add__qty1').attr('hidden',true)
+              $('#red__qty1').attr('hidden',false)
+              $('#add_quantity1').val(0)
+          }
+      })
+  })
+  </script>
+
+<script>
+
+
+
+
+function ExportAsPDF() {
+    const container = document.getElementById('detailsTable');
+
+    const margin = 10; 
+    const pdfOptions = {
+        margin: [margin, margin, margin, margin], 
+        filename: 'item_Transaction.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, 
+    };
+
+    // Generate PDF from the container
+    html2pdf().from(container).set(pdfOptions).save();
+} 
+
+
+
+
+// -----------------------------------------------------------------------------------------------------
+// Excel -----
+
+function exportAsExcel() {
+    const table = document.getElementById('detailsTable'); 
+    const selectedColumns = [0, 1, 2, 3, 4,5,6,7]; 
+
+    // Extract the relevant columns
+    const filteredTable = table.cloneNode(true);
+    const rows = filteredTable.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        for (let j = cells.length - 1; j >= 0; j--) {
+            if (!selectedColumns.includes(j)) {
+                rows[i].deleteCell(j);
+            }
+        }
+    }
+
+    // Convert the modified table to a workbook
+    const wb = XLSX.utils.table_to_book(filteredTable);
+
+    // Save the workbook as an Excel file
+    XLSX.writeFile(wb, 'item_Transactions.xlsx');
+}
+
+
+$(document).ready(function () {
+        var $rows = $('#detailsTable tbody tr');
+        $('#myInput1').keyup(function () {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+            $rows.hide().filter(function () {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return ~text.indexOf(val);
+            }).show();
+        });
+    });
+       
+
+// ----------------------------------------------------------------------------------------------------------
+// print ------
+
+function printTable() {
+    // Clone the table element
+    const tableToPrint = document.getElementById('detailsTable').cloneNode(true);
+
+    // Set background color and text color for printing
+    tableToPrint.style.backgroundColor = 'white';
+    const textElements = tableToPrint.querySelectorAll('th, td');
+
+    // Set a common width for all columns
+    const columnWidth = 100 / 6 + '%'; // Adjusted for the first 6 columns
+
+    // Iterate over the columns and set the width for each cell
+    for (let i = 0; i < tableToPrint.rows.length; i++) {
+        const cells = tableToPrint.rows[i].cells;
+        for (let j = 0; j < cells.length; j++) {
+            if (j < 6) { // Only apply styles to the first 6 columns
+                cells[j].style.width = columnWidth;
+                cells[j].style.color = 'black';
+                cells[j].style.backgroundColor = 'white';
+                cells[j].style.border = '1px solid black';
+                cells[j].style.fontSize = '20px';
+                cells[j].style.padding = '7px';
+            } else {
+                // If you want to hide the remaining columns, you can set display to 'none'
+                cells[j].style.display = 'none';
+            }
+        }
+    }
+
+    // Set border-collapse to collapse
+    tableToPrint.style.borderCollapse = 'collapse';
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+
+    // Set the background color and styles for centering
+    printWindow.document.body.style.backgroundColor = 'white';
+    printWindow.document.body.style.margin = '0'; // Remove default margin
+    printWindow.document.body.style.justifyContent = 'center';
+
+    // Add a heading to the printed table
+    const heading = document.createElement('h2');
+    heading.textContent = 'ITEMS';
+    heading.style.textAlign = 'center';
+    printWindow.document.body.appendChild(heading);
+
+    // Set the width of the table to 100%
+    tableToPrint.style.width = '100%';
+
+    // Append the modified table to the new window's body
+    printWindow.document.body.appendChild(tableToPrint);
+
+    // Trigger the print dialog for the new window
+    printWindow.print();
+
+    // Close the new window after printing
+    printWindow.close();
+}
+
+
+// ----------------------------------------------------------------------------------
+// transaction filter table
+function filterTransaction(input) {
+                                var filterValue = input.value.toLowerCase();
+                                var tableRows = document.querySelectorAll('#thirdTableTable tbody tr');
+
+                                tableRows.forEach(function(row) {
+                                var cells = row.getElementsByTagName("td");
+                                var isVisible = false;
+
+                                for (var i = 0; i < cells.length; i++) {
+                                    var cellValue = cells[i].textContent || cells[i].innerText;
+                                    if (cellValue.toLowerCase().indexOf(filterValue) > -1) {
+                                    isVisible = true;
+                                    break;
+                                    }
+                                }
+
+                                if (isVisible) {
+                                    row.style.display = "table-row";
+                                } else {
+                                    row.style.display = "none";
+                                }
+                                });
+                            }
+
+// --------------------------------------------------------------------------------------
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% comment %} gbhjkm {% endcomment %}
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+
+<!-- Include jQuery.table2excel plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+<!-- Include jQuery from a CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<!-- Include jsPDF-AutoTable plugin -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.16/jspdf.plugin.autotable.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- Add these links to include the required libraries -->
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
+
+<!-- Add this to include Bootstrap Toggle -->
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+
+
+{% load my_extras %}
+
+<style>
+    #thirdTable label,#namee{
+        color: black;
+        font-size: large;
+    }
+    #thirdTable span{
+        color: black;
+        font-size: 17px;
+    }
+    #detailsTable th{
+        color: black;
+        font-size: large;
+    }
+    #detailsTable td{
+        color: black;
+        font-size: large;
+    }
+    #thirdTable a{
+        color: rgb(81, 6, 172);
+    }
+    #thirdTable a:hover{
+        color: rgba(128, 0, 128, 0.553);
+    }
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+
+</style>
+
+
+
+
+<div class="content-body" style="background-color: white;">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row" >
+                
+            <!-- --------------------name--------------------- -->
+        
+            <div class="col-11 " style="background-color: rgb(130, 144, 199);padding: 20px;border-radius: 15px;box-shadow: 3px 3px 3px gray; margin-left: 2vw;" >
+                <div class="row">
+                    <div class="col">
+                        <p class="tb fw-bolder fs-2" style="color: black;">{{ first_item.item_name|upper }} <span class="fa fa-share ps-1 tb"></span></p>
+                    <h3 id="namee" style="text-transform: uppercase;font-size: 25px;" ></h3></div>
+                 
+                        <button style="background-color: #3d4465; color: white; text-align: right; margin-left: 32vw;" id="modal_closing" type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo">ADJUSTMENT ITEM</button>
+                    
+                     <div style="text-align: right;" class="col"><a style="background-color: #3d4465; color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " href="{% url 'view_item' %}"><i class="fa fa-arrow-left"></i> Back</a></div> 
+                    </div><br>
+                     
+            <div class="row" id="thirdTable" style="color: black;">
+                <div class="col">
+                    <div class="">
+                        <p class="tb fw-bolder fs-2">SALE PRICE  <span class="ps-2 tg">: ₹{{ first_item.item_sale_price }}</span></p>
+                        <p class="tb fw-bolder fs-2">STOCK QUANTITY  <span class="ps-2 tg">: {{ first_item.item_current_stock }}</span></p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="" style="margin-left: 10vw;">
+                        <p class="tb fw-bolder fs-2">PURCHASE PRICE  <span class="ps-2 tg">: ₹{{ first_item.item_purchase_price }}</span></p>
+                        <p class="tb fw-bolder fs-2">STOCK VALUE  <span class="ps-2 tg">: ₹{{ first_item.item_current_stock|mul:first_item.item_purchase_price }}</span></p>
+                    </div>
+                </div>
+                
+            </div>
+            
+            </div>
+        </div>
+            <!-- ------------------------------------------ -->
+            
+            <br>
+            
+            
+            <!-- -------------------transaction----------------------- -->
+        
+            <div class="row">
+                <div class="col-11" style="background-color: rgb(130, 144, 199); padding: 40px;border-radius: 15px;box-shadow: 3px 3px 3px gray; margin-left: 2vw;">
+                    <div class="row">
+                        <h3>Transactions</h3>
+                        
+                        <input type="text" style="box-shadow: 2px 2px 2px gray;" autocomplete="off" id="myInput1"  class="form-control col-3 ml-2" placeholder="search"/>
+        
+                        <div class="ml-auto ">
+                            
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " onclick="ExportAsPDF()">pdf <i class="fa fa-file-pdf"></i></button>
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " onclick="printTable()">print <i class="fa fa-print"></i></button>
+                            <button style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " onclick="exportAsExcel()">excel <i class="fa fa-file-excel"></i></button>
+                        </div>
+                    </div><br>
+        
+        
+        
+                    <div class="table table-responsive row" id="pdftable" >
+                        
+                            <table class="table" id="detailsTable">
+                                <thead>
+                                    <th class="text-center fs-2">TYPE </th>
+                                    <th class="text-center fs-2">INVOICE </th>
+                                    <th class="text-center fs-2">NAME</th>
+                                    <th class="text-center fs-2">DATE </th>
+                                    <th class="text-center fs-2">QUANTITY</th>
+                                    <th class="text-center fs-2">PRICE</th>
+                                    {% comment %} <th class="text-center fs-2">ACTION</span></th>
+                                    <th class="text-center ">BY</th> {% endcomment %}
+                                    <th class="text-center "></th>
+                                    
+                                </thead>
+                                <tbody>
+                                    {% for i in transactions %}
+                                    <tr  class="item-row">
+                                        <td class="text-center">{{i.trans_type}}</td>
+                                        <td class="text-center" ></td>
+                                        <td class="text-center"></td>
+                                        <td class="text-center">{{ i.trans_date|date:"d-m-Y" }}</td>
+                                        <td class="text-center">{{ i.trans_qty }}</td>
+                                        <td class="text-center">{{ i.trans_price }}</td>
+                                        {% comment %} <td class="text-center">{{ i.action }}</td>
+                                        <td class="text-center">{{ i.done_by_name }}</td> {% endcomment %}
+                                        <td class="text-center">
+                                            <a style="color: blue; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#myModal2"class="fa fa-edit tb hide_table_text_v" 
+                                                            hx-get="{% url 'edititemmodaladjust' first_item.id i.id %}"
+                                                            hx-trigger="click delay:0s"
+                                                            hx-target="#item_transaction_view_or_edit_target"
+                                                            ><small>Edit</small></a>
+                                 
+                                                <a title="Delete Profile" style="color: red; " id="delete" class="fa fa-trash" href="{% url 'item_delete'  i.pk %}" ><small>Delete</small> </a>
+
+                                        
+                                        </td>
+                                        
+                                    </tr>
+                                   {% endfor %}
+
+                                   <tr class="item-row">
+                                       <td class="text-center">Opening Stock</td>
+                                       <td class="text-center" ></td>
+                                       <td class="text-center"></td>
+                                       <td class="text-center">{{ first_item.item_date|date:"d-m-Y" }}</td>
+                                       <td class="text-center">{{ first_item.item_stock_in_hand }}</td>
+                                       <td class="text-center">₹{{ first_item.item_at_price }}</td>
+                                       {% comment %} <td class="text-center">{{ first_item.action }}</td>
+                                       <td class="text-center">{{ first_item.done_by_name }}</td> {% endcomment %}
+                                       <td class="text-center">
+                                        
+                                               <a title="Edit Profile" style="color: blue;" id="editt" class="fa fa-edit" href="{% url 'edit_item' first_item.pk  %}" ><small>Edit <i class="fa fa-pen-to-square"></i></small> </a>
+                                               <a title="Delete Profile" style="color: red; " id="delete" class="fa fa-trash" href="{% url 'item_delete' first_item.pk %}" ><small>Delete</small> </a>
+
+                                       </td>
+                                       
+                                   </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- ------------------------------------------- -->
+        </div>
+        </div>
+
+        <table class="table" id="detailsTable1" hidden>
+            <thead>
+                <th class="text-center fs-2">TYPE </th>
+                <th class="text-center fs-2">INVOICE </th>
+                <th class="text-center fs-2">NAME</th>
+                <th class="text-center fs-2">DATE </th>
+                <th class="text-center fs-2">QUANTITY</th>
+                <th class="text-center fs-2">PRICE</th>
+   
+                
+            </thead>
+            <tbody>
+              
+                <tr  class="item-row">
+                    <td class="text-center">Opening Stock</td>
+                    <td class="text-center" ></td>
+                    <td class="text-center"></td>
+                    <td class="text-center">{{ item.item_date|date:"d-m-Y" }}</td>
+                    <td class="text-center">{{ item.item_stock_in_hand }}</td>
+                    <td class="text-center">₹{{ item.item_at_price }}</td>
+                    
+                </tr>
+              
+            </tbody>
+        </table>
+   <!-- modal start -->
+   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+
+        <div class="modal-body pb-1" style="background-color: rgb(130, 144, 199);">
+            <form action="{% url 'ajust_quantity' first_item.pk %}" method="post" >
+                {% csrf_token %}
+                <div class="modal-header ps-4 pe-4 m-0">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="font-weight: 900;">STOCK ADJUSTMENT</h1>
+                       
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    
+                  
+                    <div class="ps-3 pe-3">
+                        <div class="row">
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Item Name</label>
+                            <h5 style="font-weight: 900;" class="pt-2">{{ item.item_name|upper }}</h3>
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+            
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Current Quantity</label>
+                            <input id="item_quantity" style="font-weight: 900;color: black;background-color: white;" value="{{ item.item_current_stock }}" disabled class="form-control fs-5" name="item_qty">
+                        </div>
+                      
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="form-check form-switch d-lg-flex d-sm-none mt-2">
+                            <label id="lbl1" class="form-check-label fw-bolder" for="toggleSwitch" style="color: black;">ADD STOCK</label>
+                            <input  type="checkbox" role="switch"  id="flexSwitchCheckChecked" name="trans_type" style="margin-top: 4px; margin-left: 5px;">
+                            <label id="lbl2" class="form-check-label fw-bolder" for="flexSwitchCheckChecked" style="color: black;">REDUCE STOCK</label>
+                            </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                       <div class="col-sm-12 col-lg-4">
+                        <label for="" style="color: black;"> Date</label>
+                        <input id="adj_date" style="font-weight: 900;color: black;" class="form-control" type="date" value="" name="trans_date">
+                        </div>
+                        <div id="add__qty" class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Add Quantity</label>
+                            <input id="add_quantity" style="font-weight: 900;color: black;" min="0" class="form-control fs-5" type="number" value="0" required name="added_qty">
+                        </div>
+                        <div id="red__qty" class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Reduce Quantity</label>
+                            <input id="reduce_quantity" style="font-weight: 900;color: black;" max="{{ item.item_current_stock }}" class="form-control fs-5" type="number" value="0" required name="reduced_qty">
+                        </div>
+                        <div class="col-sm-12 col-lg-4">
+                            <label for="" style="color: black;">Adujst Quantity</label>
+                            <input id="adj_quantity" style="font-weight: 900;color: black;background-color: white;" class="form-control fs-5" type="number" value="{{ item.item_opening_stock }}" disabled required name="adjusted_qty">
+                        </div>
+                    </div>
+                    <!-- <input id="sbmt_btn" hidden type="submit"> -->
+                    
+                    <hr class="m-0 mt-4 p-0  ms-3 me-3">
+                        
+                </div>
+                <div class="modal-footer ps-4 pe-4 ">
+                    <button id="cls_btn" type="button" class="btn " style="background-color: #3d4465;" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn " style="background-color: #3d4465;" onclick="submit_function()">Save </button>
+                </div>
+                </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- modal end -->
+    
+<!-- Second Modal -->
+<div class="modal modal-lg fade" id="myModal2" tabindex="-1" aria-labelledby="myModal2Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="item_transaction_view_or_edit_target">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+  function submit_function(){  
+    $('#adj_quantity').attr('disabled',false)    
+    $('#item_quantity').attr('disabled',false)  
+    $('#cls_btn').click()
+    setInterval(function(){
+        $('#sbmt_btn').click()
+    },200)
+}
+$(document).ready(function () {
+    if ($('#flexSwitchCheckChecked').prop('checked')) {
+    $('#lbl2').css({ 'color': 'blue' })
+    }
+    else{
+        $('#lbl1').css({ 'color': 'blue' })
+    }
+    $('#flexSwitchCheckChecked').on('change load', function () {
+    if ($('#flexSwitchCheckChecked').prop('checked')) {
+        $('#lbl2').css({ 'color': 'blue' })
+        $('#lbl1').css({ 'color': 'inherit' })
+    }
+    else {
+        $('#lbl1').css({ 'color': 'blue' })
+        $('#lbl2').css({ 'color': 'inherit' })
+    }
+    })
+})
+$(document).ready(function(){
+    var currentDate = new Date();
+    var year = currentDate.getFullYear();
+    var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    var day = String(currentDate.getDate()).padStart(2, "0");
+    var formattedDate = year + "-" + month + "-" + day;
+    $("#adj_date").val(formattedDate);
+})
+$(document).ready(function(){
+    $('#add_quantity').on('input',function(){
+        var a = $('#add_quantity').val()
+        var b = $('#item_quantity').val()
+        if(a<0)
+        {
+            $('#add_quantity').val(0)
+            $('#adj_quantity').val(parseInt(b))
+        }
+        else{
+            $('#adj_quantity').val(parseInt(a)+parseInt(b))
+        }
+    })
+})
+$(document).ready(function(){
+    $('#reduce_quantity').on('input',function(){
+        var a = $('#reduce_quantity').val()
+        var b = $('#item_quantity').val()
+        if(a<0)
+        {
+            $('#reduce_quantity').val(0)
+            $('#adj_quantity').val(b)
+        }
+        if(parseInt(a)>parseInt(b))
+        {
+            $('#reduce_quantity').val(b)
+            $('#adj_quantity').val(0)
+        }
+        else{
+            $('#adj_quantity').val(parseInt(b)-parseInt(a))
+        }
+    })
+})
+$(document).ready(function(){
+    if(!$('#flexSwitchCheckChecked').prop('checked'))
+    {
+        $('#red__qty').attr('hidden',true)
+        $('#add__qty').attr('hidden',false)
+        $('#reduce_quantity').val(0)
+    }
+    else{
+        $('#add__qty').attr('hidden',true)
+        $('#red__qty').attr('hidden',false)
+        $('#add_quantity').val(0)
+    }
+    $('#flexSwitchCheckChecked').on('change',function(){
+        if(!$('#flexSwitchCheckChecked').prop('checked'))
+        {
+            $('#red__qty').attr('hidden',true)
+            $('#add__qty').attr('hidden',false)
+            $('#reduce_quantity').val('0')
+        }
+        else{
+            $('#add__qty').attr('hidden',true)
+            $('#red__qty').attr('hidden',false)
+            $('#add_quantity').val(0)
+        }
+    })
+})
+</script>
+
+<script>
+
+
+
+
+function ExportAsPDF() {
+    const container = document.getElementById('detailsTable');
+
+    const margin = 10; 
+    const pdfOptions = {
+        margin: [margin, margin, margin, margin], 
+        filename: 'item_Transaction.pdf',
+        image: { type: 'jpeg', quality: 1 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a3', orientation: 'portrait' }, 
+    };
+
+    // Generate PDF from the container
+    html2pdf().from(container).set(pdfOptions).save();
+} 
+
+
+
+
+// -----------------------------------------------------------------------------------------------------
+// Excel -----
+
+function exportAsExcel() {
+    const table = document.getElementById('detailsTable'); 
+    const selectedColumns = [0, 1, 2, 3, 4,5,6,7]; 
+
+    // Extract the relevant columns
+    const filteredTable = table.cloneNode(true);
+    const rows = filteredTable.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName('td');
+        for (let j = cells.length - 1; j >= 0; j--) {
+            if (!selectedColumns.includes(j)) {
+                rows[i].deleteCell(j);
+            }
+        }
+    }
+
+    // Convert the modified table to a workbook
+    const wb = XLSX.utils.table_to_book(filteredTable);
+
+    // Save the workbook as an Excel file
+    XLSX.writeFile(wb, 'item_Transactions.xlsx');
+}
+
+
+$(document).ready(function () {
+        var $rows = $('#detailsTable tbody tr');
+        $('#myInput1').keyup(function () {
+            var val = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+            $rows.hide().filter(function () {
+                var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+                return ~text.indexOf(val);
+            }).show();
+        });
+    });
+       
+
+// ----------------------------------------------------------------------------------------------------------
+// print ------
+
+function printTable() {
+    // Clone the table element
+    const tableToPrint = document.getElementById('detailsTable').cloneNode(true);
+
+    // Set background color and text color for printing
+    tableToPrint.style.backgroundColor = 'white';
+    const textElements = tableToPrint.querySelectorAll('th, td');
+
+    // Set a common width for all columns
+    const columnWidth = 100 / 6 + '%'; // Adjusted for the first 6 columns
+
+    // Iterate over the columns and set the width for each cell
+    for (let i = 0; i < tableToPrint.rows.length; i++) {
+        const cells = tableToPrint.rows[i].cells;
+        for (let j = 0; j < cells.length; j++) {
+            if (j < 6) { // Only apply styles to the first 6 columns
+                cells[j].style.width = columnWidth;
+                cells[j].style.color = 'black';
+                cells[j].style.backgroundColor = 'white';
+                cells[j].style.border = '1px solid black';
+                cells[j].style.fontSize = '20px';
+                cells[j].style.padding = '7px';
+            } else {
+                // If you want to hide the remaining columns, you can set display to 'none'
+                cells[j].style.display = 'none';
+            }
+        }
+    }
+
+    // Set border-collapse to collapse
+    tableToPrint.style.borderCollapse = 'collapse';
+
+    // Create a new window for printing
+    const printWindow = window.open('', '_blank');
+
+    // Set the background color and styles for centering
+    printWindow.document.body.style.backgroundColor = 'white';
+    printWindow.document.body.style.margin = '0'; // Remove default margin
+    printWindow.document.body.style.justifyContent = 'center';
+
+    // Add a heading to the printed table
+    const heading = document.createElement('h2');
+    heading.textContent = 'ITEMS';
+    heading.style.textAlign = 'center';
+    printWindow.document.body.appendChild(heading);
+
+    // Set the width of the table to 100%
+    tableToPrint.style.width = '100%';
+
+    // Append the modified table to the new window's body
+    printWindow.document.body.appendChild(tableToPrint);
+
+    // Trigger the print dialog for the new window
+    printWindow.print();
+
+    // Close the new window after printing
+    printWindow.close();
+}
+
+
+// ----------------------------------------------------------------------------------
+// transaction filter table
+function filterTransaction(input) {
+                                var filterValue = input.value.toLowerCase();
+                                var tableRows = document.querySelectorAll('#thirdTableTable tbody tr');
+
+                                tableRows.forEach(function(row) {
+                                var cells = row.getElementsByTagName("td");
+                                var isVisible = false;
+
+                                for (var i = 0; i < cells.length; i++) {
+                                    var cellValue = cells[i].textContent || cells[i].innerText;
+                                    if (cellValue.toLowerCase().indexOf(filterValue) > -1) {
+                                    isVisible = true;
+                                    break;
+                                    }
+                                }
+
+                                if (isVisible) {
+                                    row.style.display = "table-row";
+                                } else {
+                                    row.style.display = "none";
+                                }
+                                });
+                            }
+
+// --------------------------------------------------------------------------------------
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+
+def add_company(request):
+    if request.method == 'POST':
+        email = request.POST['email']
+        
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, 'Error: User with the specified email does not exist.')
+            return render(request, 'registercompany.html')
+
+        c = company.objects.get(user=user)
+        c.company_name = request.POST['companyname']
+        c.address = request.POST['address']
+        c.city = request.POST['city']
+        c.state = request.POST['state']
+        c.country = request.POST['country']
+        c.pincode = request.POST['pincode']
+        c.pan_number = request.POST['pannumber']
+        c.gst_type = request.POST['gsttype']
+        c.gst_no = request.POST['gstno']
+
+        code = get_random_string(length=6)
+        if company.objects.filter(Company_code=code).exists():
+            code2 = get_random_string(length=6)
+            c.Company_code = code2
+        else:
+            c.Company_code = code
+        
+        c.save()
+
+        staff = staff_details.objects.get(email=email, position='company', company=c)
+        staff.first_name = request.POST['companyname']
+        staff.last_name = ''
+        staff.save()
+
+        return redirect('login')  
+
+    return render(request, 'registercompany.html')
+
+
+
+{% comment %} view items {% endcomment %}
+
+<!-- create by Antony -->
+
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<!-- Load SheetJS from a CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.0/xlsx.full.min.js"></script>
+<!-- Bootstrap JavaScript and Popper.js -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% comment %} 
+{% load my_extras %} {% endcomment %}
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .tb{
+        color: black;
+    }
+    .tg{
+        color: black;
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .btn_add,.btn-sm{
+        background-color: #343957;
+        color: white;
+    }
+    .btn_add:hover{
+        background-color:#343957;
+        color: white;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+</style>
+
+
+<div class="content-body">
+
+        <div class="row">
+        <div class="col-sm-12 col-lg-3  ps-2 pe-3 pb-2" style="height: 50rem;">
+            <div class="card  bs" style=" background-color: rgb(130, 144, 199); margin-left: 10px;">
+                <div class="row m-0">
+                    <div class="col-12 p-4 pt-3" style="z-index:2">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            <div class="d-flex justify-content-between">
+                                <span id="search_item" class="fa fa-search tb  text-light ms-2 mt-1" style="border-radius: 50%;padding: 0.77rem; background-color: #343957;"></span>
+                                <a id="add_item_btn" class="btn btn-sm rounded p-2 mt-1 btn_add" href=""><span class="fa fa-plus"></span> Add Item</a>
+                            </div>
+                            <div class="position-relative">
+                                <div class="position-absolute end-0" style="margin-top:0.5rem;margin-right:0.7rem">
+                                    <span hidden id="close_seacrh" class="fa fa-times fs-4 tr"
+                                    hx-post=""
+                                    hx-trigger="click delay:0.1s"
+                                    hx-target="#item_search_filter_target"
+                                    ></span>
+                                </div>
+                            </div>
+                        
+                            <input hidden id="search_item_input" class="form-control border-dark text-dark" type="text" placeholder="search here.." name="searching_item"
+                            hx-post=""
+                            hx-trigger="keyup"
+                            hx-target="#item_search_filter_target"
+                            >
+                        </form>
+                    </div>
+                    <div class="ps-3 pe-3">
+                        <hr class="p-0 m-0">
+                    </div>
+                    <div class="col-12 p-3 pt-0">
+                        {% if allitem %}
+                        <div id="item_search_filter_target">
+                            <form action="" method="post">
+                                {% csrf_token %}
+
+                                <div style="overflow: auto;height: 42rem;">
+                                <table class="table w-100 table-light table-striped table-hover">
+                                    <thead class="bg-light">
+                                        <th class="text-start fs-2 tb">ITEM</th>
+                                        <th class="text-end fs-2 tb">QUANTITY</th>
+                                    </thead>
+                                    <tbody>
+                                        {% for i in allitem %}
+                                        <tr class="item_lists_hide">
+                                            <td style="cursor:pointer" class="text-start fs-2 fw-bold text-dark "> <a href="{% url 'view_items' i.pk %}" style="color: black;">{{ i.item_name|capfirst }}</a></td> 
+                                            <td class="text-end fs-2 fw-bolder" style="color: green;">
+                                                {{ i.item_current_stock }}
+                                                    <div class="btn-group mb-1">
+                                                        <button style="border: none;background: none;" type="button" class="ropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                           <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu">
+                                                           <li><a href="{% url 'edit_item' i.pk %}" style="color: black; padding-left: 10px;" class="hide_table_text_e"><span class="fas fa-edit pe-2 text-primary mt-2"></span>Edit</a></li>
+                                                           <li><a href="{% url 'item_delete' i.pk %}"  style="color: black; padding-left: 10px;" class="hide_table_text_d"><span class="fa fa-trash-alt pe-2 tr mt-2"></span>Delete</a></li>
+                                                        </ul>
+                                                     </div>
+                                              
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                </div>
+
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="text-center mt-2">
+                            <small>Currently no items are available</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-lg-9  ps-2 pe-3" style="height: 80%;">
+          <div id="item_get_detail_target">
+            <div class="row m-0" style="height:20%">
+                <div class="card col-lg-12  bs p-3 mb-3" style=" background-color: #8290c7;">
+                    <div class="d-flex justify-content-between">
+                        <p class="tb fw-bolder fs-2">{{ item.item_name|upper }} <span class="fa fa-share ps-1 tb"></span></p>
+                        <button class="btn btn-sm  fs-2"data-bs-toggle="modal" data-bs-target="#myModal1" data-bs-whatever="@getbootstrap"
+                        hx-get=""
+                        hx-trigger="click delay:0s"
+                        hx-target="#item_get_details_for_modal_target"
+                        ><span class="fa fa-sliders-h pe-1"></span> ADJUSTMENT ITEM</button>
+                    </div>
+                    <p></p>
+                    <div class="d-flex justify-content-between">
+                        <p class="tb fw-bolder fs-2">SALE PRICE  <span class="ps-2 tg">: ₹{{ item.item_sale_price }}</span></p>
+                        <p class="tb fw-bolder fs-2">STOCK QUANTITY  <span class="ps-2 tg">: ₹{{ item.item_current_stock }}</span></p>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <p class="tb fw-bolder fs-2">PURCHASE PRICE  <span class="ps-2 tg">: ₹{{ item.item_purchase_price }}</span></p>
+                        <p class="tb fw-bolder fs-2">STOCK VALUE  <span class="ps-2 tg">: ₹</span></p>
+                    </div>
+
+                </div>
+            </div>
+            <!-- <div class="row" style="height: 0.5rem;"></div> -->
+            <div class="row pt-0 m-0" >
+                <div class="card p-0  bs" style=" background-color: #8290c7;">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-sm-12 col-lg-3">
+                            <p class="tb fw-bolder pt-2">TRANSACTIONS</p>
+                        </div>
+                        <div class="col-sm-12 col-lg-3">
+                            
+                        </div>
+                        
+                        <div class="col-sm-12 col-lg-6 pt-1">
+                            <div class="position-relative">
+                                <div class="position-absolute" style="margin-top:0.4rem;margin-left: 0.5rem;">
+                                    <span class="fa fa-search fs-5 text-info"></span>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <input id="search_input1" style="padding-inline-start: 2rem;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" search here..">
+                                <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="printfunction()" >
+                                    <span><img width="30px" style="margin-left: 10px; margin-right: 10px;" src="{% static 'images/printer.png' %}" alt="no img"></span>
+                                </button>
+                                <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()"><span><img width="22px" src="{% static 'images/excel2.png' %}" alt="no img"></span></button>
+
+                            </div>
+                        </div>
+                            <div class="mt-3" style="overflow: scroll;height: 31rem; padding-left: 1vw;">
+                                <table id="myTable" class="table table-bordered table-light table-striped tb table-responsive w-100">
+                                    <div  id="whatToPrint" class="print-only">
+                                    <thead>
+                                        <th>#</th>
+                                        <th class="text-center fs-2">TYPE </th>
+                                        <th class="text-center fs-2">INVOICE </th>
+                                        <th class="text-center fs-2">NAME</th>
+                                        <th class="text-center fs-2">DATE </th>
+                                        <th class="text-center fs-2">QUANTITY</th>
+                                        <th class="text-center fs-2">PRICE</th>
+                                        <th class="text-center fs-2">ACTION</span></th>
+                                        <th class="text-center ">BY</th>
+                                        
+                                        <th class="text-center p-0 m-0"></th>
+                                    </thead>
+                                    <tbody>
+                                     
+                                           
+                                            <td class="text-center" style="padding-top: 1.4rem;">
+                                                <div class="d-flex justify-content-center">
+                                                    <div style="width: 10px;height: 10px;" class="bg-dark rounded-pill bs_sm"></div>
+                                                </div>
+                                            </td>
+                                            <!-- <td class="text-center">{% if first_item.item_opening_stock %}{{ first_item.item_opening_stock }}{% else %}0{% endif %}</td> -->
+                                            <td class="text-center" style="width: 8vw;">Open Stock</td>
+                                            <td class="text-center" style="width: 6vw;"></td>
+                                            <!-- <td class="text-center">{% if first_item.item_opening_stock %}{{ first_item.item_opening_stock }}{% else %}0{% endif %}</td> -->
+                                            <td class="text-center" style="width: 8vw;">{{ item.item_name }}</td>
+                                            <td class="text-center">{{ item.item_date|date:"d-m-Y" }}</td>
+                                            <td class="text-center">{{ item.item_stock_in_hand }}</td>
+                                            <td class="text-center">₹{{ item.item_at_price }}</td>
+                                            <td class="text-center">{{ item.action }}</td>
+                                            <td class="text-center">{{ item.done_by_name }}</td>
+                                            <td class="p-0 pt-1 m-0">
+                                                <div class="btn-group mb-1">
+                                                   <button style="border: none;background: none; " type="button" class="dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                                      <span class="fa fa-ellipsis-v text-dark fs-1 ps-"></span>
+                                                   </button>
+                                                   <ul class="dropdown-menu">
+                                                      <li><a href="{% url 'edit_item' item.pk %}" style="color: black; padding-left: 10px;" class="hide_table_text_e"><span class="fas fa-edit pe-2 text-primary mt-2"></span>Edit</a></li>
+                                                      <li><a href="{% url 'item_delete' item.pk %}" style="color: black; padding-left: 10px;" class="hide_table_text_d"><span class="fa fa-trash-alt pe-2 tr mt-2"></span>Delete</a></li>
+                                                   </ul>
+                                                </div>
+                                             </td>
+                                             
+                                        </tr>
+                        
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+</div>
+ 
+
+<!-- modal adjustment create start -->
+<!-- <div class="modal modal-lg fade p-0" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog p-0">
+    <div class="modal-content p-0">
+        <div id="item_get_details_for_modal_target">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal 1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Content for Modal 1 goes here.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+  </div>
+</div> -->
+
+<!-- modal adjustment create end -->
+
+<div class="modal modal-lg fade" id="myModal1" tabindex="-1" aria-labelledby="myModal1Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="item_get_details_for_modal_target">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal 1</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Content for Modal 1 goes here.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Modal -->
+<div class="modal modal-lg fade" id="myModal2" tabindex="-1" aria-labelledby="myModal2Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div id="item_transaction_view_or_edit_target">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    function exportToExcel() {
+        $('.hide_table_text_v').text('')
+        $('.hide_table_text_d').text('')
+        const table = document.getElementById('myTable');
+        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+        XLSX.writeFile(wb, "table_data.xlsx");
+        $('.hide_table_text_v').html('<span class="fa fa-eye pe-2 tg"></span> View / Edit')
+        $('.hide_table_text_d').html('<span class="fa fa-trash-alt tr" style="padding-inline-start: 0.1rem;padding-inline-end:0.7rem ;"></span> Delete')
+    }
+    $(document).ready(function() {
+        $("#search_input1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    $(document).ready(function(){
+        $('#search_item').click(function(){
+            $(this).attr('hidden',true)
+            $('#search_item_input').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',true)
+        })
+    })
+    $(document).ready(function(){
+        $('#close_seacrh').click(function(){
+            $('#search_item_input').val('')
+            $('#search_item_input').attr('hidden',true)
+            $('#search_item').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',true)
+        })
+    })
+   
+</script>
+
+<script>
+    function printfunction(){
+        print4 = document.getElementById('myTable')
+        if (print4.style.display !== 'none'){
+            var printContents = document.getElementById("myTable").innerHTML;
+        }else{
+            var printContents = document.getElementById("whatToPrint").innerHTML;
+        }
+        var $printerDiv = $('<div class="printContainer" id=printContainer></div>');
+        $printerDiv.html(printContents); 
+        $('body').append($printerDiv).addClass("printingContent"); 
+        var h1Element = document.createElement("h1");
+        h1Element.textContent = "Item";
+        var head = document.getElementById("printContainer");
+        head.insertBefore(h1Element, head.firstChild);
+        window.print();
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+    }
+</script>
+
+{% endblock  %}
+
+
+
+
+
+{% comment %} ####################add item ###################3 {% endcomment %}
+
+
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .container {
+        margin-top: 50px;
+    }
+
+    .custom-card {
+        background-color: white;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .btn-custom {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .btn-custom:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+
+<style>
+    .bs {
+      box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+  
+    .bs_sm {
+      box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+  
+    .tb {
+      color: black;
+    }
+  
+    .tg {
+      color: rgb(0, 140, 7);
+    }
+  
+    .tr {
+      color: rgb(218, 0, 0);
+    }
+  
+    .btn_add {
+      background-color: orange;
+      color: black;
+    }
+  
+    .btn_add:hover {
+      background-color: rgb(234, 152, 0);
+      color: black;
+    }
+  
+    ::-webkit-scrollbar {
+      display: none
+    }
+    select option:hover{
+      background-color: black;
+    }
+
+    .body-wrapper {
+      margin-left: 18vw;
+      margin-top: 3vw;
+      
+    }
+
+    .position-relative{
+        background-color: #8290c7;
+    }
+  </style>
+  
+  <div class="body-wrapper">
+    <br><br><br>
+    <div class="row p-0 m-0" >
+      <div class="col-12  p-0 m-0">
+<div class="bg-light bg-light pb-0 mb-0 p-2" style="height:100%;width:100%; background-color: #8290c7;">           
+          <form action="{% url 'item_create_new' %}" method="post" >
+            {% csrf_token %}
+                    <div class="position-relative">
+                      <div class="position-absolute end-0">
+                        <div class="d-flex pt-3 pe-3" style="margin-left: 77vw;">
+                          <a href=""><span class="fa fa-times fs-5 tb p-1"></span></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class=" bs p-4 rounded mb-5" style="background-color: #8290c7;">
+                         <div class="d-md-flex d-sm-block">
+                          <h5><strong class="fw-bolder">ADD ITEM</strong></h5>
+                          
+                        </div> 
+                      <br>
+                      <div id="main_form_div">
+                        
+                        <div class="d-flex">
+                          <div class="col-md-3 ">
+                            <label class="col-form-label" style="color: black;">TYPE</label>
+                            <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" required>
+                                <option selected value="" hidden>Select Type</option>
+                                <option value="Goods">Products</option>
+                                <option value="Services">Services</option>
+                            </select>
+                        </div>
+
+                            <div class="col-md-3">
+                                <label class="col-form-label" style="color: black;">ITEM NAME</label>
+                                <input style="color: black;" class="form-control border-dark fw-bolder" type="text" placeholder="ITEM NAME" autocomplete="off" name="item_name" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="col-form-label" style="color: black;">ITEM HSN</label>
+                                <input style="color: black;" class="form-control border-dark ms-2 fw-bolder" type="number" placeholder="ITEM HSN" name="item_hsn" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="col-form-label" style="color: black;">ITEM UNIT</label>
+                                <div class="d-flex">
+                                <select style="color: black;" class="form-control ms-2 border-dark bg-light me-2" id="" name="item_unit" required>
+                                    <option value="">Select a unit</option>
+                                    <option value="NOS">NOS</option>
+                                    <option value="BOX">BOX</option>
+                                    <option value="PACKET">PACKET</option>
+                                    {% if item_units %}
+                                      {% for i in item_units %}
+                                      <option value="{{ i.unit_name|upper }}">{{ i.unit_name|upper }}</option>
+                                      {% endfor %}
+                                    {% endif %}
+                                    <option id="load_new_unit" hidden value=""></option>
+                                  </select>
+                                  <button id="modal_closing" type="button" class="btn bg-warning" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-whatever="@mdo"><span class="fa fa-plus"></span></button>
+                                  </div>
+                                </div>
+
+                        
+                          <!-- <button class="btn bg-warning"><span class="fa fa-plus"></span></button> -->
+                                                    
+                        </div>
+                      
+                        <div class="container">
+                          <div class="row justify-content-center">
+                              <div class="col-md-8">
+                                  <div class="custom-card">
+                                      <div class="text-center mb-4">
+                                          <h2 class="fw-bold">PRICING</h2>
+                                      </div>
+                                      <div class="form-group text-center">
+                                          <label class="fs-4 tb" style="user-select: none;">
+                                              <input id="item_tax_1" type="radio" name="item_tax_result" required>
+                                              Taxable
+                                          </label>
+                                          <label class="fs-4 tb" style="user-select: none;">
+                                              <input id="item_tax_2" type="radio" name="item_tax_result" required>
+                                              Non Taxable
+                                          </label>
+                                          <input id="taxable_result" type="text" name="item_taxable" hidden>
+                                      </div>
+                                      <div hidden id="taxable_hide">
+                                          <!-- GST and IGST inputs go here -->
+                                      </div>
+                                      <div class="row">
+                                          <div class="col-md-6">
+                                              <label class="col-form-label">SALES PRICE</label>
+                                              <input id="saleprice" class="form-control" type="number" name="saleprice" value="0">
+                                          </div>
+                                          <div class="col-md-6">
+                                              <label class="col-form-label">PURCHASE PRICE</label>
+                                              <input id="purprice" class="form-control" type="number" name="purprice" value="0">
+                                          </div>
+                                      </div>
+                                      <div class="text-center mt-4">
+                                          <button id="next_btn" class="btn btn-custom" type="button">Next</button>
+                                      </div>
+                                  </div>
+                      
+                                  <div class="custom-card" >
+                                      <div class="text-center mb-4">
+                                          <h2 class="fw-bold">STOCKS</h2>
+                                      </div>
+                                      <div class="row">
+                                          <div class="col-md-6">
+                                              <label class="tb fw-bold" for="opn_stock_">STOCK IN HAND</label>
+                                              <input id="opn_stock_" class="form-control" type="number" placeholder="Opening Stock here" name="item_opening_stock">
+                                          </div>
+                                          <div id="at_price_div" class="col-md-6" style="visibility: hidden;">
+                                              <label class="tb fw-bold" for="at_price">AT PRICE</label>
+                                              <input id="at_price" class="form-control" type="number" placeholder="At Price here" name="item_at_price">
+                                          </div>
+                                      </div>
+                                      <div class="col-md-6 mt-4">
+                                          <label class="tb fw-bold" for="itmdate">DATE</label>
+                                          <input id="itmdate" class="form-control" type="date" required name="itmdate" value="{{date}}">
+                                      </div>
+                                      <div class="text-center mt-4">
+                                          <button id="prev_btn" class="btn btn-custom me-3" type="button">PREVIOUS</button>
+                                          <button class="btn btn-custom" type="submit" name="save_and_next" value="save_and_next">SAVE & NEXT</button>
+                                          <button class="btn btn-custom" type="submit" name="itemsave" id="itemsave">SAVE</button>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+          </form>
+  
+          <!-- modal start -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">ADD UNIT</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body mb-1 pb-1">
+                  <form class="mb-0" action="" method="POST" id="unit_form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="recipient-name" class="col-form-label">UNIT</label>
+                      <input type="text" class="form-control border-dark" id="item_unit_name_id" placeholder="ENTER UNIT HERE.." name="item_unit_name" required>
+                    </div>
+                    <div class="m-0 text-center">
+                      <label for="message-text" class="col-form-label  text-secondary fw-lighter">Example : PCS/BOX/LITER</label>
+                      <!-- <textarea class="form-control" id="message-text"></textarea> -->
+                    </div>
+                    <input hidden id="submit_unit_creation" type="submit">
+                  </form>
+                </div>
+                <div class="modal-footer d-flex justify-content-center mt-1">
+                  <button id="modal_cls_btn" type="button" class="btn btn-secondary ps-5 pe-5" data-bs-dismiss="modal">Close</button>
+                  <button id="add_btn_" type="button" class="btn btn-primary ps-5 pe-5" onclick="submit_unit_creation_fn()">ADD</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- modal end -->
+  
+          
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    $(document).on("submit","#unit_form",function(e){
+      e.preventDefault();
+    $.ajax({
+      
+      type : 'POST',
+      url:"",
+  
+      data:{
+        item_unit_name : $("#item_unit_name_id").val(),
+          
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+          
+        },
+      
+        success: function() {
+          
+        },
+        
+    });  
+    $('#modal_cls_btn').click()
+    var a = ''+$('#item_unit_name_id').val()
+    a.toUpperCase()
+    $('#load_new_unit').val(a)
+    $('#load_new_unit').text(a) 
+    $('#load_new_unit').prop('selected',true) 
+    $('#load_new_unit').attr('hidden',false)
+  });
+    $(document).ready(function () {
+      if ($('#flexSwitchCheckChecked').prop('checked')) {
+        $('#lbl2').css({ 'color': 'blue' })
+      }
+      else{
+        $('#lbl1').css({ 'color': 'blue' })
+      }
+      $('#flexSwitchCheckChecked').on('change load', function () {
+        if ($('#flexSwitchCheckChecked').prop('checked')) {
+          $('#lbl2').css({ 'color': 'blue' })
+          $('#lbl1').css({ 'color': 'inherit' })
+        }
+        else {
+          $('#lbl1').css({ 'color': 'blue' })
+          $('#lbl2').css({ 'color': 'inherit' })
+        }
+      })
+    })
+    $(document).ready(function(){
+      $('#item_tax_1').on('click',function(){
+        if($(this).prop('checked'))
+        {
+          $('#taxable_hide').attr('hidden',false)
+        }
+      })
+    })
+    // page loading start
+    $(document).ready(function(){
+      $('#item_tax_2').on('click',function(){
+        if($(this).prop('checked'))
+        {
+          $('#taxable_hide').attr('hidden',true)
+        }
+      })
+    })
+    $(document).ready(function(){
+      $('#prc_').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+      $('#stk_ a').removeClass('text-dark')
+      $('#prc_ a').addClass('text-dark')
+      $('#stk_').css({'border-bottom': 'none'})
+      $('#pricing_template').attr('hidden',false)
+  
+  
+      $('#prc_').on('click',function(){
+        $(this).css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+        $('#stk_ a').removeClass('text-dark')
+        $('#prc_ a').addClass('text-dark')
+        $('#stk_').css({'border-bottom': 'none'})
+        $('#pricing_template').attr('hidden',false)
+        $('#stock_template').attr('hidden',true)
+      })
+    })
+    $(document).ready(function(){
+      $('#stk_').on('click',function(){
+        $('#stk_').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+        $('#prc_ a').removeClass('text-dark')
+        $('#stk_ a').addClass('text-dark')
+        $('#prc_').css({'border-bottom': 'none'})
+        $('#pricing_template').attr('hidden',true)
+        $('#stock_template').attr('hidden',false)
+      })
+    })
+    $(document).ready(function(){
+      $('#next_btn').on('click',function(){
+        $('#stk_').click()
+      })
+    })
+    $(document).ready(function(){
+      $('#prev_btn').on('click',function(){
+        $('#prc_').click()
+      })
+    })
+    // $(document).ready(function(){
+    //   $('#prc_').on('click',function(){
+    //     alert('asdsad')
+    //   })
+    // })
+    // $(document).ready(function(){
+    //   $('#prc_').on('click',function(){
+    //     alert('asdsad')
+    //   })
+    // })
+    // page loading end
+    $('#opn_stock_').on('keyup click',function(){
+      if($(this).val()>'0')
+      {
+        $('#at_price_div').css({'visibility':'visible',
+                                'transition':'all 0.2s linear'})
+      }
+      else{
+        $('#at_price_div').css({'visibility':'hidden',
+                                'transition':'all 0.2s linear'})
+        $('#at_price').val('')
+      }
+    })
+    $(document).ready(function(){
+      $('#item_tax_1').on('click',function(){
+        $('#taxable_result').val('Taxable')
+      })
+    })
+    $(document).ready(function(){
+      $('#item_tax_2').on('click',function(){
+        $('#taxable_result').val('Non Taxable')
+      })
+    })
+    function submit_unit_creation_fn()
+    {
+      $('#submit_unit_creation').click()
+    }
+    // set today start
+    $(document).ready(function(){
+          var currentDate = new Date();
+          var year = currentDate.getFullYear();
+          var month = String(currentDate.getMonth() + 1).padStart(2, "0");
+          var day = String(currentDate.getDate()).padStart(2, "0");
+          var formattedDate = year + "-" + month + "-" + day;
+          $("#date_").val(formattedDate);
+      })
+      // set today end
+  
+  </script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+{% endblock %}
+
+
+
+
+
+{% comment %} ######################################################## {% endcomment %}
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Billing Software </title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/logo/logo3.png' %}" />
+    <link rel="stylesheet" href="{% static 'assets/vendor/owl-carousel/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/vendor/owl-carousel/css/owl.theme.default.min.css' %}">
+    <link href="{% static 'assets/vendor/jqvmap/css/jqvmap.min.css ' %}" rel="stylesheet">
+    <link href="{% static 'css/style.css ' %}" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper" >
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <a href="" class="brand-logo">
+                <img class="logo-abbr" src="static/img/logo/logo3.png" alt="">
+                <p style="margin-top: 10px;"> BILLING SOFTWARE</p>
+                <img class="logo-compact" src="./images/logo-text.png" alt="">
+                <img class="brand-title" src="./images/logo-text.png" alt="">
+            </a>
+
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <div class="search_bar dropdown">
+                                <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <div class="dropdown-menu p-0 m-0">
+                                    <form>
+                                        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="navbar-nav header-right">
+        
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-account"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{% url 'profile' %}" class="dropdown-item">
+                                        <i class="icon-user"></i>
+                                        <span class="ml-2">Profile </span>
+                                    </a>
+
+                                    <a href="{% url 'logout' %}" class="dropdown-item">
+                                        <i class="icon-key"></i>
+                                        <span class="ml-2">Logout </span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="quixnav">
+            <div class="quixnav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li><a href="{% url 'homepage' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span class="nav-text">Dashboard</span></a></li>
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span></a></li>
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-globe-2"></i><span class="nav-text">Item</span></a></li>
+
+                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                                class="icon icon-plug"></i><span class="nav-text">Sales</span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="./">Invoice</a></li>
+                            <li><a href="./">Credit Note</a></li>
+                         
+                        </ul>
+                    </li>
+
+                    <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                        class="icon icon-plug"></i><span class="nav-text">Purchase</span></a>
+                <ul aria-expanded="false">
+                    <li><a href="./">Invoice</a></li>
+                    <li><a href="./">Credit Note</a></li>
+                 
+                </ul>
+            </li>
+                    
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-globe-2"></i><span class="nav-text">Stock Report</span></a></li>
+                </ul>
+            </div>
+        </div>        
+
+
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+        {% block content %}{% endblock content %}
+    
+    </div>
+   
+ <!-- Required vendors -->
+ <script src="{% static 'assets/vendor/global/global.min.js' %}"></script>
+ <script src="{% static 'assets/js/quixnav-init.js' %}"></script>
+ <script src="{% static 'assets/js/custom.min.js' %}"></script>
+
+
+ <!-- Vectormap -->
+ <script src="{% static 'assets/vendor/raphael/raphael.min.js' %}"></script>
+ <script src="{% static 'assets/vendor/morris/morris.min.js' %}"></script>
+
+
+ <script src="{% static 'assets/vendor/circle-progress/circle-progress.min.js' %}"></script>
+ <script src="{% static 'assets/vendor/chart.js/Chart.bundle.min.js' %}"></script>
+
+ <script src="{% static 'assets/vendor/gaugeJS/dist/gauge.min.js' %}"></script>
+
+ <!--  flot-chart js -->
+ <script src="{% static 'assets/vendor/flot/jquery.flot.js' %}"></script>
+ <script src="{% static 'assets/vendor/flot/jquery.flot.resize.js' %}"></script>
+
+ <!-- Owl Carousel -->
+ <script src="{% static 'assets/vendor/owl-carousel/js/owl.carousel.min.js' %}"></script>
+
+ <!-- Counter Up -->
+ <script src="{% static 'assets/vendor/jqvmap/js/jquery.vmap.min.js' %}"></script>
+ <script src="{% static 'assets/vendor/jqvmap/js/jquery.vmap.usa.js' %}"></script>
+ <script src="{% static 'assets/vendor/jquery.counterup/jquery.counterup.min.js' %}"></script>
+
+
+ <script src="{% static 'assets/js/dashboard/dashboard-1.js' %}"></script>
+
+
+</body>
+
+</html>
+
+
+
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,500,700");
+@import url("static/icons/simple-line-icons/css/simple-line-icons.css");
+@import url("static/icons/font-awesome-old/css/font-awesome.min.css");
+@import url("static/icons/material-design-iconic-font/css/materialdesignicons.min.css");
+@import url("static/icons/themify-icons/css/themify-icons.css");
+@import url("static/icons/line-awesome/css/line-awesome.min.css");
+@import url("static/icons/avasta/css/style.css");
+@import url(static/vendor/animate/animate.min.css);
+@import url(static/vendor/aos/css/aos.min.css);
+@import url(static/vendor/perfect-scrollbar/css/perfect-scrollbar.css);
+@import url(static/vendor/metismenu/css/metisMenu.min.css);
+
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Billing Software </title>
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/logo/logo3.png' %}" />
+    <link rel="stylesheet" href="static/assets/vendor/owl-carousel/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="static/assets/vendor/owl-carousel/css/owl.theme.default.min.css">
+    <link href="static/assets/vendor/jqvmap/css/jqvmap.min.css" rel="stylesheet">
+    <link href="static/css/style.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+        <div class="sk-three-bounce">
+            <div class="sk-child sk-bounce1"></div>
+            <div class="sk-child sk-bounce2"></div>
+            <div class="sk-child sk-bounce3"></div>
+        </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+
+        <!--**********************************
+            Nav header start
+        ***********************************-->
+        <div class="nav-header">
+            <a href="" class="brand-logo">
+                <img class="logo-abbr" src="static/img/logo/logo3.png" alt="">
+                <p style="margin-top: 10px;"> BILLING SOFTWARE</p>
+                <img class="logo-compact" src="./images/logo-text.png" alt="">
+                <img class="brand-title" src="./images/logo-text.png" alt="">
+            </a>
+
+            <div class="nav-control">
+                <div class="hamburger">
+                    <span class="line"></span><span class="line"></span><span class="line"></span>
+                </div>
+            </div>
+        </div>
+        <!--**********************************
+            Nav header end
+        ***********************************-->
+
+        <!--**********************************
+            Header start
+        ***********************************-->
+        <div class="header">
+            <div class="header-content">
+                <nav class="navbar navbar-expand">
+                    <div class="collapse navbar-collapse justify-content-between">
+                        <div class="header-left">
+                            <div class="search_bar dropdown">
+                                <span class="search_icon p-3 c-pointer" data-toggle="dropdown">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <div class="dropdown-menu p-0 m-0">
+                                    <form>
+                                        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ul class="navbar-nav header-right">
+        
+                            <li class="nav-item dropdown header-profile">
+                                <a class="nav-link" href="#" role="button" data-toggle="dropdown">
+                                    <i class="mdi mdi-account"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <a href="{% url 'profile' %}" class="dropdown-item">
+                                        <i class="icon-user"></i>
+                                        <span class="ml-2">Profile </span>
+                                    </a>
+
+                                    <a href="{% url 'logout' %}" class="dropdown-item">
+                                        <i class="icon-key"></i>
+                                        <span class="ml-2">Logout </span>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!--**********************************
+            Header end ti-comment-alt
+        ***********************************-->
+
+        <!--**********************************
+            Sidebar start
+        ***********************************-->
+        <div class="quixnav">
+            <div class="quixnav-scroll">
+                <ul class="metismenu" id="menu">
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-world-2"></i><span class="nav-text">Dashboard</span></a></li>
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span></a></li>
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-globe-2"></i><span class="nav-text">Item</span></a></li>
+        
+                    <li class="has-arrow"><a href="javascript:void()" aria-expanded="false"><i class="icon icon-plug"></i><span class="nav-text">Sales</span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="./">Invoice</a></li>
+                            <li><a href="./">Credit Note</a></li>
+                        </ul>
+                    </li>
+        
+                    <li class="has-arrow"><a href="javascript:void()" aria-expanded="false"><i class="icon icon-plug"></i><span class="nav-text">Purchase</span></a>
+                        <ul aria-expanded="false">
+                            <li><a href="./">Bill</a></li>
+                            <li><a href="./">Credit Note</a></li>
+                        </ul>
+                    </li>
+        
+                    <li><a href="/" aria-expanded="false"><i class="icon icon-globe-2"></i><span class="nav-text">Stock Report</span></a></li>
+                </ul>
+            </div>
+        </div>        
+
+
+        </div>
+        <!--**********************************
+            Sidebar end
+        ***********************************-->
+
+        <!--**********************************
+            Content body start
+        ***********************************-->
+        <div class="content-body">
+            <!-- row -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Today Expenses </div>
+                                    <div class="stat-digit"> <i class="fa fa-usd"></i>8500</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success w-85" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Income Detail</div>
+                                    <div class="stat-digit"> <i class="fa fa-usd"></i>7800</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-primary w-75" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Task Completed</div>
+                                    <div class="stat-digit"> <i class="fa fa-usd"></i> 500</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-warning w-50" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-sm-6">
+                        <div class="card">
+                            <div class="stat-widget-two card-body">
+                                <div class="stat-content">
+                                    <div class="stat-text">Task Completed</div>
+                                    <div class="stat-digit"> <i class="fa fa-usd"></i>650</div>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-danger w-65" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /# card -->
+                    </div>
+                    <!-- /# column -->
+                </div>
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Sales Overview</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-xl-12 col-lg-8">
+                                        <div id="morris-bar-chart"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-4 col-md-4">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <div class="m-t-10">
+                                    <h4 class="card-title">Customer Feedback</h4>
+                                    <h2 class="mt-3">385749</h2>
+                                </div>
+                                <div class="widget-card-circle mt-5 mb-5" id="info-circle-card">
+                                    <i class="ti-control-shuffle pa"></i>
+                                </div>
+                                <ul class="widget-line-list m-b-15">
+                                    <li class="border-right">92% <br><span class="text-success"><i
+                                                class="ti-hand-point-up"></i> Positive</span></li>
+                                    <li>8% <br><span class="text-danger"><i
+                                                class="ti-hand-point-down"></i>Negative</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Project</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="current-progress">
+                                    <div class="progress-content py-2">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="progress-text">Website</div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <div class="current-progressbar">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-primary w-40" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+                                                            40%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-content py-2">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="progress-text">Android</div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <div class="current-progressbar">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-primary w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100">
+                                                            60%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-content py-2">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="progress-text">Ios</div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <div class="current-progressbar">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-primary w-70" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100">
+                                                            70%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="progress-content py-2">
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="progress-text">Mobile</div>
+                                            </div>
+                                            <div class="col-lg-8">
+                                                <div class="current-progressbar">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-primary w-90" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100">
+                                                            90%
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="testimonial-widget-one p-17">
+                                    <div class="testimonial-widget-one owl-carousel owl-theme">
+                                        <div class="item">
+                                            <div class="testimonial-content">
+                                                <div class="testimonial-text">
+                                                    <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+                                                    consectetur adipisicing elit.
+                                                    <i class="fa fa-quote-right"></i>
+                                                </div>
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="testimonial-author">TYRION LANNISTER</div>
+                                                        <div class="testimonial-author-position">Founder-Ceo. Dell Corp
+                                                        </div>
+                                                    </div>
+                                                    <img class="testimonial-author-img ml-3" src="./images/avatar/1.png" alt="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="testimonial-content">
+                                                <div class="testimonial-text">
+                                                    <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+                                                    consectetur adipisicing elit.
+                                                    <i class="fa fa-quote-right"></i>
+                                                </div>
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="testimonial-author">TYRION LANNISTER</div>
+                                                        <div class="testimonial-author-position">Founder-Ceo. Dell Corp
+                                                        </div>
+                                                    </div>
+                                                    <img class="testimonial-author-img ml-3" src="./images/avatar/1.png" alt="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="item">
+                                            <div class="testimonial-content">
+                                                <div class="testimonial-text">
+                                                    <i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.
+                                                    consectetur adipisicing elit.
+                                                    <i class="fa fa-quote-right"></i>
+                                                </div>
+                                                <div class="media">
+                                                    <div class="media-body">
+                                                        <div class="testimonial-author">TYRION LANNISTER</div>
+                                                        <div class="testimonial-author-position">Founder-Ceo. Dell Corp
+                                                        </div>
+                                                    </div>
+                                                    <img class="testimonial-author-img ml-3" src="./images/avatar/1.png" alt="" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Web Server</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="cpu-load-chart">
+                                    <div id="cpu-load" class="cpu-load"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /# card -->
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Country</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="vmap13" class="vmap"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">New Orders</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Product</th>
+                                                <th>quantity</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <div class="round-img">
+                                                        <a href=""><img width="35" src="./images/avatar/1.png" alt=""></a>
+                                                    </div>
+                                                </td>
+                                                <td>Lew Shawon</td>
+                                                <td><span>Dell-985</span></td>
+                                                <td><span>456 pcs</span></td>
+                                                <td><span class="badge badge-success">Done</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="round-img">
+                                                        <a href=""><img width="35" src="./images/avatar/1.png" alt=""></a>
+                                                    </div>
+                                                </td>
+                                                <td>Lew Shawon</td>
+                                                <td><span>Asus-565</span></td>
+                                                <td><span>456 pcs</span></td>
+                                                <td><span class="badge badge-warning">Pending</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="round-img">
+                                                        <a href=""><img width="35" src="./images/avatar/1.png" alt=""></a>
+                                                    </div>
+                                                </td>
+                                                <td>lew Shawon</td>
+                                                <td><span>Dell-985</span></td>
+                                                <td><span>456 pcs</span></td>
+                                                <td><span class="badge badge-success">Done</span></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <div class="round-img">
+                                                        <a href=""><img width="35" src="./images/avatar/1.png" alt=""></a>
+                                                    </div>
+                                                </td>
+                                                <td>Lew Shawon</td>
+                                                <td><span>Asus-565</span></td>
+                                                <td><span>456 pcs</span></td>
+                                                <td><span class="badge badge-warning">Pending</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="round-img">
+                                                        <a href=""><img width="35" src="./images/avatar/1.png" alt=""></a>
+                                                    </div>
+                                                </td>
+                                                <td>lew Shawon</td>
+                                                <td><span>Dell-985</span></td>
+                                                <td><span>456 pcs</span></td>
+                                                <td><span class="badge badge-success">Done</span></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <div class="round-img">
+                                                        <a href=""><img width="35" src="./images/avatar/1.png" alt=""></a>
+                                                    </div>
+                                                </td>
+                                                <td>Lew Shawon</td>
+                                                <td><span>Asus-565</span></td>
+                                                <td><span>456 pcs</span></td>
+                                                <td><span class="badge badge-warning">Pending</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-xl-4 col-xxl-6 col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Timeline</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="widget-timeline">
+                                    <ul class="timeline">
+                                        <li>
+                                            <div class="timeline-badge primary"></div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>10 minutes ago</span>
+                                                <h6 class="m-t-5">Youtube, a video-sharing website, goes live.</h6>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <div class="timeline-badge warning">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>20 minutes ago</span>
+                                                <h6 class="m-t-5">Mashable, a news website and blog, goes live.</h6>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <div class="timeline-badge danger">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>30 minutes ago</span>
+                                                <h6 class="m-t-5">Google acquires Youtube.</h6>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <div class="timeline-badge success">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>15 minutes ago</span>
+                                                <h6 class="m-t-5">StumbleUpon is acquired by eBay. </h6>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <div class="timeline-badge warning">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>20 minutes ago</span>
+                                                <h6 class="m-t-5">Mashable, a news website and blog, goes live.</h6>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <div class="timeline-badge dark">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>20 minutes ago</span>
+                                                <h6 class="m-t-5">Mashable, a news website and blog, goes live.</h6>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <div class="timeline-badge info">
+                                            </div>
+                                            <a class="timeline-panel text-muted" href="#">
+                                                <span>30 minutes ago</span>
+                                                <h6 class="m-t-5">Google acquires Youtube.</h6>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-xxl-6 col-lg-6 col-md-6 col-sm-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Todo</h4>
+                            </div>
+                            <div class="card-body px-0">
+                                <div class="todo-list">
+                                    <div class="tdl-holder">
+                                        <div class="tdl-content widget-todo mr-4">
+                                            <ul id="todo_list">
+                                                <li><label><input type="checkbox"><i></i><span>Get up</span><a href='#'
+                                                            class="ti-trash"></a></label></li>
+                                                <li><label><input type="checkbox" checked><i></i><span>Stand up</span><a
+                                                            href='#' class="ti-trash"></a></label></li>
+                                                <li><label><input type="checkbox"><i></i><span>Don't give up the
+                                                            fight.</span><a href='#' class="ti-trash"></a></label></li>
+                                                <li><label><input type="checkbox" checked><i></i><span>Do something
+                                                            else</span><a href='#' class="ti-trash"></a></label></li>
+                                                <li><label><input type="checkbox" checked><i></i><span>Stand up</span><a
+                                                            href='#' class="ti-trash"></a></label></li>
+                                                <li><label><input type="checkbox"><i></i><span>Don't give up the
+                                                            fight.</span><a href='#' class="ti-trash"></a></label></li>
+                                            </ul>
+                                        </div>
+                                        <div class="px-4">
+                                            <input type="text" class="tdl-new form-control" placeholder="Write new item and hit 'Enter'...">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-12 col-xxl-6 col-xl-4 col-lg-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Product Sold</h4>
+                                <div class="card-action">
+                                    <div class="dropdown custom-dropdown">
+                                        <div data-toggle="dropdown">
+                                            <i class="ti-more-alt"></i>
+                                        </div>
+                                        <div class="dropdown-menu dropdown-menu-right">
+                                            <a class="dropdown-item" href="#">Option 1</a>
+                                            <a class="dropdown-item" href="#">Option 2</a>
+                                            <a class="dropdown-item" href="#">Option 3</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="chart py-4">
+                                    <canvas id="sold-product"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-12 col-xxl-6 col-lg-6 col-md-12">
+                        <div class="row">
+                            <div class="col-xl-3 col-lg-6 col-sm-6 col-xxl-6 col-md-6">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-facebook">
+                                        <span class="s-icon"><i class="fa fa-facebook"></i></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 border-right">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">119</span> k</h4>
+                                                <p class="m-0">Followers</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-sm-6 col-xxl-6 col-md-6">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-linkedin">
+                                        <span class="s-icon"><i class="fa fa-linkedin"></i></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 border-right">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">119</span> k</h4>
+                                                <p class="m-0">Followers</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-sm-6 col-xxl-6 col-md-6">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-googleplus">
+                                        <span class="s-icon"><i class="fa fa-google-plus"></i></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 border-right">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">119</span> k</h4>
+                                                <p class="m-0">Followers</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-lg-6 col-sm-6 col-xxl-6 col-md-6">
+                                <div class="card">
+                                    <div class="social-graph-wrapper widget-twitter">
+                                        <span class="s-icon"><i class="fa fa-twitter"></i></span>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 border-right">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">89</span> k</h4>
+                                                <p class="m-0">Friends</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="pt-3 pb-3 pl-0 pr-0 text-center">
+                                                <h4 class="m-1"><span class="counter">119</span> k</h4>
+                                                <p class="m-0">Followers</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--**********************************
+            Content body end
+        ***********************************-->
+
+
+        <!--**********************************
+            Footer start
+        ***********************************-->
+        <div class="footer">
+            <div class="copyright">
+                <p>Copyright © Designed &amp; Developed by <a href="#" target="_blank">Quixkit</a> 2019</p>
+                <p>Distributed by <a href="https://themewagon.com/" target="_blank">Themewagon</a></p> 
+            </div>
+        </div>
+        <!--**********************************
+            Footer end
+        ***********************************-->
+
+        <!--**********************************
+           Support ticket button start
+        ***********************************-->
+
+        <!--**********************************
+           Support ticket button end
+        ***********************************-->
+
+
+    </div>
+    <!--**********************************
+        Main wrapper end
+    ***********************************-->
+
+    <!--**********************************
+        Scripts
+    ***********************************-->
+ <!-- Required vendors -->
+ <script src="static/assets/vendor/global/global.min.js"></script>
+ <script src="static/assets/js/quixnav-init.js"></script>
+ <script src="static/assets/js/custom.min.js"></script>
+
+
+ <!-- Vectormap -->
+ <script src="static/assets/vendor/raphael/raphael.min.js"></script>
+ <script src="static/assets/vendor/morris/morris.min.js"></script>
+
+
+ <script src="static/assets/vendor/circle-progress/circle-progress.min.js"></script>
+ <script src="static/assets/vendor/chart.js/Chart.bundle.min.js"></script>
+
+ <script src="static/assets/vendor/gaugeJS/dist/gauge.min.js"></script>
+
+ <!--  flot-chart js -->
+ <script src="static/assets/vendor/flot/jquery.flot.js"></script>
+ <script src="static/assets/vendor/flot/jquery.flot.resize.js"></script>
+
+ <!-- Owl Carousel -->
+ <script src="static/assets/vendor/owl-carousel/js/owl.carousel.min.js"></script>
+
+ <!-- Counter Up -->
+ <script src="static/assets/vendor/jqvmap/js/jquery.vmap.min.js"></script>
+ <script src="static/assets/vendor/jqvmap/js/jquery.vmap.usa.js"></script>
+ <script src="static/assets/vendor/jquery.counterup/jquery.counterup.min.js"></script>
+
+
+ <script src="static/assets/js/dashboard/dashboard-1.js"></script>
+
+</body>
+
+</html>

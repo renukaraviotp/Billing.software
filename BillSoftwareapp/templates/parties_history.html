@@ -1,0 +1,49 @@
+ 
+ 
+{% extends 'base.html' %}
+{% block content %}
+{% load custom_filters %}
+{% load static %}
+
+<style>
+    table td,table th{
+        color: black;
+    }
+    table td{
+        font-size: 17px;
+    }
+    body{
+        background-color: rgb(130, 144, 199);
+        
+    }
+    
+</style>
+
+<div class="container col-md-10 mr-1" style="background-color: rgb(130, 144, 199);min-height: 100vh;"> <br><br><br><br><br><br><br>
+    
+   <div class="container col-md-10" style="box-shadow: 3px 3px 3px gray;border-radius: 15px;padding: 20px;background-color: white;">
+    <h2>{{partyName.party_name}}'s History <div style="float: right;"> <a style="background-color: #3d4465;color: white;" onmouseover="this.style.backgroundColor='#480ceb'" onmouseout="this.style.backgroundColor='#3d4465'" class="btn " href="{% url 'parties_table' %}"><i class="fa-solid fa-arrow-left"></i> Back</a> </div></h2>
+    <table class="table" >
+        <thead>
+            <tr>
+                <th style="font-size: larger;">ACTION</th>
+                <th style="font-size: larger;">DATE</th>
+                <th style="font-size: larger;">STAFF</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in history %}
+            <tr>
+                <td>{{i.action}}</td>
+                <td>{{i.date}}</td>
+                <td>{{i.staff.first_name}} {{i.staff.last_name}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   </div>
+
+</div>
+
+
+{% endblock %}

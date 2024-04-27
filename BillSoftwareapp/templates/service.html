@@ -1,0 +1,361 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="en">
+	
+<head>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<title>MultiUser Billing Software In India</title>
+		<meta name="description" content="">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<link rel="shortcut icon" type="image/png" href="{% static 'img/logo/logo3.png' %}" />
+
+		<!-- all css here -->
+
+		<!-- bootstrap v3.3.6 css -->
+		<link rel="stylesheet" href="static/assets/css/bootstrap.min.css">
+		<!-- owl.carousel css -->
+		<link rel="stylesheet" href="static/assets/css/owl.carousel.css">
+		<link rel="stylesheet" href="static/assets/css/owl.transitions.css">
+       <!-- Animate css -->
+        <link rel="stylesheet" href="static/assets/css/animate.css">
+        <!-- meanmenu css -->
+        <link rel="stylesheet" href="static/assets/css/meanmenu.min.css">
+		<!-- font-awesome css -->
+		<link rel="stylesheet" href="static/assets/css/font-awesome.min.css">
+		<link rel="stylesheet" href="static/assets/css/themify-icons.css">
+		<link rel="stylesheet" href="static/assets/css/flaticon.css">
+		<!-- magnific css -->
+        <link rel="stylesheet" href="static/assets/css/magnific.min.css">
+		<!-- style css -->
+		<link rel="stylesheet" href="static/assets/style/style.css">
+		<!-- responsive css -->
+		<link rel="stylesheet" href="static/assets/css/responsive.css">
+
+		<!-- modernizr css -->
+		<script src="static/assets/js/vendor/modernizr-2.8.3.min.js"></script>
+
+        <style>
+
+            .slide-area {
+                background: rgba(0, 0, 0, 0) url(static/img/slider/h1.jpg) no-repeat scroll top center / cover;
+                width: 100%;
+                height: 100%;
+                z-index: 1;
+                position: relative;
+            }
+            .slide-area::after {
+                position: absolute;
+                left: 0;
+                top: 0;
+                height: 100%;
+                width: 100%;
+                background: rgba(10, 24, 40, 0.1) none repeat scroll 0 0;
+                content: "";
+                z-index: -1;
+            }
+
+            .header-right-link {
+                float: right;
+                width: 115px;
+                padding: 30px 0px;
+                margin-left: 20px;
+                text-align: right;
+            }
+                    </style>
+	</head>
+		<body >
+
+		<!--[if lt IE 8]>
+			<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+		<![endif]-->
+
+        <div id="preloader"></div>
+        <header class="header-one">
+            <!-- Start top bar -->
+            <div class="topbar-area fix hidden-xs">
+                <div class="container">
+                </div>
+            </div>
+            <!-- End top bar -->
+            <!-- header-area start -->
+            <div id="sticker" class="header-area hidden-xs">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <div class="row">
+                                <!-- logo start -->
+                                <div class="col-md-3 col-sm-3">
+                                    <div class="logo">
+                                        <!-- Brand -->
+                                        <a class="navbar-brand page-scroll white-logo" href="">
+                                            <img src="static/img/logo/logo3.png" alt="">
+                                        </a>
+                                        <a class="navbar-brand page-scroll black-logo" href="">
+                                            <img src="img/logo/logo.png" alt="">
+                                        </a>
+                                    </div>
+                                    <!-- logo end -->
+                                </div>
+                                <div class="col-md-9 col-sm-9">
+                                    <div class="header-right-link">
+                                        <!-- search option end -->
+                                        <a class="s-menu" href="{% url 'login' %}">Login</a>
+                              
+                                    </div>
+                                    <div class="header-right-link">
+                                        <!-- search option end -->
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" id="navbar-example" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: orange; width: 120px; height: 42px; margin-top: -10px; color: white; ">
+                                               <b style="font-size: 14px;"> REGISTER</b>
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="navbar-example" style="margin-left: -15px; ">
+                                                <a class="dropdown-item" href="{% url 'register' %}" style="color: black; margin-left: 10px; ">Company Registration</a>
+                                                <a class="dropdown-item" href="{% url 'registerstaff' %}" style="color: black; margin-left: 10px; ">Staff Registration</a>
+                                                <!-- <a class="dropdown-item" href="#">Something else here</a> -->
+                                              </div>
+                                        </div>
+                                    </div>
+                                    <!-- mainmenu start -->
+                                    <nav class="navbar navbar-default">
+                                        <div class="collapse navbar-collapse" id="navbar-example">
+                                            <div class="main-menu">
+                                                <ul class="nav navbar-nav navbar-right">
+                                                    <li><a class="pages" href="{% url 'home' %}">Home</a>
+
+                                                    </li>
+                                                    <li><a href="{% url 'about' %}">About us</a></li>
+                                                    <li><a href="{% url 'service' %}">Service</a></li>
+                                                    <li><a href="{% url 'contact' %}">contacts</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </nav>
+                                    <!-- mainmenu end -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- header-area end -->
+            <!-- mobile-menu-area start -->
+            <div class="mobile-menu-area hidden-lg hidden-md hidden-sm">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mobile-menu">
+                                <div class="logo">
+                                    <a href=""><img src="static/img/logo/logo3.png" alt="" /></a>
+                                </div>
+                                <nav id="dropdown">
+                                    <ul>
+                                        <li><a class="pages" href="{% url 'home' %}">Home</a>
+                                        </li>
+                                        <li><a href="{% url 'about' %}">About us</a></li>
+                                        <li><a href="{% url 'service' %}">Service</a></li>
+                                        <li><a href="{% url 'contact' %}">contacts</a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- mobile-menu-area end -->		
+        </header>
+        <!-- header end -->
+        <!-- Start breadcumb Area -->
+        <div class="page-area slide-area">
+            <div class="breadcumb-overlay"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="breadcrumb text-center">
+                            <div class="section-headline white-headline">
+                                <h3>Service</h3>
+                            </div>
+                            <ul class="breadcrumb-bg">
+                                <li class="home-bread">Home</li>
+                                <li>Service</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End breadcumb Area -->
+           <!-- ======= Services Section ======= -->
+    <section id="services" class="services section-bg">
+        <div class="container">
+  
+          <div class="section-title">
+          
+            <p data-aos="fade-in">Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+          </div>
+  
+          <div class="row">
+           
+            <div class="col-md-6 d-flex align-items-stretch" data-aos="fade-right">
+              <div class="card">
+                <div class="card-img">
+                  <img src="static/img/services-3.jpg" alt="...">
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title"><a href="">Veritatis natus nisi</a></h5>
+                  <p class="card-text">Nemo enim ipsam voluptatem quia voluptas sit aut odit aut fugit, sed quia magni dolores eos qui ratione voluptatem sequi nesciunt Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 d-flex align-items-stretch" data-aos="fade-left">
+              <div class="card">
+                <div class="card-img">
+                  <img src="static/img/services-4.jpg" alt="...">
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title"><a href="">Aliquam veritatis</a></h5>
+                  <p class="card-text">Nostrum eum sed et autem dolorum perspiciatis. Magni porro quisquam laudantium voluptatem. In molestiae earum ab sit esse voluptatem. Eos ipsam cumque ipsum officiis qui nihil aut incidunt aut</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+      </section><!-- End Services Section -->
+  
+      <!-- ======= Features Section ======= -->
+      <section id="features" class="features section-bg">
+        <div class="container">
+  
+          <div class="section-title">
+            <h2 data-aos="fade-in">Features</h2>
+            <p data-aos="fade-in">Magnam dolores commodi suscipit. Necessitatibus eius consequatur ex aliquid fuga eum quidem. Sit sint consectetur velit. Quisquam quos quisquam cupiditate. Et nemo qui impedit suscipit alias ea. Quia fugiat sit in iste officiis commodi quidem hic quas.</p>
+          </div>
+  
+          <div class="row content">
+            <div class="col-md-5" data-aos="fade-right">
+              <img src="static/img/features-1.svg" class="img-fluid" alt="">
+            </div>
+            <div class="col-md-7 pt-4" data-aos="fade-left">
+              <h3>Voluptatem dignissimos provident quasi corporis voluptates sit assumenda.</h3>
+              <p class="font-italic">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+                magna aliqua.
+              </p>
+              <ul>
+                <li><i class="icofont-check"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
+                <li><i class="icofont-check"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
+              </ul>
+            </div>
+          </div>
+
+  
+        </div>
+      </section><!-- End Features Section -->
+
+       
+        <!-- Start Footer Area -->
+        <footer class="footer1">
+            <div class="footer-area">
+                <div class="container">
+                    <div class="row">
+                        
+                        <!-- end single footer -->
+                        <div class="col-md-4 col-sm-3 col-xs-12">
+                            <div class="footer-content">
+                                <div class="footer-head">
+                                    <h4>Services Link</h4>
+                                    <ul class="footer-list">
+                                        <li><a href="#">Home</a></li>
+                                        <li><a href="#">About us</a></li>
+                                        <li><a href="#">Contact us </a></li>
+                                        <li><a href="#">Services </a></li>
+                                        <li><a href="#">Privacy</a></li>
+                                        <li><a href="#">Terms & Condition</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end single footer -->
+                        <div class="col-md-3 col-sm-4 col-xs-12">
+                            <div class="footer-content last-content">
+                                <div class="footer-head">
+                                    <h4>Information</h4> 
+                                    <div class="footer-contacts">
+										<p><span>Tel :</span> 9983898799</p>
+										<p><span>Email :</span> billsoftware.com</p>
+										<p><span>Location :</span> Carnival 1, Infopark, Kakkanad</p>
+									</div> 
+                                    <div class="footer-icons">
+                                        <ul>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-google"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-pinterest"></i>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#">
+                                                    <i class="fa fa-instagram"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-area-bottom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-12">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- End Footer area -->
+		
+		<!-- all js here -->
+
+		<!-- jquery latest version -->
+		<script src="static/assets/js/vendor/jquery-1.12.4.min.js"></script>
+		<!-- bootstrap js -->
+		<script src="static/assets/js/bootstrap.min.js"></script>
+		<!-- owl.carousel js -->
+		<script src="static/assets/js/owl.carousel.min.js"></script>
+		  <!-- stellar js -->
+        <script src="static/assets/js/jquery.stellar.min.js"></script>
+		<!-- magnific js -->
+        <script src="static/assets/js/magnific.min.js"></script>
+        <!-- wow js -->
+        <script src="static/assets/js/wow.min.js"></script>
+        <!-- meanmenu js -->
+        <script src="static/assets/js/jquery.meanmenu.js"></script>
+		<!-- Form validator js -->
+		<script src="static/assets/js/form-validator.min.js"></script>
+		<!-- plugins js -->
+		<script src="static/assets/js/plugins.js"></script>
+		<!-- main js -->
+		<script src="static/assets/js/main.js"></script>
+	</body>
+
+<!-- Mirrored from rockstheme.com/rocks/aievari-live/about.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 03 Mar 2020 08:28:01 GMT -->
+</html>

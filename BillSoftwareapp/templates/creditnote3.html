@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% load social_share %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        background-color: rgb(130, 144, 199);
+      }
+      
+      .credit {
+        border: 1px solid #ccc;
+        padding: 20px;
+        max-width: 900px;
+      }
+      
+      .credit-header, .credit-footer {
+        text-align: center;
+      }
+      
+      .credit-body {
+        margin-top: 20px;
+      }
+      
+      .table-container {
+        overflow-x: auto;
+      }
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      table th, table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      
+      .credit-footer p {
+        font-weight: bold;
+      }
+      .credit-head-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 700px;
+    }
+    .credit-head-bottom-left,
+    .credit-head-bottom-right {
+        width: 48%; /* Adjust width as needed */
+        flex: 1;
+    }
+    {% comment %} .printContainer {
+      visibility: visible !important; /* Override the rule above to only show the printables*/
+      position: absolute;
+      z-index: 99999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      font-size: large;
+  } {% endcomment %}
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .credit-container, .credit-container * {
+      visibility: visible !important;
+    }
+    .print-area{
+        visibility: visible;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        overflow: hidden;
+    }
+    .overflow-view{
+        overflow-x: hidden;
+    }
+
+    .credit-btns{
+        display: none;
+    }
+    .credit-header{
+      visibility: visible;
+      background-image: linear-gradient(rgb(130, 144, 199), rgb(60, 61, 101)); padding:10px;
+    }
+  }
+      
+      
+</style>
+<body>
+    
+
+<br><br><br><br><br><br>
+<div class="body-wrapper" style="margin-left:25%;margin-right:5%;background-color:white;box-shadow:5px;">
+<div class="row ps-3 pe-3 m-0" >
+<div class="col-sm-12 ps-2 pe-3">
+    <div class="row pt-0 m-0">
+        <div class="card p-0 bg-light bs col-md-12"><br>
+            <div class="row">
+                <div class="container" id="print-area">
+                    <div class="row ">
+                        <div class="col-md-3" style="margin-left: 7vh; margin-top: 7vh;">
+                            <div class="form-group">
+                                <h2>Credit Note Details</h2>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4 text-right" style="margin-left: -13vh;">
+                          <div class="btn-group" role="group" aria-label="Button group">
+                              <button class="btn mt-3" type="button" onclick="printContent()" style="margin-right: 2vh;">
+                                  <span><img width="30px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
+                                  <br><span style="color: black; font-size: small; font-weight: bold;">Print</span>
+                              </button>
+                      
+                              <button class="btn mt-3" type="button" id="download-pdf" style="margin-right: 2vh;">
+                                  <span><img width="30px" src="{% static 'images/credit/pdf.jpg' %}" alt="no img"></span>
+                                  <br><span style="color: black; font-size: small; font-weight: bold;">Pdf</span>
+                              </button>
+                      
+                              <div class="dropdown">
+                                  <button class="btn mt-3 dropdown-toggle" type="button" id="shareDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                      <span><img width="30px" src="{% static 'images/credit/share.png' %}" alt="no img"></span>
+                                      <br>
+                                      <span style="color: black; font-size: small; font-weight: bold;">Share</span>
+                                  </button>
+                                  <div class="dropdown-menu" aria-labelledby="shareDropdown">
+                                      <a class="dropdown-item" href="#" id="share_on_whatsapp">{% post_to_whatsapp object_or_url "WhatsApp" %}</a>
+                                      <a class="dropdown-item" href="#" id="share_with_email" onclick="toggleEmailModal()">Email</a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="templates" class="col text-center pb-2 pt-3" style="background-color:rgb(130, 144, 199); color:white;"  >
+      <a class="fw-bolder fs-4" style="color: white; text-decoration: none; " >TEMPLATE</a>
+    </div><br>
+
+    <div class="credit" style='background-color:white;' id="whatToPrint1">
+      <div class="d-flex justify-content-end">
+        <div class="ml-auto">
+            <a href="{% url "transactiontable" %}" class="close-icon" style="font-size: large;">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </div>
+    </div>
+    
+    <div class="credit-container">
+        <div class="credit-header" style="background-image: linear-gradient(rgb(130, 144, 199), rgb(60, 61, 101)); padding:10px;"> 
+          <h1>Credit Note</h1>
+          <p class="text-white">CreditNote No: <span id="creditNumber">{{cd.returnno}}</span></p>
+          <p class="text-white">Date: <span id="creditDate">{{cd.date}}</span></p>
+        </div>
+        <div class="credit-body">
+          <div class="credit-head-bottom">
+            <div class="credit-head-row">
+                <div class="credit-head-bottom-left">
+                    <ul>
+                        <li class='text-bold' style="color:black; font-weight:bold;">From:</li>
+                        <li style="color:black;">{{cd.company.company_name}}</li>
+                        <li style="color:black;">{{cd.company.address}}</li>
+                    </ul>
+                </div>
+                <div class="credit-head-bottom-right">
+                    <ul class="text-end">
+                        <li class='text-bold' style="color:black; font-weight:bold;">To:</li>
+                        <li style="color:black;">{{cd.party_name}}</li>
+                    </ul>
+                </div>
+            </div>
+          </div><br>
+        
+        
+          <div class="table-container">
+            <table>
+              <thead style="background-image: linear-gradient(rgb(130, 144, 199), rgb(60, 61, 101));">
+                <tr style="color:black; font-weight:bold;">
+                    <td class = "text-bold">Item</td>
+                    <td class = "text-bold">HSN</td>
+                    <td class = "text-bold">Qty</td>
+                    <td class = "text-bold">Rate</td>
+                    <td class = "text-bold">Tax</td>
+                    <td class = "text-bold">Discount</td>
+                    <td class = "text-bold">Total</td>
+                </tr>
+              </thead>
+              <tbody id="creditItems">
+                {% for i in crditem %}
+                <tr style="color:black;">
+                  <td>{{i.product}}</td>
+                  <td>{{i.hsn}}</td>
+                  <td>{{i.qty}}</td>
+                  <td>{{i.price}}</td>
+                  <td>{{i.tax}}</td>
+                  <td>{{i.discount}}</td> 
+                  <td class = "text-end">{{i.total}}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div> 
+        </div>
+        <br><br>
+        <div class="credit-footer">
+          <p style="color:black;">Sub Total: <span id="totalAmount">{{cd.subtotal}}</span></p>
+          <p style="color:black;">Tax: <span id="totalAmount">{{cd.taxamount}}</span></p>
+          <p style="color:black;">Total: <span id="totalAmount">{{cd.grandtotal}}</span></p>
+        </div>
+      </div>
+    </div>
+
+
+
+<br><br>
+<div class="container">
+  <div class="row justify-content-center">
+      <div class="col-6 d-flex justify-content-center">
+          <ul class="pagination pagination-sm">
+              <li class="page-item"><a class="page-link" href="{% url "template1" cd.id %}">1</a></li>
+              <li class="page-item"><a class="page-link" href="{% url "template2" cd.id %}">2</a></li>
+              <li class="page-item active"><a class="page-link" href="{% url "template3" cd.id %}">3</a></li>
+          </ul>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+</div><br><br>
+
+<div id="emailModal" class="modal col-md-6" style="margin-left:25%; height:125%">
+  <div class="modal-content">
+      <span class="close" style="cursor: pointer;" onclick="closeEmailModal()">&times;</span>
+      <div class="modal-header" style="background: rgb(130, 144, 199);">
+          <h5 class="m-3 text-uppercase" style="color:white;" id="shareBillEmailLabel">Share Credit Note Via Email</h5>
+      </div>
+      <div class="modal-body" style="background: rgb(130, 144, 199);">
+          <div class="card p-3 m-3">
+              <form action="{% url 'pdftomailcredit' cd.id %}" method="post" class="needs-validation" id="share_to_email_form" autocomplete="off">
+                  {% csrf_token %}
+                  <div class="form-group">
+                      <label for="emailIds">Email IDs</label>
+                      <textarea class="form-control text-dark" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma." required></textarea>
+                  </div>
+                  <div class="form-group mt-2">
+                      <label for="item_unitname">Message(optional)</label>
+                      <textarea name="email_message" id="email_message" class="text-dark form-control" cols="" rows="2" placeholder="This message will be sent along with credit note details."></textarea>
+                  </div>
+                  <div class="modal-footer d-flex justify-content-center" style="border-top: 2px solid #ffff;">
+                      <input type="submit" id="share_with_email" class="submitShareEmailBtn rounded-pill text-grey w-40 my-4 mx-3" value="SEND">
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<script>
+  // Function to open the email modal
+  function toggleEmailModal() {
+      document.getElementById("emailModal").style.display = "block";
+  }
+
+  // Function to close the email modal
+  function closeEmailModal() {
+      document.getElementById("emailModal").style.display = "none";
+  }
+
+  // Handle the submission of the email form
+  $(document).ready(function () {
+  $('#share_with_email').on('click', function () {
+    var emailsInput = document.getElementById('emailIds');
+    var emailsString = emailsInput.value.trim();
+
+    var emails = emailsString.split(',').map(function (email) {
+      return email.trim();
+    });
+
+    var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+    var invalidEmails = []
+    if (emailsString == "") {
+      alert('Enter valid email addresses..')
+    }
+    else {
+      for (var i = 0; i < emails.length; i++) {
+        var currentEmail = emails[i];
+
+        if (currentEmail != "" && !emailRegex.test(currentEmail)) {
+          console.log(currentEmail + ' is invalid!');
+          invalidEmails.push(currentEmail)
+        }
+      }
+
+      if (invalidEmails.length > 0) {
+        alert('Invalid emails..Please check!\n' + invalidEmails)
+        // alert(invalidEmails)
+      } else {
+        $('#share_to_email_form').submit();
+      }
+    }
+  })
+});
+ 
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+    
+
+    
+<script>
+  function printContent() {
+      var printContents = document.getElementById("whatToPrint1").innerHTML;
+      var originalContents = document.body.innerHTML;
+      document.body.innerHTML = printContents;
+      var printCSS = "<style>\
+                      body { font-family: Arial, sans-serif;margin: 0; } \
+                      .credit { border: 1px solid #ccc; padding: 20px; max-width: 900px; } \
+                      .credit-header, .credit-footer { text-align: center; } \
+                      .credit-body { margin-top: 20px; } \
+                      .table-container { overflow-x: auto; } \
+                      table { width: 100%; border-collapse: collapse; } \
+                      table th, table td { border: 1px solid #ddd; padding: 8px;text-align: left;} \
+                      .credit-footer p { font-weight: bold;} \
+                      .credit-head-row { display: flex; justify-content: space-between; gap: 700px; } \
+                    .credit-head-bottom-left,.credit-head-bottom-right { width: 48%; flex: 1;} \
+                      </style>";
+      document.body.innerHTML += printCSS;
+      window.print();
+      document.body.innerHTML = originalContents;
+  }
+</script>
+
+<script>
+  document.getElementById('download-pdf').addEventListener('click', function() {
+      var element = document.querySelector('.credit-container'); // Select the container to print
+      var opt = {
+          margin: 0.1,
+          filename: 'CreditNote.pdf',
+          image: { type: 'jpeg', quality: 0.98 },
+          html2canvas: { scale: 3 },
+          jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save(); // Generate and save PDF
+  });
+</script>
+
+
+
+</body>
+{% endblock content %}

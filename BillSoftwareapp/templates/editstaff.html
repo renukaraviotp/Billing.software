@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+<style>
+
+    .save_btn{
+        background-color: rgb(218, 164, 48);
+        color: azure; 
+        padding: 3; 
+        margin-left: 200px; 
+        margin-top: 30px; 
+        width: 200px;
+        border-radius: 20px;
+        justify-content: center;
+        /* z-index: 1 !important; */
+    }
+.section-title {
+  font-size: 32px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  position: relative;
+  color: rgb(218, 164, 48);
+}
+.inputContainer {
+  position: relative;
+  height: 45px;
+  width: 90%;
+  margin-bottom: 17px;
+}
+/* Style the inputs */
+
+.input {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #DADCE0;
+  border-radius: 7px;
+  font-size: 16px;
+  padding: 0 20px;
+  outline: none;
+  background: none;
+  z-index: 1;
+    color: #c7cfd4;
+}
+
+/* Hide the placeholder texts (a) */
+
+::placeholder {
+  color: transparent;
+}
+.label {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  padding: 0 4px;
+ 
+  color: #c7cfd4;
+  font-size: 16px;
+  transition: 0.5s;
+  z-index: 0;
+}
+.submitBtn {
+  display: block;
+  margin-left: auto;
+  padding: 15px 30px;
+  border: none;
+  background-color:  #47b2e4;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 30px;
+}
+
+.submitBtn:hover {
+  background-color: rgb(51, 105, 131);
+  transform: translateY(-2px);
+}
+.input:focus + .label {
+  top: -7px;
+  left: 3px;
+  z-index: 10;
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(211, 213, 219);
+}
+.input:focus {
+  border: 2px solid rgb(218, 164, 48);
+}
+.input:not(:placeholder-shown)+ .label {
+  top: -7px;
+  left: 3px;
+  z-index: 10;
+  font-size: 14px;
+  font-weight: 600;
+}
+/* Full-width inputs */
+input[type=text], input[type=password] ,input[type=email] {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 2px solid #d4d1d1;;
+  box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+  background-color: #04AA6D;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* Add a hover effect for buttons */
+button:hover {
+  opacity: 0.8;
+}
+.card-title{
+    width: 900px; 
+    margin-left: 300px;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    background-color: #8290c7;
+    border-radius: 20px;
+    z-index: 2 !important;
+}
+
+@media (min-width: 400px)and ( max-width:900px) {
+    .containereditprof{
+        width: 390px; 
+        margin: 0;
+        padding: 0;
+        justify-content: center;
+    }
+    .row{
+        width:100%
+    }
+    .btn{
+        padding: 1; 
+        margin-left: 25%; 
+        width: 100px;
+        justify-content: center;
+        height: auto;
+    }
+    h3{
+        margin-left: 25%;
+    }
+    .profimg{
+        margin-left: 25%;
+    }
+    .panel-body{
+      justify-content: center;
+      margin-left: 100px;
+      width: 300px;
+    }
+    .profile_table{
+      width: fit-content;
+    }
+}
+
+</style>
+
+
+
+<!-- <div class="container-fluid p-5 mt-5 " > -->
+
+ 
+            <div class="card-title">
+              <form method="post" action="{% url 'edit_staffprofilesave' %}" enctype="multipart/form-data" class="needs-validation mb-5" novalidate>
+                    {% csrf_token %}
+     
+                <center>
+                    <h3 class="mb-0" style="font-weight: bolder;color: rgb(218, 164, 48);">MY PROFILE</h3>
+                    {% if staff.img %}
+                    <img src="{{ staff.img.url }}" class="img img-fluid m-3"
+                    style="width: 150px; height: 150px; border-radius: 50%">
+                    {% else %}
+                    <img src="{% static 'img/default.png' %}"  class="img img-fluid m-3"
+                    style="width: 150px; height: 150px; border-radius: 50%" >
+                    {% endif %}
+                    <br>
+
+                    <input type="file" name="file" style="padding-left: 150px;">
+                 
+                </center>
+             
+                    <section style="padding-left: 170px;">
+                <table class="table-responsive profile_table">
+                  <tbody class="p-2 m-2">
+                    
+                      <tr>
+                        <td>
+                          <div class="mb-3 mt-3 p-0" id ='fname'>
+                            <p style="color:azure ; margin-bottom: 0px;">First Name:</p>
+                            <div class="inputContainer" class="col-md-6">  
+                              <input type="text" class="input" name="f_name"  
+                              style="width: 280px; text-transform: capitalize; color: black;" value="{{ staff.first_name }}"> 
+                          </div>
+                        </td>
+                       
+
+                        <td>
+                          <div class="mb-3 mt-3 p-0" >
+                          <p style=" color:azure ;margin-left: 200px; margin-bottom: 0px;">Last Name:</p>
+                          <div class="inputContainer">
+                            <input type="text"   class="input" name="l_name"  
+                            style="width: 280px; margin-left :200px ; text-transform: capitalize; color: black;" value="{{ staff.last_name }}"> 
+                          </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                          <div class="mb-3 mt-3 p-0">
+                            <p style=" color:azure ; margin-bottom: 0px;">Email:</p>
+                            <div class="inputContainer">
+                              <input type="text"  class="input" name = 'email' value="{{ staff.email }}" 
+                              style="width: 280px; color: black;" pattern="[a-zA-Z0-9._%+-]+@gmail\.com">
+                          </div>
+                        </td>
+
+                        <td>
+                          <div class="mb-3 mt-3 p-0">
+                            <p style=" color:azure ;margin-left: 200px; margin-bottom: 0px;">Contact Number:</p>
+                            <div class="inputContainer">
+                              <input type="text"  class="input" name="cnum" value="{{ staff.contact }}" 
+                              style="width: 280px; margin-left :200px ; color: black;" pattern="\d{10}">
+                        </div>
+                        </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+                <button type="submit"class="save_btn"> SAVE CHANGES</button>
+                       
+            </form>
+                
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+              </form>
+              </div>
+          </div>
+      </div>
+  </div>
+<!-- </div> -->
+
+   </section>
+   <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to validate email format
+        function validateEmail(email) {
+            var emailPattern = /[a-zA-Z0-9._%+-]+@gmail\.com/;
+            return emailPattern.test(email);
+        }
+  
+        // Function to validate contact number format
+        function validateContactNumber(contactNumber) {
+            var contactPattern = /\d{10}/;
+            return contactPattern.test(contactNumber);
+        }
+  
+        // Validate form on submission
+        document.querySelector('form').addEventListener('submit', function (event) {
+            var emailInput = document.querySelector('input[name="email"]');
+            var contactInput = document.querySelector('input[name="cnum"]');
+  
+            if (!validateEmail(emailInput.value)) {
+                alert('Please enter a valid  email address.');
+                event.preventDefault();
+            }
+  
+            if (!validateContactNumber(contactInput.value)) {
+                alert('Please enter a valid 10-digit contact number.');
+                event.preventDefault();
+            }
+        });
+    });
+  </script>
+
+
+   {% endblock %}
