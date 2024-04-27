@@ -4316,3 +4316,24 @@ def salesreport_graph(request):
     chart_data = {'monthly_labels': monthly_labels, 'monthly_sales': monthly_sales,
                   'yearly_labels': yearly_labels, 'yearly_sales': yearly_sales}
     return render(request, 'saleschart.html', {'chart_data': chart_data, 'staff': staff})
+  
+def getItemDetailsinvoice(request):
+    if 'login_id' in request.session:
+        log_id = request.session['login_id']
+        log_details= LoginDetails.objects.get(id=log_id)
+        if log_details.user_type == 'Company':
+            cmp = CompanyDetails.objects.get(login_details = log_details)
+        else:
+            cmp = StaffDetails.objects.get(login_details = log_details).company
+        
+        itemName = request.GET['item']
+        
+        item = Items.objects.filter(company = cmp, item_name = itemName).first()
+        print('py ok ',item.current_stock)
+        context = {
+            'avl':item.current_stock,
+            
+        }
+        return JsonResponse(context)
+    else:
+       return redirect('/')

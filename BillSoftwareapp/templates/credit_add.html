@@ -256,7 +256,7 @@
                                             {% for i in items %}
                                             <li class="dropdown-item items-options text-white" onclick="getItemDetails($(this).parent().prev().attr('id'),`{{i.item_name}}`)">{{i.item_name}}</li>
                                             {% endfor %}
-                                        </ul>&nbsp;&nbsp;&nbsp;
+                                        </ul>&nbsp;&nbsp;&nbsp; 
                                         <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
                                             <span class="fa fa-plus"></span>
                                         </button>
@@ -747,6 +747,39 @@
         </div>
     </div>
 </div>
+<script>
+    function getItemStock(inpId, value, qtty) {
+        var plc = $('#placeOfSupply').val();
+        var PLId = $('#priceListIds').val();
+    
+        if (plc !== "") {
+            $.ajax({
+                url: "{% url 'getItemDetailsinvoice' %}",
+                type: 'GET',
+                data: {
+                    item: value,
+                    listId: PLId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    
+                    if (response.avl) {
+                        $('#' + inpId).val(value);
+                        avail = response.avl ;
+                        $('#qtyspan' + inpId.slice(4)).text(avail);
+                        $('#avl' + inpId.slice(4)).text(avail);
+                        
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    alert('Something went wrong !: ' + textStatus);
+                }
+            });
+        } else {
+            alert('Select Place of Supply!');
+        }
+    }
+</script>
 
 <script>
     $(document).ready(function(){
