@@ -252,14 +252,11 @@
             
                                 <td style="width:21%">
                                     <div class="d-flex">
-                                        <select name='product[]' id="product1" class="form-control product" onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
-                                            <option value="" selected hidden>Select</option>
-                                            {% for i in item %}
-                                                {% if i.cid_id == cmp.cid %}
-                                                    <option value="{{ i.id }}">{{ i.item_name }}</option>
-                                                {% endif %}
+                                        <ul class="dropdown-menu w-100 items-available position-absolute bg-black text-white" id="menu1"  style="overflow-y: auto; height: fit-content;max-height: 40vh; border: 1px solid gray;"> 
+                                            {% for i in items %}
+                                            <li class="dropdown-item items-options text-white" onclick="getItemDetails($(this).parent().prev().attr('id'),`{{i.item_name}}`)">{{i.item_name}}</li>
                                             {% endfor %}
-                                        </select>&nbsp;&nbsp;&nbsp;
+                                        </ul>&nbsp;&nbsp;&nbsp;
                                         <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
                                             <span class="fa fa-plus"></span>
                                         </button>
