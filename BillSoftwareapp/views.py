@@ -3128,7 +3128,7 @@ def creditbilldata(request):
 
         # Return a JSON response with the list of bill numbers and dates
         if not bill_numbers and not bill_dates:
-            return JsonResponse({'bill_numbers': ['nobill'], 'bill_dates': ['nodate']})
+            return JsonResponse({'bill_numbers': ['no invoice'], 'bill_dates': ['nodate']})
 
         return JsonResponse({'bill_numbers': bill_numbers, 'bill_dates': bill_dates})
 
@@ -4318,22 +4318,17 @@ def salesreport_graph(request):
     return render(request, 'saleschart.html', {'chart_data': chart_data, 'staff': staff})
   
 def getItemDetailsinvoice(request):
-    if 'login_id' in request.session:
-        log_id = request.session['login_id']
-        log_details= LoginDetails.objects.get(id=log_id)
-        if log_details.user_type == 'Company':
-            cmp = CompanyDetails.objects.get(login_details = log_details)
-        else:
-            cmp = StaffDetails.objects.get(login_details = log_details).company
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
         
-        itemName = request.GET['item']
+    itemName = request.GET['item_name']
         
-        item = Items.objects.filter(company = cmp, item_name = itemName).first()
-        print('py ok ',item.current_stock)
-        context = {
-            'avl':item.current_stock,
+    item = ItemModel.objects.filter(company = cmp, item_name = itemName).first()
+    print('py ok ',item.current_stock)
+    context = {
+        'avl':item.current_stock,
             
         }
-        return JsonResponse(context)
-    else:
-       return redirect('/')
+    return JsonResponse(context)
+    
