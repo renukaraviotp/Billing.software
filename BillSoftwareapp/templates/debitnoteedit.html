@@ -50,13 +50,6 @@ body {
             
         }
 
-
-        #customer_div {
-            background-color: rgb(0, 0, 139,.397);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
     .card-body{
         box-shadow: 2px 2px 10px 3px rgba(0, 0, 139, 0.397);
         border-radius: 1vh;
@@ -74,7 +67,8 @@ body {
         border-top: 1px solid black;
         border-left: 1px solid black;
         border-right: 1px solid black;
-        background-color: rgb(0, 0, 139,.397);
+        background-color: rgb(61, 68, 101);
+        color:white;
     }
     #tab_logic tbody td{
         border-bottom: 1px solid black;
@@ -146,6 +140,41 @@ body {
         width: auto; /* Adjust button width as needed */
         margin-left: 0; /* Remove left margin for buttons */
     }
+}
+@media(min-width:768px){
+    .debit-div{
+    background: linear-gradient(#3d4465 0%, #3d4465 80px, white 80px, white 100%);
+}
+.button-div{
+    margin-left: 8vh;
+}
+.body-wrapper{
+    margin-left: 25% ;
+    margin-top:4%;
+}
+}
+@media(max-width:768px){
+    .debit-div{
+    background: linear-gradient(#3d4465 0%, #3d4465 80px, white 80px, white 100%);
+}
+.button-div{
+    margin-left: 32vh;
+    margin-bottom: 2vh;
+    
+}
+.body-wrapper{
+    margin:5% ;
+    margin-top:10%;
+    
+}
+}
+.button-hover{
+    background-color: white;
+    color: #3d4465;
+}
+.button-hover:hover{
+    background-color:#4d5fbc ;
+    color: white;
 }
 </style> 
 
@@ -249,20 +278,20 @@ body {
                     {% csrf_token %}
                     <div class="page-content">
                         <div class="card radius-15">
-                            <div class="card-body bg-light">
+                            <div class="card-body debit-div">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <h3 class="mb-3">EDIT  DEBIT  NOTE</h3>
+                                    <div class="col-md-4 my-3">
+                                        <h3 class="mb-3 text-white">EDIT DEBIT NOTE</h3> 
                                     </div>
-                                    <div class="col-md-7"></div>
-                                    <div class="col-md-1">
-                                        <a href="{% url 'view_purchasedebit' %}" style="text-align: right; font-size: large; color: black; margin-left: 8vh;">
-                                            <i class="fa fa-times mt-2" aria-hidden="true"></i>
+                                    <div class="col-md-6"></div>
+                                    <div class="col-md ">
+                                        <a href="javascript:window.history.back();" style="text-align: right; " class="btn button-hover button-div">
+                                            <i class="fa fa-arrow-left"></i> Back
                                         </a>
                                     </div>
                                 </div>
 
-                                <div id="customer_div" style="background-color:rgb(0, 0, 139,.397); margin-left: .1px; margin-right: .51px;">
+                                <div id="customer_div">
                                     <div class="row text-dark">
                                         <!-- Left Side -->
                                         <div class="col-md-1"></div>
@@ -462,11 +491,11 @@ body {
                                
                                         <div class="clearfix" style="margin-top:10px">
                                             <div class="row" style="margin-left: 1vh;" >
-                                                <div class="col-md-7 table-responsive mt-3 " id="tab_logic_total" style=" color: black; border: 1px solid rgb(0, 0, 139,.397); margin-left: -2vh; background-color: rgb(0, 0, 139,.397); ">
+                                                <div class="col-md-7 table-responsive mt-3 " id="tab_logic_total" style=" color: black; border: 1px solid rgb(0, 0, 139,.397); margin-left: -2vh; background-color: rgb(61, 68, 101); ">
                                                     <div class="p-3">
                                                         <div class="row container-fluid p-2 m-0">
                                            
-                                                            <div class="col-sm-4 mt-2"><label class="text-center" style="color:black;">Sub Total</label></div>
+                                                            <div class="col-sm-4 mt-2"><label class="text-center" style="color:white;">Sub Total</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                              <div class="col-sm-7"> <input type="number" value="{{pdebt.subtotal}}" step="any"
                                                               placeholder=0 class="form-control" id="sub_total" name="subtotal" readonly />
@@ -477,7 +506,7 @@ body {
                                        
                                                         {% if pdebt.supply  == 'State' %}
                                                         <div class="row container-fluid p-2 m-0" id="cgstdiv">
-                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">CGST</label></div>
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">CGST</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                             <div class="col-sm-7">
                                                                 <input type="number" name='cgst' step="any" id="cgst"  value="{{pdebt.cgst}}"style="color: black; background-color: white;" readonly class="form-control"/>
@@ -485,7 +514,7 @@ body {
                                                             <div class="col-sm-4 m-0 p-0"></div>
                                                         </div>
                                                         <div class="row container-fluid p-2 m-0"  id="sgstdiv">
-                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">SGST</label></div>
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">SGST</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                             <div class="col-sm-7">
                                                                 <input type="number" name='sgst' step="any" id="sgst" value="{{pdebt.sgst}}"style="color: black; background-color: white;" readonly class="form-control"/>
@@ -493,7 +522,7 @@ body {
                                                             <div class="col-sm-4 m-0 p-0"></div>
                                                         </div>
                                                         <div class="row container-fluid p-2 m-0" style="display: none;" id="igstdiv">
-                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">IGST</label></div>
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">IGST</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                             <div class="col-sm-7">
                                                                 <input type="number" name='igst' step="any" id="igst" value="{{pdebt.igst}}"style="color: black; background-color: white;" readonly class="form-control"/>
@@ -502,7 +531,7 @@ body {
                                                         </div>
                                                     {% else %}
                                                         <div class="row container-fluid p-2 m-0" style="display: none;" id="cgstdiv">
-                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">CGST</label></div>
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">CGST</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                             <div class="col-sm-7">
                                                                 <input type="number" name='cgst' step="any" id="cgst"  value="{{pdebt.cgst}}"style="color: black; background-color: white;" readonly class="form-control"/>
@@ -510,7 +539,7 @@ body {
                                                             <div class="col-sm-4 m-0 p-0"></div>
                                                         </div>
                                                         <div class="row container-fluid p-2 m-0" style="display: none;" id="sgstdiv">
-                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">SGST</label></div>
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">SGST</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                             <div class="col-sm-7">
                                                                 <input type="number" name='sgst' step="any" id="sgst" value="{{pdebt.sgst}}"style="color: black; background-color: white;" readonly class="form-control"/>
@@ -518,7 +547,7 @@ body {
                                                             <div class="col-sm-4 m-0 p-0"></div>
                                                         </div>
                                                         <div class="row container-fluid p-2 m-0" id="igstdiv">
-                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center">IGST</label></div>
+                                                            <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">IGST</label></div>
                                                             <div class="col-sm-1 mt-2">:</div>
                                                             <div class="col-sm-7">
                                                                 <input type="number" name='igst' step="any" id="igst" value="{{pdebt.igst}}"style="color: black; background-color: white;" readonly class="form-control"/>
@@ -529,7 +558,7 @@ body {
                                                     </div>
         
                                                     <div class="row container-fluid p-2 m-0">
-                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Tax Amount</label></div>
+                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">Tax Amount</label></div>
                                                         <div class="col-sm-1 mt-2">:</div>
                                                         <div class="col-sm-7"><input type="number" id="tax_amount"
                                                                            value="{{pdebt.taxamount}}" name="taxamount" placeholder=0 step="any"
@@ -539,7 +568,7 @@ body {
                                                     </div>
         
                                                     <div class="row container-fluid p-2 m-0">
-                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
+                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">Adjustment</label></div>
                                                         <div class="col-sm-1 mt-2">:</div>
                                                          <div class="col-sm-7"><input type="number" id="adj" name="adj"
                                                                    value="{{pdebt.adjustment}}" placeholder=0 step="any" value="0" required
@@ -548,7 +577,7 @@ body {
                                                     </div>
                                                     
                                                     <div class="row container-fluid p-2 m-0">
-                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Grand Total</label></div>
+                                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center" style="color:white;">Grand Total</label></div>
                                                         <div class="col-sm-1 mt-2">:</div>
                                                         <div class="col-sm-7"><input type="number" value={{pdebt.grandtotal}}
                                                              id="grandtotal" name="grandtotal" value=0 step="any" class="form-control"  readonly /></div>
@@ -564,11 +593,11 @@ body {
                                     
                                     
 
-                                    </div><br><br>
+                                    </div>
                                         <div class="row justify-content-center" >
                                             <div class="col-md-5 mt-3 d-flex">
                                         
-                                                <input type="submit" class="btn w-75" style="background-color:rgb(61, 68, 101); color: white;" name="Save" value="UPDATE"></input>
+                                                <input type="submit" class="btn" style="background-color:rgb(61, 68, 101); color: white;" name="Save" value="SAVE"></input>
                                                 
                                             </div>
                                             

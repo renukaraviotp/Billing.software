@@ -133,7 +133,7 @@
         margin-right: 10px; /* Adjust as needed */
     }
     @media(min-width:768px){
-        .purchase-div{
+        .credit-div{
         background: linear-gradient(#3d4465 0%, #3d4465 80px, white 80px, white 100%);
     }
     .button-div{
@@ -145,7 +145,7 @@
     }
     }
     @media(max-width:768px){
-        .purchase-div{
+        .credit-div{
         background: linear-gradient(#3d4465 0%, #3d4465 135.5px, white 133.5px, white 100%);
     }    
     .button-div{
@@ -180,7 +180,7 @@
                  {% csrf_token %}
                     <div class="page-content " >
                         <div class="card radius-15">
-                            <div class="card-body purchase-div" >
+                            <div class="card-body credit-div" >
                                 <div class="row">
                                     <div class="col-md-4 my-3">
                                         <h3 class="mb-3 text-white">ADD CREDIT NOTE</h3> 
@@ -200,17 +200,84 @@
                                             <span class="control"></span>
                                         </label>
                                     </div>
-                                    <div class="row">
+                                    <div id="partyForm" class="form-group row">
+                                        <div class="col-md-4 custom-dropdown">
+                                            <label for=""> Party Name</label>
+                                            <div class="d-flex">
+                                                <select name="partyname" id="employee2" class="form-control border-secondary" >
+                                                    <option value="" selected hidden>Select</option>
+                                                    {% for c in party %}
+                                                        {% if c.cid_id == cmp.cid %}
+                                                            <option value={{c.id}}> {{ c.party_name }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                                &nbsp;&nbsp;&nbsp;
+                                                <button id="modal_closing" type="button" class="btn" style="background-color:rgb(61, 68, 101);" data-bs-toggle="modal" data-bs-target="#customercreation" data-bs-whatever="@mdo">
+                                                    <span class="fa fa-plus"></span>
+                                                </button>
+                                            </div>   
+                                            <div class="mt-1 d-flex" >
+                                                &nbsp;<span id="balancediv" style="display: none; color: black;"> Available Balance : <span id="balval"></span></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" id="phonediv">
+                                            <label class="col-form-label" >Phone No. </label>
+                                            <input class="form-control border-secondary" name="number"  id="ph"  style="color: black;background-color: white;" placeholder="Phone number" readonly>
+                                        </div>
+                                        <div class="col-md-4" id="addressdiv">
+                                            <label class="col-form-label">Billing Address</label>
+                                            <textarea class="form-control mb-3 border-secondary" name="address" id="bname" rows="2" type="text" style="color: black;background-color: white;" placeholder="Billing Address..." readonly></textarea>
+                                        </div>
+                                    </div>
+                                    <div id="daddressdiv" style="display: none;">
+                                        <label class="col-form-label">Billing Address</label>
+                                        <textarea class="form-control mb-3 border-secondary" name="dbname" id="dbname" rows="2" type="text" style="color: black;background-color: white;" placeholder="Billing Address..." readonly></textarea>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div>
+                                        <div class="col">
+                                            <label for="">Invoice No.</label>
+                                            <select class="form-control border-secondary" name="billNod" id="bno" style="color: black; background-color: white;">
+                                                <option value="" selected hidden>Select</option>
+                                                {% for bill_number in bill_numbers %}
+                                                    <option value="{{ bill_number }}">{{ bill_number }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <input id="bno-input" type="text" name="billNo" class="form-control border-secondary" placeholder="Invoice Number" style="display: none;">
+                                        </div>
+                                        <div class="col">
+                                            <label for="">Invoice Date</label>
+                                            <select class="form-control border-secondary" name="billDated" id="bdt" style="color: black; background-color: white;">
+                                                <option value="" selected hidden>Select</option>
+                                                <!-- Options will be dynamically added here using JavaScript -->
+                                            </select>
+                                            <input id="bdt-input" type="date" name="billDate" class="form-control border-secondary" placeholder="Bill Date" style="display: none;">
+                                        </div>
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col"><label for="">Date</label><input type="date" id="dt" name="date" value="{{todayDate}}" class="form-control border-secondary"></div>
+                                
+                                        <div class="col">
+                                            <label class="col-form-label ">State of Supply</label>
+                                            <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
+                                                <option value="" selected hidden>Select</option>
+                                                <option value="State">State</option>
+                                                <option value="Other State">Other State</option>
+                                            </select> 
+                                        </div>
+                                    </div>
+                                    {% comment %} <div class="row">
                                         <div class="col-md-4">
                                             <label class="col-form-label">Party</label>
                                             <div class="d-flex">
-                                                <select name="customername" id="customer" class="form-control border-secondary" >
+                                                <select name="partyname" id="employee2" class="form-control border-secondary" >
                                                     <option value="" selected hidden>Select</option>
                                                     {% for c in party %}
-                                                    {% if c.cid_id == cmp.cid %}
-                                                        <option value={{c.id}}> {{ c.party_name }}</option>
-                                                    {% endif %}
-                                                {% endfor %}
+                                                        {% if c.cid_id == cmp.cid %}
+                                                            <option value={{c.id}}> {{ c.party_name }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
                                                 </select> &nbsp;&nbsp;&nbsp;
                                                 <button id="modal_closing" type="button" class="btn" style="background-color:rgb(61, 68, 101);" data-bs-toggle="modal" data-bs-target="#customercreation" data-bs-whatever="@mdo">
                                                     <span class="fa fa-plus"></span>
@@ -221,7 +288,7 @@
                                             </div>
                                             <div >
                                                 <label class="col-form-label ">Place of Supply</label>
-                                                <select type="text" class="form-control border-secondary" id="plosu" name="placosupply"  style="color: black;background-color: white;">
+                                                <select type="text" class="form-control border-secondary" id="psu" name="placosupply"  style="color: black;background-color: white;">
                                                     <option value="" selected hidden>Select</option>
                                                     <option value="State">State</option>
                                                     <option value="Other State">Other State</option>
@@ -231,7 +298,7 @@
                                         <div class="col-md-4">
                                             <div id="phonediv">
                                                 <label class="col-form-label" >Phone No. </label>
-                                                <input class="form-control border-secondary" name="phno"  id="cust_phno"  style="color: black;background-color: white;" readonly>
+                                                <input class="form-control border-secondary" name="number"  id="ph"  style="color: black;background-color: white;" placeholder="Phone number" readonly>
                                             </div>
                                             <div id="dbilldiv" style="display: none;">
                                                 <label class="col-form-label">Invoice No.</label>
@@ -254,9 +321,9 @@
                                             <label class="col-form-label">Invoice No.</label>
                                             <input type="text" class="form-control border-secondary" value="{{bill_no}}"  style="color: black;background-color: white;" readonly> <br>
                                         </div>
-                                    </div>
+                                    </div> {% endcomment %}
                                     
-                                    <div class="row">
+                                    {% comment %} <div class="row">
                                         
                                         <div id="billdiv" class="col-md-4">
                                             <label for="">Invoice No.</label>
@@ -277,7 +344,7 @@
                                             <input id="bdt-input" type="date" name="billDate" class="form-control border-secondary" placeholder="Bill Date" style="display: none;color: black;background-color: white;"><br>
                                         </div>
                                        
-                                    </div>
+                                    </div> {% endcomment %}
 
                                    
                                 

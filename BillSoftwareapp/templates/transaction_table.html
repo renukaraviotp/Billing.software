@@ -178,6 +178,14 @@
         display: flex;
         gap:2px;
     }
+    .button-hover{
+        background-color: white;
+        color: #3d4465;
+    }
+    .button-hover:hover{
+        background-color:#4d5fbc ;
+        color: white;
+    }
 </style>
 
 {% if item %}
@@ -188,32 +196,30 @@
     <div class="row ps-3 pe-3 m-0 w-100" style="width:100%;">
         <div class="col-md-12 ps-2 pe-3" style="width:100%;">
             <div class="row pt-0 m-0" style="width:100%;">
-                <div class="card p-0 bg-light w-100 bs"><br>
+                <div class="card p-0 bs" style="width:98%;margin-left:1%;background-color: #3d4465;"><br>
                     <div class="row">
                         <div class="container" style="width:100%;">
                             <div class="row">
                                 <div class="col-md-3" style="margin-left: 7vh;">
                                     <div class="form-group">
-                                        <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date:</label>
+                                        <label for="fromDate" style="color: white; margin-bottom: 1vh;">From Date:</label>
                                         <input type="date" class="form-control h-100 border-secondary" id="fromDate" style="color: black; background-color: white;" onchange="filterDates()"> 
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                        <label for="toDate" style="color: white; margin-bottom: 1vh;">To Date:</label>
                                         <input type="date" class="form-control h-100 border-secondary" id="toDate" style="color: black; background-color: white;" onchange="filterDates()">
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>
                                 <div class="col-md-3 text-right" style="margin-left: 2vh;">
-                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 0vh; margin-left: 5vh;">
-                                        <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
-                                        <br><span style="color: black; font-size: small; font-weight: bold;">Excel</span>
+                                    <button class="btn mt-4 button-hover" type="button" onclick="ExportToExcel()" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Excel </span> <span class="fa-solid fa-file-excel" style="color:#3d4465;"></span>
                                     </button>
 
-                                    <button class="btn mt-3" type="button" onclick="printfunction()" style="margin-right: 0vh;">
-                                        <span><img width="30px" src="{% static 'images/printer.jpeg' %}" alt="no img"></span>
-                                        <br><span style="color: black; font-size: small; font-weight: bold;">Print</span>
+                                    <button class="btn mt-4 button-hover" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Print </span> <span class="fa-solid fa-print" style="color:#3d4465;"></span>
                                     </button>
 
                                    
@@ -228,10 +234,10 @@
                     
 
             
-                <div class="card p-0 bg-light bs" style="height: 36rem; width:100%;">
+                <div class="card p-0 bs" style="height: 36rem; width:100%;background: linear-gradient(#3d4465 0%, #3d4465 178.5px, white 17px, white 100%);">
                     <div class="row m-0 p-0 pt-3">
                         <div class="col-sm-12 col-lg-3" style="margin-left: 5vh;">
-                            <h3 class="tb fw-bolder pt-2 " style="rgb(61, 68, 101);">Credit Notes</h3>
+                            <h3 class="tb fw-bolder pt-2 " style="color:white;">Credit Notes</h3>
                         </div>
                     </div>
 
@@ -241,16 +247,16 @@
                         </div>
                         <div class="col-md-6"></div>
                         <div class="col-md-2" style="margin-left:-3%;">
-                            <a class="btn"  href="{% url 'credit_add' %}" style="color: white;background-color:rgb(61, 68, 101);margin-right:3%;"> 
-                                <i class="fa fa-plus border-dark " aria-hidden="true" style="color: white;"></i> &nbsp;Add Creditnote
+                            <a class="btn button-hover"  href="{% url 'credit_add' %}" style="margin-right:3%;"> 
+                                <i class="fa fa-plus border-dark " aria-hidden="true" style="color: #3d4465;"></i> &nbsp;Add Creditnote
                             </a>
                         </div>
-                    </div> 
+                    </div> <br>
 
                     <div class="row">
-                        <div class="col-md-12" style="margin-left: 2vh;">
+                        <div class="col-md-12 mt-1" style="margin-left: 2vh;">
                             <div class="mt-3"  style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
-                                <table class="table tb table-bordered" id="credittable"  style="text-align: center;margin-left:3%;width:95%;">
+                                <table class="table tb" id="credittable"  style="text-align: center;margin-left:3%;width:95%;">
                                     <thead >
                                         <tr class="fs-2 tb">
                                             <th class="text-white" style="background-color:rgb(61,68,101);width:16%;">

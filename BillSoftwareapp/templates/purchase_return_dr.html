@@ -196,6 +196,14 @@
         }
 
     }
+    .button-hover{
+        background-color: white;
+        color: #3d4465;
+    }
+    .button-hover:hover{
+        background-color:#4d5fbc ;
+        color: white;
+    }
 
 </style>
 <br><br><br>
@@ -207,32 +215,30 @@
     <div class="row ps-3 pe-3 m-0" >
         <div class="col-sm-12 ps-2 pe-3" >
             <div class="row pt-0 m-0" >
-                <div class="card p-0 bg-light bs" style="width:98%;margin-left:1%;"><br>
+                <div class="card p-0 bs" style="width:98%;margin-left:1%;background-color: #3d4465;"><br>
                     <div class="row">
                         <div class="container">
                             <div class="row">
                                 <div class="col-md-3" style="margin-left: 7vh;">
-                                    <div class="form-group" style="margin-left:10%;">
-                                        <label for="fromDate" style="color: black; margin-bottom: 1vh;">From Date:</label>
+                                    <div class="form-group">
+                                        <label for="fromDate" style="color: white; margin-bottom: 1vh;">From Date:</label>
                                         <input type="date" class="form-control h-100 border-secondary" id="fromDate" style="color: black; background-color: white;" onchange="filterDates()"> 
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <label for="toDate" style="color: black; margin-bottom: 1vh;">To Date:</label>
+                                        <label for="toDate" style="color: white; margin-bottom: 1vh;">To Date:</label>
                                         <input type="date" class="form-control h-100 border-secondary" id="toDate" style="color: black; background-color: white;" onchange="filterDates()">
                                     </div>
                                 </div>
                                 <div class="col-md-2"></div>
                                 <div class="col-md-3 text-right" style="margin-right: 2vh;">
-                                    <button class="btn mt-3" type="button" onclick="ExportToExcel()" style="margin-right: 2vh; margin-left: 5vh;">
-                                        <span><img width="22px" src="{% static 'assets/excel2.png' %}" alt="no img"></span>
-                                        <br><span style="color: black; font-size: small; font-weight: bold;">Excel</span>
+                                    <button class="btn mt-4 button-hover" type="button" onclick="ExportToExcel()" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Excel </span> <span class="fa-solid fa-file-excel" style="color:#3d4465;"></span>
                                     </button>
 
-                                    <button class="btn mt-3" type="button" onclick="printfunction()">
-                                        <i class="fa fa-print" aria-hidden="true" style="font-size:22px;color: red;"></i>
-                                        <br><span style="color: black; font-size: small; font-weight: bold;">Print</span>
+                                    <button class="btn mt-4 button-hover" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Print </span> <span class="fa-solid fa-print" style="color:#3d4465;"></span>
                                     </button>
                          
 
@@ -248,10 +254,10 @@
     
 
                     <div class="row pt-0 m-0">
-                        <div class="card p-0 bg-light bs" style="height: 36rem;">
+                        <div class="card p-0 bg-light bs" style="height: 36rem; background: linear-gradient(#3d4465 0%, #3d4465 178.5px, white 17px, white 100%);">
                             <div class="row m-0 p-0 pt-3">
                                 <div class="col-md-8" style="margin-left:5%;">
-                                    <h4 class="tb fw-bolder pt-55" style="color:rgb(61, 68, 101); margin-right:36vh;">DEBIT NOTE</h4>
+                                    <h3 class="tb fw-bolder pt-55" style="color:white;">DEBIT NOTE</h3>
                                 </div>
                             </div>
         
@@ -261,15 +267,15 @@
                                 </div>
                                 <div class="col-md-6"></div>
                                 <div class="col-md-2">
-                                    <a class="btn" href="{% url 'add_debitnote' %}" style="color: white;background-color:rgb(61, 68, 101); margin-left: -5%; margin-right: 3%;"> 
-                                        <i class="fa fa-plus border-dark" aria-hidden="true" style="color: white;"></i> &nbsp;Add Debit Note
+                                    <a class="btn button-hover" href="{% url 'add_debitnote' %}" style=" margin-left: -5%; margin-right: 3%;"> 
+                                        <i class="fa fa-plus border-dark" aria-hidden="true" style="color: #3d4465;"></i> &nbsp;Add Debit Note
                                     </a>
                                 </div>
-                            </div>
-                            <div class="row mt-3" style="margin-left: 8vh; margin-right: 6vh;">
+                            </div><br>
+                            <div class="row mt-4" style="margin-left: 8vh; margin-right: 6vh;">
                                 <div class="col-md-12">
-                                    <div class="table-responsive" style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
-                                        <table class="table table-bordered tb" id="debittable" style="text-align: center;">
+                                    <div class="table-responsive mt-1" style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
+                                        <table class="table tb" id="debittable" style="text-align: center;">
                                     <thead>
                                         <tr class="fs-2 tb" >
                                             <th class="text-white" style="width: 10%; background-color: rgb(61,68,101);">#</th>
