@@ -2,170 +2,134 @@
 {% load static %}
 {% block content %}
 
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
-
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 <style>
-    .bs {
-        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    body{
+        background-color: rgb(130, 144, 199);
+        
     }
 
-    .bs_sm {
-        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+
+    .tablediv{
+        margin-left: 1vh;
+        margin-right: 1vh;
+        margin-top: 1vh;
     }
 
-    .tablediv {
-        margin: auto;
-        overflow: auto;
-        max-height: 60vh;
-        width: 80vh;
-    }
-
-    h4 {
-        text-align: left;
-        margin-top: 2vh;
+    h4{
+        text-align: left; 
+        margin-top:2vh; 
         margin-bottom: 2vh;
         margin-left: 1vh;
     }
-
-    ::-webkit-scrollbar {
-        display: none;
+    td,tr,th,table{
+        border:2px 2px 2px 2px black;
     }
 
-    @media (max-width: 768px) {
-        .tablediv {
-            width: auto;
-            max-width: 100%;
-        }
+    ::-webkit-scrollbar{
+        display: none
     }
+
+    @media(min-width:768px){
+        .history-div{
+        background: linear-gradient(#3d4465 0, #3d4465 116px, white 0px, white 100px);
+    }
+    .body-wrapper{
+        margin-left:18%
+    }
+    
+    }
+
+    @media(max-width:768px){
+        .history-div{
+        background: linear-gradient(#3d4465 0, #3d4465 189px, white 0px, white 100px);
+    }
+    }
+
+    .button-hover{
+        background-color: white;
+        color: #3d4465;
+    }
+    .button-hover:hover{
+        background-color:#4d5fbc ;
+        color: white;
+    }
+    
 </style>
-
-
-<div class="quixnav ">
-    <div class="quixnav-scroll">
-        <ul class="metismenu" id="menu">
-            <li>
-                {% if staff.position == 'company' %}
-                <a href="{% url 'homepage' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span
-                class="nav-text">Dashboard</span></a></li>
-                {% else %}
-                <a href="{% url 'staffhome' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span
-                    class="nav-text">Dashboard</span></a>
-                    {% endif %}
-                </li>
-
-            <!-- <li><a href="/" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span></a></li> -->
-            <li><a href="{% url 'parties_table' %}" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span> </a> <a style="display: flex;position:absolute ;left: 195px;background-color: transparent; "  href="{% url 'parties_add_page' %}"><i style="font-size: 25px;" class="fa-solid fa-circle-plus "></i></a></li>
-                    
-                    <div class="position-relative nav-text">
-                       
-                            <div class="position-absolute end-0 bottom-0" style="z-index: 1; margin-top: 8px; margin-right: 0.9rem; margin-left: 14vw;">
-                                <a style="color: black; margin-top: -2px; width: 20px;" href="{% url 'add_item' %}">
-                                    <span>
-                                        <i class="fa fa-plus fa-stack-.5x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </div>
-
-                    </div>
-                    
-                      <li class="sidebar-item">
-                        <a class="sidebar-link mt-2" href="{% url 'view_item'  %}" aria-expanded="false">
-                          <span>
-                            <b style="margin-left: 10px;"><i class="fa fa-th"></i></b>
-                          </span>
-                          <span class="hide-menu nav-text"><b>Items</b></span>
-                        </a>
-                      </li>
-
-                      
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
-                        class="icon icon-app-store"></i><span class="nav-text">Sales</span></a>
-                <ul aria-expanded="false">
-                  <li style="display: flex; align-items: center;">
-                    <a href="{% url 'sales_invoice' %}">Invoice</a>
-                    <a href="{% url 'sales_invoice_add' %}"  style="margin-left: 50px;">
-                      <span>
-                        <i class="fa fa-plus fa-stack-.1x fa-inverse"></i>
-                    </span></a>
-                </li>
-                <li style="display: flex; align-items: center;">
-                  <a href="{% url 'transactiontable' %}" style="text-decoration: none;">Credit Note</a>
-                  <a href="{% url 'credit_add' %}" id="" style="color: white; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-left: 10px;" class="btn col-md-1">
-                      <i class="fa-solid fa-plus" id="addRowIcon"></i>
-                  </a>
-              </li>
-                </ul>
-            </li>
-
-            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false" style="background-color: slateblue; color: white;"><i
-                class="icon icon-credit-card "></i><span class="nav-text">Purchase</span></a>
-        <ul aria-expanded="false">
-          <li><a href="{% url 'view_purchasebill' %}">Purchase Bill  &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></a></li>
-  
-          
-          <li><a href="{% url 'view_purchasedebit' %}">Purchase Return/Dr.Note<i class="fa fa-plus"></i></a></li>
-        </ul>
-    </li>
-
-            <li><a href="widget-basic.html" aria-expanded="false"><i class="icon icon-globe-2"></i><span
-                class="nav-text">Stock Report</span></a></li>
-            
-        </ul>
-    </div>
-
-
-</div>
-
-<div class="content-body">
-    <div class="container-fluid">
-        <div class="p-3 text-center" style="display: flex; justify-content: center;">
-            <div class="card" style="background-color: white; width: 90%; box-shadow: 5px 5px 10px 5px rgba(0, 0, 0, 0.249);">
+<br><br><br>
+<body>
+    <div class="body-wrapper ">
+        <br><br>
+           <div class="p-3 text-center " style="display: flex;justify-content: center; ">
+            <div class="card col-md-9 history-div" style="background-color: white;width:50rem; ">
                 <div class="row">
                     <div class="col-md-4">
-                        <h4 class="text-primary">DEBIT NOTE NO: {{ id }}</h4>
+                        <h3 class="mb-3 mt-3 text-white">Transaction History</h3> 
+                        {% comment %} <h4 class="fs-3" style="color:white ; font-weight:bold;text-align:center;margin-top:5%;">Transaction History</h4> {% endcomment %}
                     </div>
-                    <div class="col-md-7"></div>
-                    <div class="col-md-1">
-                        <a href="{% url 'view_purchasedebit' %}" style="text-align: right; font-size: large;"><i class="fa fa-times mt-3 mr-4" aria-hidden="true"></i></a>
+                    <div class="col-6"></div>
+                    <div class="col my-3">
+                        <a href="javascript:window.history.back();" class="btn button-hover" ><i class="fa fa-arrow-left"></i> Back</a>
                     </div>
                 </div>
-                <div class="tablediv">
-                    <table class="table table-bordered table-striped tb" style="text-align: center;">
-                        <thead>
-                            <tr class="fs-2 tb">
-                                <th class="text-white" style="width: 40%; background-color: darkslateblue;">DATE</th>
-                                <th class="text-white" style="width: 40%; background-color: darkslateblue;">STAFF NAME</th>
-                                <th class="text-white" style="width: 40%; background-color: darkslateblue;">ACTION</th>
+                <div class="tablediv table-responsive" style="height: 28rem;  ">
+                    <table class="table  " id="billtable"  style="text-align: center;  ">
+                        <thead style="background-color:rgb(61, 68, 101); ">
+                            <tr style="width:35%; ">
+                                <th class=" text-white" style="background-color: #3d4465; "     >
+                                    # 
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    DATE 
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    BILL NUMBER 
+                                </th>
+                                <th class="text-white" style="background-color: #3d4465;" >
+                                    NAME 
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    AMOUNT
+                                </th>
+                                <th class="text-white" style="background-color: #3d4465;">
+                                    BY
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    ACTION
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="table-bordered">
                             {% for h in hsty %}
-                            <tr>
-                                <td style="color: black;">{{ h.transactiondate | date:'d-m-Y' }}</td>
-                                <td style="color: black;">{{ staff.first_name }} {{ staff.last_name }}</td>
-                                {% if h.action == 'Created' %}
-                                <td style="color: red;">{{ h.action }}</td>
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td style="color: black;">{{ h.transactiondate | date:'d-m-Y' }}</td>
+                            <td style="color: black;">{{ h.debitnote.billno }}</td>
+                            <td style="color: black;">{{ h.debitnote.party.party_name }}</td>
+                            <td style="color: black;">{{ h.debitnote.grandtotal }}</td>
+                            <td style="color: black;">
+                                {% if h.staff %}
+                                    {{ h.staff.first_name }} {{ h.staff.last_name }}
                                 {% else %}
-                                <td style="color: #154c79;">{{ h.action }}</td>
+                                    {{ h.debitnote.company.company_name }}
                                 {% endif %}
-                            </tr>
-                            {% endfor %}
+                            </td>
+                            {% if h.action == 'Created' %}
+                            <td style="color: red;" >{{h.action}}</td>
+                        {% else %}
+                            <td style="color: #154c79;" >{{h.action}}</td>
+                        {% endif %}
+                           
+                        </tr>
+                        {% endfor %}
+                            
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    </body>
 
-{% endblock %}
+
+{% endblock  %}

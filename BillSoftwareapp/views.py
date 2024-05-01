@@ -3056,7 +3056,7 @@ def history_debitnote(request,id):
   allmodules= modules_list.objects.filter(company=staff.company,status='New')
   pdebt = purchasedebit.objects.get(pdebitid=id,company=cmp)
   hsty= DebitnoteTransactionHistory.objects.filter(debitnote=id,company=cmp)
-  context = {'staff':staff,'allmodules':allmodules,'hsty':hsty,'id':id}
+  context = {'staff':staff,'allmodules':allmodules,'hsty':hsty,'id':id,'pdebt':pdebt}
   return render(request,'debitnotehistory.html',context)
 
   
