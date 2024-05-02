@@ -1,546 +1,402 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-            <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+{% block content %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="https://unpkg.com/htmx.org@1.9.6" integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+{% comment %} <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> {% endcomment %}
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+
 
 
 <style>
+
+    body{
+        background-color:rgb(130, 144, 199);
+    }
     .bs{
         box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
     }
+
     .bs_sm{
         box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
     }
-    .tb{
+
+    .paiddiv{
         color: black;
-        
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightgray;
     }
-    table td{
-        border-bottom: 1px solid #ddd;
+
+    .unpaiddiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightsteelblue;
     }
-    table th{
-        background-color:rgb(61, 68, 101);color: white;
-        margin-top: 4vh;
-        
+
+    .totaldiv{
+        color: black;
+        height: 10vh;
+        width: 20vh;
+        padding-left: 2vh;
+        padding-top: 1vh;
+        padding-bottom: 1vh;
+        margin-left: 7vh;
+        border-radius: 8px;
+        background-color: lightgreen;
     }
+
+    
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        padding: 10px;
+        z-index: 1;
+        width: 15%;
+    }
+
+    .dropdown-content label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-content input {
+        width: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+    }
+
+    .tplus{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
+    .tequal{
+        margin-top: 3vh;
+        margin-left: 5vh;
+        margin-right: -2vh;
+    }
+
     .tg{
         color: rgb(0, 140, 7);
     }
+
     .tr{
         color: rgb(218, 0, 0);
     }
-    .btn_add{
-        background-color: orange;
-        color: black;
+
+    .tj{
+        color:#E4A11B;
     }
-    .btn_add:hover{
-        background-color: rgb(234, 152, 0);
-        color: black;
+
+    .th{
+        color: rgb(12, 79, 234);
     }
+
+    @media print{
+        body{
+            visibility: hidden; /* hide everything in body when in print mode*/
+            background-color: transparent !important;
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            z-index: 99999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+
+        #calcdiv{
+            visibility: visible;
+            margin-top: -10vh;
+            margin-left: -9vh;
+            margin-bottom: 30vh;
+        }
+
+        .extra{
+            display: none;
+        }
+    }
+    
     ::-webkit-scrollbar{
         display: none
     }
-    .bg-pink{
-        background-color: rgb(239, 3, 82)
-    }
-
-    
-    .heading-with-dropdown {
+    .button-row {
         display: flex;
-        align-items: center;
+        gap:2px;
     }
-    
-    .heading-with-dropdown span {
-        margin-right: 5px; /* Adjust as needed */
-    }
-    
-</style>
-
-
-<style>
-    .custom-dropdown {
-        position: relative;
-        display: inline-block;
-        }
-
-        .dropdown-toggle {
-        padding: 10px;
-        background-color: #3498db;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        }
-
-        .dropdown-content {
-        z-index: 1;
-        display: none;
-        position: absolute;
-        top: 40px;
-        left: 2px;
-        background-color: #b4b4b450;
-        backdrop-filter: blur(5px);
-        padding: 10px;
-        border: 1px solid #3498db;
-        border-radius: 5px;
-        box-shadow: 3px 5px 5px 5px rgba(0, 0, 0, 0.201);
-        }
-
-        .dropdown-content input {
-        width: 100%;
-        padding: 8px;
-        margin-bottom: 10px;
+    .button-hover{
         background-color: white;
-        border-radius: 5px;
-        border: 1px solid rgb(168, 168, 168);
-        }
-
-        .dropdown-content button {
-        padding: 8px 15px;
-        background-color: rgb(0, 154, 108);
-        color: #fff;
-        border: none;
-        cursor: pointer;
-        border-radius: 3px;
-        }
-
-        .custom-dropdown .dropdown-content .cls{
-            position: absolute;
-            right: -7px;
-            top: -7px;
-            padding: 3px 5px;
-            color: white;
-            text-shadow: 0px 0px 2px black ;
-            border-radius: 50%;
-            font-size: 15px;
-            background-color: rgba(255, 0, 0, 0.424);
-        }
-        .custom-dropdown .dropdown-content .title
-        {
-            background-color: rgb(255, 255, 255);
-            font-weight: 500;
-            color: rgb(0, 0, 0);
-            text-shadow: 0px 0px 20px rgb(255, 255, 255);
-            padding: 5px;
-            border-radius: 5px;
-        }
-        /* tooltip */
-        .tooltip {
-        position: relative;
-        display: inline-block;
-        border-bottom: 1px dotted #ccc; /* Add a dotted underline for visual indication */
-        cursor: help; /* Change the cursor to a help cursor on hover */
-        }
-
-        .tooltip .tooltiptext {
-        visibility: hidden;
-        width: 200px;
-        background-color: #333;
-        color: #fff;
-        text-align: center;
-        border-radius: 6px;
-        padding: 5px;
-        position: absolute;
-        z-index: 1;
-        bottom: 125%;
-        left: 50%;
-        margin-left: -100px;
-        opacity: 0;
-        transition: opacity 0.3s;
-        }
-
-        .tooltip:hover .tooltiptext {
-        visibility: visible;
-        opacity: 1;
-        }
-
-        .filter-option {
-        width: 100%;
-        padding: 5px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 1px;
+        color: #3d4465;
     }
-
-    #myTable tbody{
-        cursor: pointer;
-        
+    .button-hover:hover{
+        background-color:#4d5fbc ;
+        color: white;
     }
-   
-    .custom-container {
-        
-        min-height: 100vh;
-        padding: 50px;
-         
-    }
-    .content-body {
-        width: 100%;
-        margin-left: 0%;
-        display: flex;
-        justify-content: center; /* Center the content horizontally */
-        align-items: center; /* Center the content vertically */
-        height: 100%; /* Full height of the viewport */
-        background-color: rgb(130, 144, 199);
-    }
- 
 </style>
 
-<div class="content-body" style="margin-left: 1vw;">
-    <div class="custom-container col-md-12 mr-1">
-        <div class="col-md-6  " style=" margin-left: 20%; margin-top: -10vh; width: 50%;">
-            <h1><ul>Sales Invoice</ul></h1>
-        </div>
-    <div class="d-flex mt-2"  style="background-color: white;height: 6vw;margin-left: 20vw;border-radius: 15px 15px 15px 15px;">
-        <div class="date-range-box rounded" style="margin-left: 2vw;  margin-top: 2vh; background-color: white;height: 10vh; padding-top: 3vh;width: 30vw;padding-left: 1vw;">
-            <label for="" style="color: rgb(0, 0, 0); font-size: 1.3vw;"><b>Date</b></label>
-            <input type="date" id="fromDate" class="date-input"> TO
-            <input type="date" id="toDate" class="date-input">
-        </div>
-        <div class="ml-auto rounded " style="margin-left: 24vw; margin-top: 2vh; background-color: white;padding-right: 1vw;height: 10vh;" >
-            <a href="{% url 'salesinvoice_graph' %}">
-            <button class="btn p-0 ps-2 pe-2 ms-2" type="button">
-                <span>
-                   <img width="30px" src="{% static 'images/graph.png' %}" alt="graph Icon">
-                   <br><span style="color: black; font-size: small; ">Graph</span>
-                </span>
-            </button></a>
-            
-
-            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()">
-                <span>
-                    <img width="22px" src="{% static 'images/excel2.png' %}" alt="Excel Icon">
-                    <br><span style="color: black; font-size: small; ">Export</span>
-                </span>
-            </button>
-
-            
-
-            <label for="file-input" title="import excel" class="btn p-0 ps-2 pe-2 ms-2" type="button">
-                <span style="position: relative; display: inline-block;">
-                    <img width="23px" src="{% static 'images/import.png' %}" alt="no img" style="position: absolute; top: 2vh; left: 50%; transform: translateX(-50%);">
-                    <span style="color: black; font-size: small; display: block; text-align: center; padding-top: 5.5vh;">Import</span>
-                </span>
-                <input id="file-input" type="file" name="file" style="display:none;" onchange="uploadFile()">
-            </label>
-            
-                  
-                
-            <button id="printButton" class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="printSalesInvoice()">
-                <span>
-                    <img width="28px" src="{% static 'images/printer.jpeg' %}" alt="Printer Icon">
-                    <br><span style="color: black; font-size: small; ">Printer</span>
-                </span>
-            </button>
-        </div>
-    </div>
-    <div style="background-color: white; margin-left:20vw;margin-top: 5vh;border-radius: 15px 15px 15px 15px;">
-    <div class="row">
-        
-        <div class="col-md-6 d-flex align-items-center" style="padding-top: 2%; margin-bottom: 2vh;margin-left: 59%;">
-            <input type="text"  autocomplete="off" id="myInput1" onkeyup="filter(this);" onclick="myFunction1()" class="form-control w-35 border-secondary text-dark pt-1 pb-1 pe-1 rounded" placeholder="search" />
-            <a style="color: white; height: 45px; width: 150px; margin-left: 10px;background-color:rgb(61, 68, 101);" class="btn pt-2 " href="{% url 'sales_invoice_add' %}">
-                Add 
-            </a>
-        </div>
-        
-    </div>
+<div class="body-wrapper" style="margin-left:20%;">
+    <br><br><br><br>
     
-    <!-- Add a container to display search results -->
-    <div id="searchResultsContainer"></div>
-    <script>
-        function printSalesInvoice() {
-            // Clone the table to avoid modifying the original
-            var clonedTable = document.getElementById('printTable').cloneNode(true);
-    
-            // Remove any dropdown elements from the cloned table
-            var dropdowns = clonedTable.querySelectorAll('select');
-            dropdowns.forEach(function(dropdown) {
-                dropdown.remove();
-            });
-    
-            // Hide any dropdowns in the original table
-            var originalDropdowns = document.getElementById('printTable').querySelectorAll('select');
-            originalDropdowns.forEach(function(dropdown) {
-                dropdown.style.display = 'none';
-            });
-    
-            // Create a new window for printing
-            var printWindow = window.open('', '_blank');
-            printWindow.document.write('<html><head><title>Print</title>');
-            printWindow.document.write('<style>');
-            printWindow.document.write('/* Add any print-specific styling here */');
-            printWindow.document.write('h1 { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid black; }');
-            printWindow.document.write('table { border-collapse: collapse; width: 100%; }');
-            printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
-            printWindow.document.write('</style>');
-            printWindow.document.write('</head><body>');
-    
-            // Add the heading "Sales Invoice" before the table with a styled boundary
-            printWindow.document.write('<h1>Sales Invoice</h1>');
-    
-            // Add the table content
-            printWindow.document.write('<table>' + clonedTable.innerHTML + '</table>');
-            printWindow.document.write('</body></html>');
-            printWindow.document.close();
-    
-            // Trigger the print dialog in the new window
-            printWindow.print();
-    
-            // Show the original dropdowns after printing
-            originalDropdowns.forEach(function(dropdown) {
-                dropdown.style.display = 'block';
-            });
-        }
-    </script>
-    
-    
-    
-    
-    <script>
-        function exportToExcel() {
-            // Make an AJAX request to the Django view
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "{% url 'export_sales_invoices_to_excel' %}", true);
-            xhr.responseType = "blob";
-    
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    // Create a link element and trigger the download
-                    var blob = new Blob([xhr.response], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-                    var link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = "sales_invoices.xlsx";
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-            };
-    
-            xhr.send();
-        }
-    </script>
-    
-    
-    <script>
-        function searchInvoices(query) {
-            // Replace '/search_invoices/' with the actual URL for the search view
-            const searchUrl = `/InvoiceSearchView/?query=${query}`;
-    
-            // Perform AJAX request
-            fetch(searchUrl)
-                .then(response => response.json())
-                .then(data => displaySearchResults(data))
-                .catch(error => console.error('Error fetching search results:', error));
-        }
-    
-        function displaySearchResults(results) {
-            const searchResultsContainer = document.getElementById('searchResultsContainer');
-    
-            // Clear previous search results
-            searchResultsContainer.innerHTML = '';
-    
-            // Display the new search results
-            if (results.length > 0) {
-                const resultList = document.createElement('ul');
-                resultList.classList.add('list-group');
-    
-                results.forEach(result => {
-                    const listItem = document.createElement('li');
-                    listItem.classList.add('list-group-item');
-                    listItem.textContent = result.name;  // Assuming 'name' is a property of the search result
-                    resultList.appendChild(listItem);
-                });
-    
-                searchResultsContainer.appendChild(resultList);
-            } else {
-                // Display a message if no results are found
-                const noResultsMessage = document.createElement('p');
-                noResultsMessage.textContent = 'No results found.';
-                searchResultsContainer.appendChild(noResultsMessage);
-            }
-        }
-
-
-        function filter(input) {
-    var filterValue = input.value.toLowerCase();
-    var tableRows = document.querySelectorAll('#InvoiceTable tbody tr');
-
-    tableRows.forEach(function(row) {
-        var cells = row.querySelectorAll('td'); // Assuming all data cells are td elements
-
-        var rowMatch = Array.from(cells).some(function(cell) {
-            var cellValue = cell.textContent || cell.innerText;
-            return cellValue.toLowerCase().includes(filterValue);
-        });
-
-        if (rowMatch) {
-            row.style.display = "table-row";
-        } else {
-            row.style.display = "none";
-        }
-    });
-}
-
-
-
-    </script>
-    
-    
-    
-    
-  
-       <div class="col-md-12  table-container" style="width: 100%;">
-           <div class="table-responsive" style="border-radius: 15px 15px 15px 15px; gray; width: 100%;">
-            <table class="text-dark"  id="InvoiceTable" style=" background-color: rgb(255, 255, 255);">
-                <thead style="border-bottom: 1px solid #ddd; ">
-                    
-                    <!-- Example for the first column -->
-                <th class="text-center fs-8" style="width: 30vw; padding-top: 15px; padding-bottom: 2vh; ">
-                    <div>
-                        <span style="margin-left: 2px;">DATE</span>
-                        
-                    </div>
-                </th>
-
-                    <th class="text-center fs-8 " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown ">
-                            <span style="white-space: nowrap;  ">INVOICE NO</span>
-                        
-                        
-                                                
-                                            </div>
-                    </th>
-                
-                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown">
-                            <span style="white-space: nowrap;">PARTY NAME</span>
-                            
-                                
-                        </div>
-                    </th>
-                    <th class="text-center fs-8  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown">
-                            <span>TRANSACTION</span>
-                           
-                        </div>
-                    </th>
-                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown">
-                            <span style="white-space: nowrap;">PAYMENT</span>
-                            
-                        </div>
-                    </th>
-                    <th class="text-center fs-9  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown"style="margin-right: -1vw;">
-                            <span style="width: 6vw;">AMOUNT</span>
-                            
-                        </div>
-                    </th>
-                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown" >
-                            <span style=" width: 6vw;">BALANCE</span>
-                            
-                        </div>
-                    </th>
-                    <th class="text-center fs-8 no-export " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown">
-                            <span style="margin-left: 20px;width: 5vw;">ACTION</span>
-                            
-                        </div>
-                    </th>
-                    <th class="text-center fs-8 no-export  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
-                        <div class="heading-with-dropdown">
-                            <span style="margin-left: 25px;width: 1vw; ">BY</span>
-                            
-                        </div>
-                    </th>
-                    <th class="text-center p-0 m-0 no-export  " style="padding-right: 5px;padding-top: 15px; padding-bottom: 2vh;"></th> 
-            </thead>
-                <tbody class="text-dark" style="color: black;">
-                    {% for s in sales_invoices %}
-                                            <tr class="sales-row">                                               
-                                                <td class="text-center date-cell td_date clickable-row" id="filterByDate" data-href="salesinvoice_template/{{ s.id }}">{{s.date|date:"d-m-y"}}</td>
-                                                <td class="text-center td_invoice clickable-row" id="filterByInvoiceNumber" data-href="salesinvoice_template/{{ s.id }}">{{s.invoice_no}}</td>
-                                                <td class="text-center td_name clickable-row" id="filterByName" data-href="salesinvoice_template/{{ s.id }}">{{s.party_name}}</td>
-                                                <td class="text-center td_transcation clickable-row"  id="filterByTransaction" data-href="salesinvoice_template/{{ s.id }}">Sale Invoice</td>
-                                                <td class="text-center td_payment clickable-row" id="filterByPayment" data-href="salesinvoice_template/{{ s.id }}">{{ s.paymenttype }}</td>
-                                                <td class="text-center td_amount clickable-row" id="filterByAmount" data-href="salesinvoice_template/{{ s.id }}">{{s.grandtotal}}</td>
-                                                <td class="text-center td_balance clickable-row" id="filterByBalance'" data-href="salesinvoice_template/{{ s.id }}">{{ s.totalbalance }}</td>
-                                                <td class="text-center td_action no-export clickable-row" id="filterByAction" data-href="salesinvoice_template/{{ s.id }}">{{ s.action }}</td>
-                                                <td class="text-center td_by no-export clickable-row" id="filterByBy" data-href="salesinvoice_template/{{ s.id }}">{{s.company.company_name}}</td>
-                                                <td>
-                            <div class="btn-group mb-1">
-                                <div class="dropdown" style="margin-bottom: 4vh;">
-                                    <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                       <span class="fa fa-ellipsis-v text-dark fs-5 ps-"></span>
-                                    </button>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                        <ul>
-                                            <li>
-                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_v" onclick="redirectToView(event, {{ s.id }})">
-                                                    <span class="fa fa-eye pe-2 tg"></span> View
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_e" onclick="redirectToEdit(event, {{ s.id }})">
-                                                    <span class="fa fa-edit pe-2 text-primary mt-2"></span> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" style="color: black; padding-left: 20px;" class="hide_table_text_d" onclick="redirectToDelete(event, {{ s.id }})">
-                                                    <span class="fa-solid fa-trash" style="margin-left: -.7vw;padding-right: .7vw;"></span> Delete
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_h" onclick="redirectToHistory(event, {{ s.id }})">
-                                                    <span class="fa fa-history pe-2 th mt-2"></span> History
-                                                </a>
-                                            </li>
-                                        </ul>
+    <p></p>
+    <div class="row ps-3 pe-3 m-0 w-100" style="width:100%;">
+        <div class="col-md-12 ps-2 pe-3" style="width:100%;">
+            <div class="row pt-0 m-0" style="width:100%;">
+                <div class="card p-0 bs" style="width:100%;background-color: #3d4465;"><br>
+                    <div class="row">
+                        <div class="container" style="width:100%;">
+                            <div class="row">
+                                <div class="col-md-3" style="margin-left: 7vh;">
+                                    <div class="form-group">
+                                        <label for="fromDate" style="color: white; margin-bottom: 1vh;">From Date:</label>
+                                        <input type="date" class="form-control h-100 border-secondary" id="fromDate" style="color: black; background-color: white;" onchange="filterDates()"> 
                                     </div>
-                                    
-                                    <script>
-                                        function redirectToView(event, id) {
-                                            event.preventDefault();
-                                            window
-                                            window.location.href = "{% url 'salesinvoice_template' 0 %}".replace('0', id);
-                                        }
-                                    
-                                        function redirectToEdit(event, id) {
-                                            event.preventDefault();
-                                            window.location.href = "{% url 'invoice_edit' 0 %}".replace('0', id);
-                                        }
-                                    
-                                        function redirectToDelete(event, id) {
-                                            event.preventDefault();
-                                            window.location.href = "{% url 'delete_sales_invoice' 0 %}".replace('0', id);
-                                        }
-                                    
-                                        function redirectToHistory(event, id) {
-                                            event.preventDefault();
-                                            window.location.href = "{% url 'salesinvoice_history' 0 %}".replace('0', id);
-                                        }
-                                    </script>
-                                    
-                                    
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label for="toDate" style="color: white; margin-bottom: 1vh;">To Date:</label>
+                                        <input type="date" class="form-control h-100 border-secondary" id="toDate" style="color: black; background-color: white;" onchange="filterDates()">
+                                    </div>
+                                </div>
+                                {% comment %} <div class="col-md-2"></div> {% endcomment %}
+                                <div class="col-md-5 text-right" style="margin-left: 2vh;">
+                                    <a href="{% url 'salesinvoice_graph' %}">
+                                        <button class="btn mt-4 button-hover" type="button" style="margin-right: 2vh;">
+                                            <span style="color: black; font-size: small; font-weight: bold;">Graph </span> <span class="fa-solid fa-square-poll-vertical" style="color:#3d4465;"></span>
+                                        </button>
+                                    </a>
+                                    <label for="file-input" title="import excel" class="btn mt-4 button-hover" type="button" style="margin-right: 2vh;">
+                                        <span style="position: relative; display: inline-block;">
+                                            <span style="color: black; font-size: small; font-weight: bold;">Import </span> <span class="fa-solid fa-file-import" style="color:#3d4465;"></span>
+                                        </span>
+                                        <input id="file-input" type="file" name="file" style="display:none;" onchange="uploadFile()">
+                                    </label>
+                                    {% comment %} <button class="btn mt-4 button-hover" type="button" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Import </span> <span class="fa-solid fa-file-import" style="color:#3d4465;"></span>
+                                        <input id="file-input" type="file" name="file" style="display:none;" onchange="uploadFile()">
+                                    </button> {% endcomment %}
+                                    <button class="btn mt-4 button-hover" type="button" onclick="exportToExcel()" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Excel </span> <span class="fa-solid fa-file-excel" style="color:#3d4465;"></span>
+                                    </button>
+
+                                    <button class="btn mt-4 button-hover" type="button" onclick="printSalesInvoice()" style="margin-right: 2vh;">
+                                        <span style="color: black; font-size: small; font-weight: bold;">Print </span> <span class="fa-solid fa-print" style="color:#3d4465;"></span>
+                                    </button>
+                                   
+                                </div>
+                                    <br><br><br><br>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </div>
+                    </div><br><br>
+                    
+                    
+
             
-           </div>
-       </div>
+                <div class="card p-0 bs" style="height: 36rem; width:100%;background: linear-gradient(#3d4465 0%, #3d4465 206px, white 17px, white 100%);">
+                    <div class="row m-0 p-0 pt-3">
+                        <div class="col-sm-12 col-lg-3" style="margin-left: 5vh;">
+                            <h3 class="tb fw-bolder pt-2 " style="color:white;">Sales Invoice</h3>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input id="search_input" style="padding-inline-start: 2rem; margin-left: 7vh; " class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder=" Search">
+                        </div>
+                        <div class="col-md-6"></div>
+                        <div class="col-md-2" style="margin-left:-3%;">
+                            <a class="btn button-hover"  href="{% url 'sales_invoice_add' %}" style="margin-right:3%;"> 
+                                <i class="fa fa-plus border-dark " aria-hidden="true" style="color: #3d4465;"></i> &nbsp;Add SalesInvoice
+                            </a>
+                        </div>
+                    </div> <br>
+
+                    <div class="row">
+                        <div class="col-md-12 mt-1" style="margin-left: 2vh;">
+                            <div class="mt-3"  style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
+                                <table class="text-dark"  id="InvoiceTable" style=" background-color: rgb(255, 255, 255);">
+                                    <thead style="border-bottom: 1px solid #ddd; ">
+                                        
+                                        <!-- Example for the first column -->
+                                    <th class="text-center fs-8" style="width: 30vw; padding-top: 15px; padding-bottom: 2vh; background-color:#3d4465; color:white;">
+                                        <div>
+                                            <span style="margin-left: 2px;">DATE</span>
+                                            
+                                        </div>
+                                    </th>
+                    
+                                        <th class="text-center fs-8 " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown ">
+                                                <span style="white-space: nowrap;  ">INVOICE NO</span>
+                                            
+                                            
+                                                                    
+                                                                </div>
+                                        </th>
+                                    
+                                        <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown">
+                                                <span style="white-space: nowrap;">PARTY NAME</span>
+                                                
+                                                    
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-8  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown">
+                                                <span>TRANSACTION</span>
+                                               
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown">
+                                                <span style="white-space: nowrap;">PAYMENT</span>
+                                                
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-9  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown"style="margin-right: -1vw;">
+                                                <span style="width: 6vw;">AMOUNT</span>
+                                                
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown" >
+                                                <span style=" width: 6vw;">BALANCE</span>
+                                                
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-8 no-export " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown">
+                                                <span style="margin-left: 20px;width: 5vw;">ACTION</span>
+                                                
+                                            </div>
+                                        </th>
+                                        <th class="text-center fs-8 no-export  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                            <div class="heading-with-dropdown">
+                                                <span style="margin-left: 25px;width: 1vw; ">BY</span>
+                                                
+                                            </div>
+                                        </th>
+                                        <th class="text-center p-0 m-0 no-export  " style="padding-right: 5px;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;"></th> 
+                                </thead>
+                                    <tbody class="text-dark" style="color: black;">
+                                        {% for s in sales_invoices %}
+                                                                <tr class="sales-row">                                               
+                                                                    <td class="text-center date-cell td_date clickable-row" id="filterByDate" data-href="salesinvoice_template/{{ s.id }}">{{s.date|date:"d-m-y"}}</td>
+                                                                    <td class="text-center td_invoice clickable-row" id="filterByInvoiceNumber" data-href="salesinvoice_template/{{ s.id }}">{{s.invoice_no}}</td>
+                                                                    <td class="text-center td_name clickable-row" id="filterByName" data-href="salesinvoice_template/{{ s.id }}">{{s.party_name}}</td>
+                                                                    <td class="text-center td_transcation clickable-row"  id="filterByTransaction" data-href="salesinvoice_template/{{ s.id }}">Sale Invoice</td>
+                                                                    <td class="text-center td_payment clickable-row" id="filterByPayment" data-href="salesinvoice_template/{{ s.id }}">{{ s.paymenttype }}</td>
+                                                                    <td class="text-center td_amount clickable-row" id="filterByAmount" data-href="salesinvoice_template/{{ s.id }}">{{s.grandtotal}}</td>
+                                                                    <td class="text-center td_balance clickable-row" id="filterByBalance'" data-href="salesinvoice_template/{{ s.id }}">{{ s.totalbalance }}</td>
+                                                                    <td class="text-center td_action no-export clickable-row" id="filterByAction" data-href="salesinvoice_template/{{ s.id }}">{{ s.action }}</td>
+                                                                    <td class="text-center td_by no-export clickable-row" id="filterByBy" data-href="salesinvoice_template/{{ s.id }}">{{s.company.company_name}}</td>
+                                                                    <td>
+                                                <div class="btn-group mb-1">
+                                                    <div class="dropdown" style="margin-bottom: 4vh;">
+                                                        <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                           <span class="fa fa-ellipsis-v text-dark fs-5 ps-"></span>
+                                                        </button>
+                                                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                                            <ul>
+                                                                <li>
+                                                                    <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_v" onclick="redirectToView(event, {{ s.id }})">
+                                                                        <span class="fa fa-eye pe-2 tg"></span> View
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_e" onclick="redirectToEdit(event, {{ s.id }})">
+                                                                        <span class="fa fa-edit pe-2 text-primary mt-2"></span> Edit
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" style="color: black; padding-left: 20px;" class="hide_table_text_d" onclick="redirectToDelete(event, {{ s.id }})">
+                                                                        <span class="fa-solid fa-trash" style="margin-left: -.7vw;padding-right: .7vw;"></span> Delete
+                                                                    </a>
+                                                                </li>
+                                                                <li>
+                                                                    <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_h" onclick="redirectToHistory(event, {{ s.id }})">
+                                                                        <span class="fa fa-history pe-2 th mt-2"></span> History
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                        
+                                                        <script>
+                                                            function redirectToView(event, id) {
+                                                                event.preventDefault();
+                                                                window
+                                                                window.location.href = "{% url 'salesinvoice_template' 0 %}".replace('0', id);
+                                                            }
+                                                        
+                                                            function redirectToEdit(event, id) {
+                                                                event.preventDefault();
+                                                                window.location.href = "{% url 'invoice_edit' 0 %}".replace('0', id);
+                                                            }
+                                                        
+                                                            function redirectToDelete(event, id) {
+                                                                event.preventDefault();
+                                                                window.location.href = "{% url 'delete_sales_invoice' 0 %}".replace('0', id);
+                                                            }
+                                                        
+                                                            function redirectToHistory(event, id) {
+                                                                event.preventDefault();
+                                                                window.location.href = "{% url 'salesinvoice_history' 0 %}".replace('0', id);
+                                                            }
+                                                        </script>
+                                                        
+                                                        
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
+                    </div>                        
+                </div>
+            
+        </div>
     </div>
-   </div>
-
-   </div>
+        
 </div>
-
 <table id="printTable" style="display: none;">
     <thead >
         
@@ -972,4 +828,149 @@ function filterTable(columnIndex) {
 }
 
         </script>
-{% endblock %}
+<!-- Add a container to display search results -->
+<div id="searchResultsContainer"></div>
+<script>
+    function printSalesInvoice() {
+        // Clone the table to avoid modifying the original
+        var clonedTable = document.getElementById('printTable').cloneNode(true);
+
+        // Remove any dropdown elements from the cloned table
+        var dropdowns = clonedTable.querySelectorAll('select');
+        dropdowns.forEach(function(dropdown) {
+            dropdown.remove();
+        });
+
+        // Hide any dropdowns in the original table
+        var originalDropdowns = document.getElementById('printTable').querySelectorAll('select');
+        originalDropdowns.forEach(function(dropdown) {
+            dropdown.style.display = 'none';
+        });
+
+        // Create a new window for printing
+        var printWindow = window.open('', '_blank');
+        printWindow.document.write('<html><head><title>Print</title>');
+        printWindow.document.write('<style>');
+        printWindow.document.write('/* Add any print-specific styling here */');
+        printWindow.document.write('h1 { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid black; }');
+        printWindow.document.write('table { border-collapse: collapse; width: 100%; }');
+        printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
+        printWindow.document.write('</style>');
+        printWindow.document.write('</head><body>');
+
+        // Add the heading "Sales Invoice" before the table with a styled boundary
+        printWindow.document.write('<h1>Sales Invoice</h1>');
+
+        // Add the table content
+        printWindow.document.write('<table>' + clonedTable.innerHTML + '</table>');
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+
+        // Trigger the print dialog in the new window
+        printWindow.print();
+
+        // Show the original dropdowns after printing
+        originalDropdowns.forEach(function(dropdown) {
+            dropdown.style.display = 'block';
+        });
+    }
+</script>
+
+
+
+
+<script>
+    function exportToExcel() {
+        // Make an AJAX request to the Django view
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "{% url 'export_sales_invoices_to_excel' %}", true);
+        xhr.responseType = "blob";
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                // Create a link element and trigger the download
+                var blob = new Blob([xhr.response], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                var link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = "sales_invoices.xlsx";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        };
+
+        xhr.send();
+    }
+</script>
+
+
+<script>
+    function searchInvoices(query) {
+        // Replace '/search_invoices/' with the actual URL for the search view
+        const searchUrl = `/InvoiceSearchView/?query=${query}`;
+
+        // Perform AJAX request
+        fetch(searchUrl)
+            .then(response => response.json())
+            .then(data => displaySearchResults(data))
+            .catch(error => console.error('Error fetching search results:', error));
+    }
+
+    function displaySearchResults(results) {
+        const searchResultsContainer = document.getElementById('searchResultsContainer');
+
+        // Clear previous search results
+        searchResultsContainer.innerHTML = '';
+
+        // Display the new search results
+        if (results.length > 0) {
+            const resultList = document.createElement('ul');
+            resultList.classList.add('list-group');
+
+            results.forEach(result => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('list-group-item');
+                listItem.textContent = result.name;  // Assuming 'name' is a property of the search result
+                resultList.appendChild(listItem);
+            });
+
+            searchResultsContainer.appendChild(resultList);
+        } else {
+            // Display a message if no results are found
+            const noResultsMessage = document.createElement('p');
+            noResultsMessage.textContent = 'No results found.';
+            searchResultsContainer.appendChild(noResultsMessage);
+        }
+    }
+
+
+    function filter(input) {
+var filterValue = input.value.toLowerCase();
+var tableRows = document.querySelectorAll('#InvoiceTable tbody tr');
+
+tableRows.forEach(function(row) {
+    var cells = row.querySelectorAll('td'); // Assuming all data cells are td elements
+
+    var rowMatch = Array.from(cells).some(function(cell) {
+        var cellValue = cell.textContent || cell.innerText;
+        return cellValue.toLowerCase().includes(filterValue);
+    });
+
+    if (rowMatch) {
+        row.style.display = "table-row";
+    } else {
+        row.style.display = "none";
+    }
+});
+}
+
+
+
+</script>
+
+
+
+
+
+
+{% endblock  %}

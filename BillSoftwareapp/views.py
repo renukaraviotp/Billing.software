@@ -2305,7 +2305,7 @@ def add_unit(request):
 
     return redirect('create_purchasebill')  
     
-    
+     
 def sales_invoice(request):
     if 'staff_id' in request.session:
         if request.session.has_key('staff_id'):

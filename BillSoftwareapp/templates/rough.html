@@ -7384,3 +7384,2208 @@ def add_company(request):
 </script>
 
 {% endblock content %}  
+
+{% comment %} debit note templates old {% endcomment %}
+
+{% extends 'base.html' %}
+{% block content %}
+{% load social_share %}
+{% load static %}
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600&display=swap');
+
+    body {
+        background-color: var(--body-bg);
+    }
+
+    .page {
+        background: var(--white);
+        background-color: white;
+        display: block;
+        margin: 0 auto;
+        position: relative;
+        box-shadow: var(--pageShadow);
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+
+    .page[size="A4"] {
+        width: 21cm;
+        height: 29.7cm;
+        overflow: hidden;
+    }
+
+    .top-content {
+        padding-bottom: 15px;
+    }
+
+    .store-user {
+        padding-bottom: 25px;
+    }
+
+    .store-user p {
+        margin: 0;
+        font-weight: 600;
+        color: #000000;
+    }
+
+    .store-user .address {
+        font-weight: 400;
+    }
+    .pg{
+        border: 3px dotted black;
+    }
+
+    .store-user h5 {
+        color: var(--themeColor);
+        font-family: 'Rajdhani', sans-serif;
+    }
+
+    thead {
+        color: var(--white);
+        background: var(--themeColor);
+    }
+
+    .table td,
+    .table th {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    tr th:first-child,
+    tr td:first-child {
+        text-align: left;
+    }
+
+    .balance-info .table td,
+    .balance-info .table th {
+        padding: 0;
+        border: 0;
+    }
+
+    .balance-info tr td:first-child {
+        font-weight: 600;
+    }
+
+    tfoot {
+        border-top: 2px solid var(--darkWhite);
+    }
+
+    tfoot td {
+        font-weight: 600;
+    }
+
+    .print-only {
+        height: auto;
+        width: auto;
+        overflow-y: auto;
+        border: none;
+    }
+
+    @media print{
+        body{
+            visibility: hidden !important; /* hide everything in body when in print mode*/
+        }
+
+        #printslip{
+            margin-left: 2vh;
+            margin-right: 2vh;
+      
+        }
+        #pg1{
+           
+           border: none;
+       }
+
+        #ch{
+            margin-left:15% ;
+        }
+
+        .printContainer {
+            visibility: visible !important; /* Override the rule above to only show the printables*/
+            position: absolute;
+            /* z-index: 99999; */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: large;
+        } 
+    }
+    .vl {
+        border-left: 6px solid gray;
+    }
+
+    .equal-length-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: auto; /* Make the container fill the height of the column */
+        margin-left: 2vh;
+        margin-right: 2vh;
+        width: auto;
+       
+    }
+
+    .equal-length-item {
+        flex: 1;
+        text-align: center;
+        
+    }
+
+    #templates, #slip{
+        cursor: pointer;
+    }
+
+    #myDropdown {
+        display: none;
+        position: absolute;
+        margin-left: 200px;
+        background-color: #f9f9f9;
+        min-width: 160px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    #myDropdown  a {
+        display: block;
+        padding: 12px 16px;
+        text-decoration: none;
+        color: #333;
+    }
+
+    #myDropdown  a:hover {
+        background-color:#0000cd;
+        color: #ffffff;
+    }
+
+    ::-webkit-scrollbar{
+        display: none
+    }
+</style>
+
+<div class="quixnav ">
+    <div class="quixnav-scroll">
+        <ul class="metismenu" id="menu">
+            <li>
+                {% if staff.position == 'company' %}
+                <a href="{% url 'homepage' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span
+                class="nav-text">Dashboard</span></a></li>
+                {% else %}
+                <a href="{% url 'staffhome' %}" aria-expanded="false"><i class="icon icon-world-2"></i><span
+                    class="nav-text">Dashboard</span></a>
+                    {% endif %}
+                </li>
+
+            <!-- <li><a href="/" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span></a></li> -->
+            <li><a href="{% url 'parties_table' %}" aria-expanded="false"><i class="icon icon-single-04"></i><span class="nav-text">Parties</span> </a> <a style="display: flex;position:absolute ;left: 195px;background-color: transparent; "  href="{% url 'parties_add_page' %}"><i style="font-size: 25px;" class="fa-solid fa-circle-plus "></i></a></li>
+                    
+                    <div class="position-relative nav-text">
+                       
+                            <div class="position-absolute end-0 bottom-0" style="z-index: 1; margin-top: 8px; margin-right: 0.9rem; margin-left: 14vw;">
+                                <a style="color: black; margin-top: -2px; width: 20px;" href="{% url 'add_item' %}">
+                                    <span>
+                                        <i class="fa fa-plus fa-stack-.5x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </div>
+
+                    </div>
+                    
+                      <li class="sidebar-item">
+                        <a class="sidebar-link mt-2" href="{% url 'view_item'  %}" aria-expanded="false">
+                          <span>
+                            <b style="margin-left: 10px;"><i class="fa fa-th"></i></b>
+                          </span>
+                          <span class="hide-menu nav-text"><b>Items</b></span>
+                        </a>
+                      </li>
+
+                      
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false"><i
+                        class="icon icon-app-store"></i><span class="nav-text">Sales</span></a>
+                <ul aria-expanded="false">
+                  <li style="display: flex; align-items: center;">
+                    <a href="{% url 'sales_invoice' %}">Invoice</a>
+                    <a href="{% url 'sales_invoice_add' %}"  style="margin-left: 50px;">
+                      <span>
+                        <i class="fa fa-plus fa-stack-.1x fa-inverse"></i>
+                    </span></a>
+                </li>
+                <li style="display: flex; align-items: center;">
+                  <a href="{% url 'transactiontable' %}" style="text-decoration: none;">Credit Note</a>
+                  <a href="{% url 'credit_add' %}" id="" style="color: white; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-left: 10px;" class="btn col-md-1">
+                      <i class="fa-solid fa-plus" id="addRowIcon"></i>
+                  </a>
+              </li>
+                </ul>
+            </li>
+
+            <li><a class="has-arrow" href="javascript:void()" aria-expanded="false" style="background-color: slateblue; color: white;"><i
+                class="icon icon-credit-card "></i><span class="nav-text">Purchase</span></a>
+        <ul aria-expanded="false">
+          <li><a href="{% url 'view_purchasebill' %}">Purchase Bill  &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i></a></li>
+  
+          
+          <li><a href="{% url 'view_purchasedebit' %}">Purchase Return/Dr.Note<i class="fa fa-plus"></i></a></li>
+        </ul>
+    </li>
+
+            <li><a href="widget-basic.html" aria-expanded="false"><i class="icon icon-globe-2"></i><span
+                class="nav-text">Stock Report</span></a></li>
+            
+        </ul>
+    </div>
+
+
+</div>
+
+<div class="content-body">
+    <div class="container-fluid">
+        <!-- row for image and content -->
+        <div class="card-body">
+            <div class=" bg-light bg-light pb-0 mb-0 p-2" style="height:100%;width:100%">
+                <!-- <div class="d-flex justify-content-center pt-4">
+                    <a href="" id="b1" class="btn  text-white"
+                        style="margin-right: 10px; background-color: rgb(252, 3, 3,0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        Add Sale <i class="fa fa-plus"></i>
+                    </a>
+                    <a href="" id="b2" class="btn  text-white"
+                        style="margin-right: 10px;background-color: rgba(3, 161, 252, 0.7);border-radius: 20px;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        Add Purchase <i class="fa fa-plus"></i>
+                    </a>
+                    <a href="" id="b3" class="btn text-primary"
+                        style="border-radius: 20px;border: 1px solid rgb(40, 12, 222);background-color: white;box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
+                        Add More <i class="fa fa-plus"></i>
+                    </a>
+                </div> -->
+                <p></p>
+                <div class="page-content">
+                    <div class="card radius-15">
+                        <div class="card-body bg-light">
+                            <div class="row">
+                                <a class="ml-2" href="{% url 'view_purchasedebit' %}" style="text-align: right; font-size: large; color: black;">
+                                    <i class="fa fa-times mt-2" aria-hidden="true"></i>
+                                </a>
+                                <div class="col-md-4">
+                                   
+
+
+                                    <center><h3 class="mb-3">DEBIT NOTE DETAILS</h3> </center>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn ml-5" onclick="printfun()">   <i class="fa fa-print" aria-hidden="true" style="font-size:22px;color: red;"></i> <br>Print</a>
+                                    <a class="btn ml-4" id="pdflink"><i class="fa fa-file-pdf" aria-hidden="true" style="font-size:22px;color: darkslateblue;"></i><br>Pdf</a>
+                                    <a class="btn ml-4" onclick="toggleDropdown()"> <i class="fa fa-share" aria-hidden="true" style="font-size:22px;color: navy;"></i><br>Share</a>
+                                    <div class="dropdown-content close-dropdown-link" id="myDropdown">
+                                        
+                                        <ul style="margin-bottom: -1px;">{% post_to_whatsapp object_or_url "WhatsApp" %}</ul>
+                                        <ul><a href="#" data-toggle="modal" data-target="#shareBillEmail">Email</a></ul>
+                                     </div>
+                                     
+                                   
+                                
+                                </div>
+                            </div>
+                            <div class="row pb-0 mb-0 mt-1" style="margin-top:-2vh">
+                                <div id="templates" class="col text-center pb-2 pt-3" style="background-color: rgb(0, 0, 139,.397);"  >
+                                    <a class="fw-bolder fs-4" style="color: gray; text-decoration: none; " >TEMPLATE</a>
+                                </div>
+                                <div id="slip" class="col text-center pb-2 pt-3" style="background-color: rgb(0, 0, 139,.397);" >
+                                    <a class="fw-bolder fs-4" style="color: gray; text-decoration: none;" >DEBIT SLIP</a>
+                                </div>
+                            </div>
+                            
+                            <div id="templatediv" style=" border-radius: 2vh;">
+                                <div  id="whatToPrint" class="print-only">
+                                    <!-- template1 -->
+                                    <div id="whatToPrint1" class="printTemplates template1" >
+                                        <div class="my-5 page" size="A4" >
+                                            <div class="p-4" id="printdiv1">
+                                                <div id="printdiv1">
+                                                    <section>
+                                                        <div class="text-center">
+                                                            <h2 style="color: darkslateblue;">DEBIT NOTE</h2>
+                                                        </div>
+                                                    </section>
+                                                    <section class="top-content ">
+                                                        <div class="top-left">
+                                                            <div class="position-relative" style="text-align: left;">
+                                                                <p> Debit No: &nbsp; {{ pdebt.pdebitid }}</p>
+                                                                <p>Debit Date: <span>{{pdebt.debitdate | date:'d-m-Y'}}</span></p>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+
+                                                    <hr style="color: black;">
+                                                    <br>
+
+                                                    <section class="store-user mt-2">
+                                                        <div class="col-12">
+                                                            <div class="row pb-3">
+                                                                <div class="col-6">
+                                                                    <div class="from-address text-left">
+                                                                        <p><b>FROM</b>,</p>
+                                                                        <!-- <h5 class="text-info" style='margin-left: 4vh;'>{{pdebt.staff.first_name }} {{pdebt.staff.last_name }}</h5> -->
+                                                                        <p class="address" style="margin-top: -1vh; margin-left: 4vh"> 
+                                                                            <br>
+                                                                            {{pdebt.company.company_name }}<br>
+                                                                            {{pdebt.company.address}}<br>
+                                                                            {{pdebt.company.city}},
+                                                                            {{pdebt.company.state}}<br>
+                                                                            {{pdebt.company.pincode}}<br>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-6">
+                                                                    <div class="to-address text-end">
+                                                                        <p><b>TO</b>,</p>
+                                                                        <h5 style='color: darkslateblue;'>{{pdebt.party.party_name}}</h5>
+                                                                        <p class="address text-end" style="margin-top: -1vh; margin-left: 4vh;"> {{ pdebt.party.billing_address}} </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                    
+                                                    
+
+                                                    <hr style="color: black;">
+
+                                                    <section class="product-area mt-4">
+                                                        <table class=" table table-hover table-bordered border-dark" id="table1">
+                                                            <thead>
+                                                                <tr>
+                                                                    <td style="text-align: center; font-weight:bold; color:white;background-color: darkslateblue; ">Items</td>
+                                                                    <td style="font-weight:bold; color:white;background-color: darkslateblue;  ">HSN</td>
+                                                                    <td style="font-weight:bold; color:white;background-color: darkslateblue;  ">Price</td>
+                                                                    <td style="font-weight:bold; color:white;background-color: darkslateblue; ">Quantity</td>
+                                                                    <td style="font-weight:bold; color:white;background-color: darkslateblue; ">Tax</td>
+                                                                    <td style="font-weight:bold; color:white;background-color: darkslateblue; ">Discount</td>
+                                                                    <td style="font-weight:bold; color:white;background-color: darkslateblue; ">Total</td>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for i in pitm %}
+                                                                <tr>
+                                                                    <td style="color:black; text-align: center;">{{i.product.item_name}}</td>
+                                                                    <td style="color:black">{{i.product.item_hsn}}</td >
+                                                                    <td style="color:black">{{i.qty}}</td>
+                                                                    <td style="color:black">{{i.product.item_purchase_price}}</td>
+                                                                    {% if pdebt.supply == 'State' %}
+                                                                    <td class="text-center" style="color: black;">{{ i.product.item_gst  }}</td>
+                                                                    {% else %}
+                                                                    <td class="text-center" style="color: black;">{{ i.product.item_igst  }}</td>
+                                                                    {% endif %}
+                                                                    <td style="color:black">{{i.discount}} </td>
+                                                                    <td style="color:black">{{i.total}}</td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table><br><br>
+                                                    </section>
+                                        
+                                                    <section class="balance-info">
+                                                        <div class="row mt-3">
+                                                            <div class="col-4"></div>
+                                                            <div class="col-4"></div>
+                                                            <div class="col-4"><br><br>
+                                                                <table class="table table-borderless">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <td style="color: #000;">Sub Total</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.subtotal}}</td>
+                                                                        </tr>
+                                                                        
+                                                                        {% if pdebt.supply != 'State' %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">IGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.igst}}</td>
+                                                                        </tr>
+                                                                        {% else %}
+                                                                        <tr>
+                                                                            <td style="color: #000;">CGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.cgst}}</td>
+                                                                            
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="color: #000;">SGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.sgst}}</td>
+                                                                        </tr>
+                                                                        {% endif %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">Tax Amount</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.taxamount}}</td>
+                                                                        </tr>
+
+                                                                        {% if pdebt.adjustment != '0.00' %}
+                                                                        {% if pbill.adjustment != '0' %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">Adjustment</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.adjustment}}</td>
+                                                                        </tr>
+                                                                        {% endif %}
+                                                                        {% endif %}
+                                                                    </tbody>
+                                                                </table>
+                                                                <hr style="background-color: #000000;">
+                                                                <table class="table table-borderless">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <th style="color: #000;">Grand Total &nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                                                            <th style="color: #000; ">:</th>
+                                                                            <th style="color: #000; text-align: center;">{{pdebt.grandtotal}}</th>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <!-- template2 -->
+                                    <div  id="whatToPrint2"  class="printTemplates template2"  style="display: none;">
+                                        <div class="my-5 page" size="A4" >
+                                            <div id="printdiv2">
+                                                <div class="row px-5 py-4" style="background-color:rgb(0, 0, 139,.397);">
+                                                    <div class="col-md-4"></div>
+                                                    <div class="col-md-4 d-flex justify-content-center">
+                                                        <center ><h2 class="text-dark">DEBIT NOTE</h2></center>
+                                                    </div>  
+                                                    <div class="col-md-4 d-flex justify-content-end">
+                                                        <div class="text-dark" >
+                                                            <p class="mb-0 mt-2" >Debit No: <b>{{pdebt.pdebitid }}</b></p>
+                                                            <p class="mb-0 mt-2" >Debit Date: <b>{{pdebt.debitdate | date:'d-m-Y'}}</b></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="px-5 py-1">
+                                                    <section class="store-user"><br><br>
+                                                        <div class="col-12">
+                                                            <div class="row  pb-2 mt-3">
+                                                                <div class="col-4 pl-0">
+                                                                    <label class="text-dark w-100 p-1 mb-1" style="background-color: rgb(0, 0, 139,.397); border-top-right-radius: 4vh; border-bottom-right-radius: 4vh;" ><b>BILLING ADDRESS</b></label>
+                                                                    <!-- <h5 class="text-dark" style="font-weight: bold;">{{pdebt.staff.first_name}} {{pdebt.staff.last_name}}</h5> -->
+                                                                    <p class="address" style="font-weight: bold;color: #000;">
+                                                                        <br>
+                                                                        {{pdebt.company.company_name}} <br>
+                                                                        {{pdebt.company.address}}
+                                                                        <br>
+                                                                        {{pdebt.company.city}}
+                                                                        <br>
+                                                                        {{pdebt.company.state}} - {{pdebt.company.pincode}}
+                                                                    </p>  
+                                                                </div>
+                                                                <div class="col-4"></div>
+                                                                <div class="col-4 pr-0">
+                                                                    <label class="text-dark w-100 p-1 mb-1" style="border-top-right-radius: 4vh; border-bottom-right-radius: 4vh; background-color: #0d6cf1;" ><b>SHIPPING ADDRESS</b></label>
+                                                                    <h5 class="text-dark" style="font-weight: bold;">{{pdebt.party.party_name}}</h5>
+                                                                    <p class="address" style="font-weight: bold;color: #000;">{{ pdebt.party.billing_address | linebreaksbr}} </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                        
+                                                    <section class="product-area mt-2">
+                                                        <table class="table table-hover table-bordered " id="table2">
+                                                            <thead style="background-color: rgb(0, 0, 139,.397);">
+                                                                <tr class="template3tablehead">
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">Items</th>
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">HSN</th>
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">Quantity</th>
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">Rate</th>
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">Tax</th>
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">Discount</th>
+                                                                    <th class="text-center" style="color:white;background-color: darkslateblue;">Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody style="border: 1px solid red;" >
+                                                                {% for itm in pitm %}
+                                                                    <tr>
+                                                                        <td class="text-center" style="color:black">{{ itm.product.item_name}}</td>
+                                                                        <td class="text-center" style="color:black">{{ itm.product.item_hsn }}</td>
+                                                                        <td class="text-center" style="color:black">{{ itm.qty }}</td>
+                                                                        <td class="text-center" style="color:black">{{ itm.product.item_purchase_price  }}</td>
+                                                                        {% if pdebt.supply == 'State' %}
+                                                                        <td class="text-center" style="color: black;">{{ itm.product.item_gst  }}</td>
+                                                                        {% else %}
+                                                                        <td class="text-center" style="color: black;">{{ itm.product.item_igst  }}</td>
+                                                                        {% endif %}
+                                                                        <td class="text-center" style="color:black">{{ itm.discount  }}</td>
+                                                                        <td class="text-center" style="color:black">{{ itm.total }}</td>
+                                                                    </tr>
+                                                                {% endfor %} 
+                                                            </tbody>
+                                                        </table>
+                                                    </section>
+                                        
+                                                    <section class="balance-info">
+                                                        <div class="row mt-3">
+                                                            <div class="col-4"></div>
+                                                            <div class="col-4"></div>
+                                                            <div class="col-4"><br><br>
+                                                                <table class="table table-borderless">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <td style="color: #000;">Sub Total</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.subtotal}}</td>
+                                                                        </tr>
+                                                                        
+                                                                        {% if pdebt.supply != 'State' %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">IGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.igst}}</td>
+                                                                        </tr>
+                                                                        {% else %}
+                                                                        <tr>
+                                                                            <td style="color: #000;">CGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.cgst}}</td>
+                                                                            
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td style="color: #000;">SGST</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.sgst}}</td>
+                                                                        </tr>
+                                                                        {% endif %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">Tax Amount</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.taxamount}}</td>
+                                                                        </tr>
+
+                                                                        {% if pdebt.adjustment != '0.00' %}
+                                                                        {% if pbill.adjustment != '0' %}
+                                                                        <tr >
+                                                                            <td style="color: #000;">Adjustment</td>
+                                                                            <td style="color: #000;">:</td>
+                                                                            <td class="text-right" style="color: #000;">{{pdebt.adjustment}}</td>
+                                                                        </tr>
+                                                                        {% endif %}
+                                                                        {% endif %}
+                                                                    </tbody>
+                                                                </table>
+                                                                <hr style="background-color: #000000;">
+                                                                <table class="table table-borderless">
+                                                                    <tbody>
+                                                                        <tr >
+                                                                            <th style="color: #000;">Grand Total &nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                                                            <th style="color: #000; ">:</th>
+                                                                            <th style="color: #000; text-align: center;">{{pdebt.grandtotal}}</th>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div> 
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- template3 -->
+                                    <div id="whatToPrint3" class="printTemplates template3"  style="display: none;" >
+                                        <div class="my-5 page"  size="A4" >
+                                            <div class="" id="printdiv3">
+                                                <div class="row">
+                                                    <div class="col-sm-12" style="background-image: linear-gradient(rgb(0, 0, 139,.397),#00008b ); color: black;">
+                                                        <br>
+                                                        <p style="font-size: 4vh; text-align: center;">DEBIT NOTE</p>
+                                                        <p style=" text-align: center;"> 
+                                                          
+                                                            {{pdebt.company.company_name}} <br>
+                                                            {{pdebt.company.address}} <br>
+                                                            {{pdebt.company.city}},
+                                                            {{pdebt.company.state}}<br>
+                                                            {{pdebt.company.cemail}}
+                                                            <br>
+                                                        </p>
+                                                    </div>
+                                                    <div class="row col-12">
+                                                        <div class="col-md-1"></div>
+                                                        <div class="col-5">
+                                                            <br><br><br>
+                                                            <p style="color:black;"> <span style=" font-weight: bold;">To: </span><br>
+                                                            {{pdebt.party.party_name}}<br>
+                                                            {{pdebt.party.billing_address|linebreaksbr }}
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-2"></div>
+                                                        <div class="col-4">
+                                                            <br><br><br>
+                                                            <table class="table table-borderless">
+                                                                <tbody>
+                                                                    <tr >
+                                                                        <td style="color: #000; font-weight: bold;">Debit No : <b>{{pdebt.pdebitid }}</b></td>
+                                                                       
+                                                                    </tr>
+                                                                    <tr >
+                                                                        <td style="color: #000; font-weight: bold;">Debit Date :<b>{{pdebt.debitdate | date:'d-m-Y'}}</b> </td>
+                                                                        <!-- <td style="color: #000; text-align: left;">{{pdebt.debitdate | date:'d-m-Y'}}<td> -->
+                                                                    </tr>
+                                                                </tbody>
+                            
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-10"><br>
+                                                        <table class="table table-hover table-bordered  template3table" id="table3" style="border:1px solid black">
+                                                            <thead >
+                                                                <tr >
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">Items</th>
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">HSN</th>
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">Quantity</th>
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">Rate</th>
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">Tax</th>
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">Discount</th>
+                                                                    <th class="text-center"  style="color:white;background-color: darkslateblue;">Total</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                {% for itm in pitm %}
+                                                                    <tr>
+                                                                        <td class="text-center" style="color: black;">{{ itm.product.item_name}}</td>
+                                                                        <td class="text-center" style="color: black;">{{itm.product.item_hsn}}</td>
+                                                                        <td class="text-center" style="color: black;">{{ itm.qty }}</td>
+                                                                        <td class="text-center" style="color:black">{{ itm.product.item_purchase_price  }}</td>
+                                                                        {% if pdebt.supply == 'State' %}
+                                                                        <td class="text-center" style="color: black;">{{ itm.product.item_gst  }}</td>
+                                                                        {% else %}
+                                                                        <td class="text-center" style="color: black;">{{ itm.product.item_igst  }}</td>
+                                                                        {% endif %}
+                                                                        <td class="text-center" style="color:black">{{ itm.discount  }}</td>
+                                                                        <td class="text-center" style="color:black">{{ itm.total }}</td>
+                                                                    </tr>
+                                                                {% endfor %} 
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div> 
+                                                <section class="balance-info">
+                                                    <div class="row mt-3">
+                                                        <div class="col-4"></div>
+                                                        <div class="col-3"></div>
+                                                        <div class="col-4"><br><br>
+                                                            <table class="table table-borderless">
+                                                                <tbody>
+                                                                    <tr >
+                                                                        <td style="color: #000;">Sub Total</td>
+                                                                        <td style="color: #000;">:</td>
+                                                                        <td class="text-right" style="color: #000;">{{pdebt.subtotal}}</td>
+                                                                    </tr>
+                                                                    
+                                                                    {% if pdebt.supply != 'State' %}
+                                                                    <tr >
+                                                                        <td style="color: #000;">IGST</td>
+                                                                        <td style="color: #000;">:</td>
+                                                                        <td class="text-right" style="color: #000;">{{pdebt.igst}}</td>
+                                                                    </tr>
+                                                                    {% else %}
+                                                                    <tr>
+                                                                        <td style="color: #000;">CGST</td>
+                                                                        <td style="color: #000;">:</td>
+                                                                        <td class="text-right" style="color: #000;">{{pdebt.cgst}}</td>
+                                                                        
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="color: #000;">SGST</td>
+                                                                        <td style="color: #000;">:</td>
+                                                                        <td class="text-right" style="color: #000;">{{pdebt.sgst}}</td>
+                                                                    </tr>
+                                                                    {% endif %}
+                                                                    <tr >
+                                                                        <td style="color: #000;">Tax Amount</td>
+                                                                        <td style="color: #000;">:</td>
+                                                                        <td class="text-right" style="color: #000;">{{pdebt.taxamount}}</td>
+                                                                    </tr>
+
+                                                                    {% if pdebt.adjustment != '0.00' %}
+                                                                    {% if pbill.adjustment != '0' %}
+                                                                    <tr >
+                                                                        <td style="color: #000;">Adjustment</td>
+                                                                        <td style="color: #000;">:</td>
+                                                                        <td class="text-right" style="color: #000;">{{pdebt.adjustment}}</td>
+                                                                    </tr>
+                                                                    {% endif %}
+                                                                    {% endif %}
+                                                                </tbody>
+                                                            </table>
+                                                            <hr style="background-color: #000000;">
+                                                            <table class="table table-borderless">
+                                                                <tbody>
+                                                                    <tr >
+                                                                        <th style="color: #000;">Grand Total &nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                                                        <th style="color: #000; ">:</th>
+                                                                        <th style="color: #000; text-align: center;">{{pdebt.grandtotal}}</th>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div> 
+                                                    </div>
+                                                </section>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="templateToggle" class="templateToggleSegment mt-3 mb-0 w-100 d-flex justify-content-center">
+                                    <button id="toggleTemplate1" onclick="toggleTemplate('whatToPrint1','toggleTemplate1')" class="btn btn-outline-primary bg-gradientt btn-sm m-2 active templateToggleButtons">1</button>
+                                    <button id="toggleTemplate2" onclick="toggleTemplate('whatToPrint2','toggleTemplate2')" class="btn btn-outline-primary bg-gradientt btn-sm m-2 templateToggleButtons">2</button>
+                                    <button id="toggleTemplate3" onclick="toggleTemplate('whatToPrint3','toggleTemplate3')" class="btn btn-outline-primary bg-gradientt btn-sm m-2 templateToggleButtons">3</button>
+                                </div>
+                            </div>
+
+                            <div id="slipdiv" style="border-radius: 2vh; display: none;">
+                                <div class=" page" size="A4">
+                                    <div class="row" style="margin-top: 10%;" id="printslip">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-8" style="margin-right:20px;" >
+                                            <div class="card bg-white" style="border: 2px black; box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);width:450px;">
+                                                <div class="mt-2" style="text-align: center;">
+                                                    <div class="text-center" style="font-size: 3vh; color: black;">
+                                                        <b>{{pdebt.company.company_name}} </b>
+                                                    </div>
+                                                    <span style="font-size: x-small; color: black;">
+                                                        {{ pdebt.company.address }} <br>
+                                                        {{pdebt.company.city}},
+                                                        {{pdebt.company.state}}
+                                                        {{pdebt.company.pincode}} <br>
+                                                        {{ pdebt.company.user.email }} <br>
+                                                        {{ pdebt.company.contact }} 
+                                                    </span>
+                                                </div>
+                                                <div class="ml-4 mt-2" style="color: black;">
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">Debit No:</div>
+                                                        <div class="col-md-5 text-right">{{pdebt.pdebitid}}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">Party Name:</div>
+                                                        <div class="col-md-5 text-right">{{pdebt.party.party_name}}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-6 text-left">Debit Date :</div>
+                                                        <div class="col-md-5 text-right">{{pdebt.debitdate | date:'d-m-Y'}}</div>
+                                                    </div>
+                                                </div>
+                                                <div><br>
+                                                    <div class="equal-length-container" style="color: black; font-weight: bold;">
+                                                        <div class="equal-length-item" style=" text-align: center;">
+                                                            Item
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:95%">
+                                                        </div>
+                                                        <div class="equal-length-item ml-2"  style=" text-align:center;">
+                                                            HSN
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:63%; margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                                            Qty
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;  margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                                            Price
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:65%;  margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item"  style=" text-align: center; ">
+                                                            Tax
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:60%;  margin-left: 10px;">
+                                                        </div>
+                                                        <div class="equal-length-item" style=" text-align: center; ">
+                                                            Total
+                                                            <hr style="border-bottom: 1px solid black; margin-top:1vh; width:65%;  margin-left: 10px;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    {% for i in pitm %}
+                                                    <div class="equal-length-container" style="color: black; font-size: small; word-wrap: break-word; margin-bottom: 1vh;">
+                                                        <div class="equal-length-item"  style="text-align: center; margin-left: 2px;">
+                                                            {{i.product.item_name}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: right;">
+                                                            {{i.product.item_hsn}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: center; ">
+                                                            {{i.qty}}
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: center; ">
+                                                            {{i.product.item_purchase_price}}
+                                                        </div>
+                                                        {% if pdebt.supply == 'State' %}
+                                                        <div class="equal-length-item" id="tax{{ forloop.counter }}" style="display: none;">
+                                                            {{ i.product.item_gst  }}
+                                                        </div>
+                                                        {% else %}
+                                                        <div class="equal-length-item" id="tax{{ forloop.counter }}" style="display: none;">
+                                                            {{ i.product.item_igst  }}
+                                                        </div>
+                                                        {% endif %}
+                                                        <div class="equal-length-item" id="taxval{{ forloop.counter }}" style="text-align: center; ">
+                                                        </div>
+                                                        <div class="equal-length-item" style="text-align: center; ">
+                                                            {{i.total}}
+                                                        </div>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                                <div><br>
+                                                    {% if dis != 0 %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            Discount
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;" id="ch">
+                                                            {{ dis }}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            Subtotal
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;"id="ch">
+                                                            {{ pdebt.subtotal }}
+                                                        </div>
+                                                    </div>
+                                                    {% if pdebt.supply != 'State' %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left " style=" color: black;">
+                                                            IGST
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;"id="ch">
+                                                            {{ pdebt.igst }}
+                                                        </div>
+                                                    </div>
+                                                    {% else %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            CGST
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;"id="ch">
+                                                            {{ pdebt.cgst }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            SGST
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;"id="ch">
+                                                            {{ pdebt.sgst }}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    {% if pdebt.adjustment != '0.00' %}
+                                                    {% if pdebt.adjustment != '0' %}
+                                                    <div class="row ml-1">
+                                                        <div class="col-md-5 text-left" style=" color: black;">
+                                                            Adjust
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="color: black;"id="ch">
+                                                            {{ pdebt.adjustment }}
+                                                        </div>
+                                                    </div>
+                                                    {% endif %}
+                                                    {% endif %}
+                                                    <hr class="ml-2 mr-2" style="color: black; border-bottom: 1px solid black; ">
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <div class="row">
+                                                        <div class="col-md-5 text-left ml-2" style=" font-size: large; color: black; font-weight: bold;">
+                                                            Total
+                                                        </div>
+                                                        <div class="col-md-6 text-right ml-2" style="font-size: large; color: black; font-weight: bold;"id="ch">
+                                                            {{ pdebt.grandtotal }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ml-2 mt-2">
+                                                    <p>Created by : {{pdebt.staff.first_name}}  {{pdebt.staff.last_name}} <br>
+                                                    Printed by {{staff.first_name}}  {{staff.last_name}} <br>
+                                                    On <span id="datetimedisplay"></span>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.x.x.min.js"></script>
+
+
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+<div class="modal fade" id="shareBillEmail" tabindex="-1" aria-labelledby="shareBillEmailLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content" style=" background-color:rgb(0, 0, 139,.397)">
+        <div class="modal-header" style="border-bottom: 1px solid #ffffff;">
+          <h5 class="modal-title text-light" id="shareBillEmailLabel">Share Debitnote Via Email</h5>
+          <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body text-light">
+          <form action="{% url 'sharedebitToEmail' pdebt.pdebitid %}" method="post" class="needs-validation" id="share_to_email_form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="emailIds">Email IDs</label>
+                <textarea class="form-control" name="email_ids" id="emailIds" rows="3" placeholder="Multiple emails can be added by separating with a comma(,)." required></textarea>
+            </div>
+            <div class="form-group mt-2 text-light">
+                <label for="item_unitname">Message(optional)</label>
+                <textarea name="email_message" id="email_message" class="form-control" cols="" rows="4" placeholder="This message will be sent along with debitnote details."></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer d-flex justify-content-center" style="border-top: 1px solid #ffffff;">
+          <button type="submit" id="share_with_email" class="submitShareEmailBtn w-50 text-uppercase btn btn-danger">SEND MAIL</button>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+{% for message in messages %}
+
+<script>
+  let msg = '{{message}}';
+  alert(msg);
+</script>
+{% endfor %}
+
+
+<script>
+
+    $(document).ready(function(){
+        $('#share_with_email').on('click',function(){
+            var emailsInput = document.getElementById('emailIds');
+            var emailsString = emailsInput.value.trim();
+
+            var emails = emailsString.split(',').map(function(email) {
+                return email.trim();
+            });
+
+            var emailRegex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
+
+            var invalidEmails = []
+            if(emailsString == ""){
+                alert('Enter valid email addresses..')
+            }
+            else{
+                for (var i = 0; i < emails.length; i++) {
+                    var currentEmail = emails[i];
+
+                    if (currentEmail!="" && !emailRegex.test(currentEmail)) {
+                        console.log(currentEmail + ' is invalid!');
+                        invalidEmails.push(currentEmail)
+                    }
+                }
+                
+                if(invalidEmails.length > 0){
+                    alert('Invalid emails..Please check!\n'+invalidEmails)
+                    // alert(invalidEmails)
+                }else{
+                    $('#share_to_email_form').submit();
+                }
+            }
+        })
+    });
+</script>
+
+
+
+
+
+<script>
+    function toggleDropdown() {
+        var dropdownContent = document.getElementById("myDropdown");
+        dropdownContent.style.display = (dropdownContent.style.display === "block") ? "none" : "block";
+    }
+</script>
+
+<script>
+    function updateDateTime() {
+        var currentDate = new Date();
+        var dateTimeString = currentDate.toLocaleString();
+        document.getElementById('datetimedisplay').textContent = dateTimeString;
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+</script>
+
+<script>
+    l = parseInt('{{itm_len}}')
+    place = '{{pdebt.supply}}'
+    for (var i=1; i<=l; i++){
+        val =  document.getElementById('tax'+i).innerText
+        tax = val.split('[')[1];
+        tax = tax.split(']')[0]
+        if(place == 'State'){
+
+            document.getElementById('taxval'+i).innerText = 'GST' + tax;
+        }else{
+            document.getElementById('taxval'+i).innerText = 'IGST' + tax;
+        }
+    }
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('#templates').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+        $('#slip a').removeClass('text-dark')
+        $('#templates a').addClass('text-dark')
+        $('#slip').css({'border-bottom': 'none'})
+        $('#templatediv').attr('hidden',false)
+        $('#slipdiv').attr('hidden',true)
+
+        $('#templates').on('click',function(){
+            $(this).css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+            $('#slip a').removeClass('text-dark')
+            $('#templates a').addClass('text-dark')
+            $('#slip').css({'border-bottom': 'none'})
+            $('#templatediv').attr('hidden',false)
+            $('#slipdiv').attr('hidden',true)
+            document.getElementById('slipdiv').style.display = 'none';
+        })
+    })
+
+    $(document).ready(function(){
+        $('#slip').on('click',function(){
+        $('#slip').css({'border-bottom': '3px solid rgba(0, 0, 0, 0.548)'})
+        $('#templates a').removeClass('text-dark')
+        $('#slip a').addClass('text-dark')
+        $('#templates').css({'border-bottom': 'none'})
+        $('#templatediv').attr('hidden',true)
+        $('#slipdiv').attr('hidden',false)
+        document.getElementById('slipdiv').style.display = 'block';
+        })
+    })
+
+    function toggleTemplate(templateId,buttonId){
+            $('.printTemplates').css('display','none');
+            $('#'+templateId).css('display','block');
+            $('.templateToggleButtons').removeClass('active');
+            $('#'+buttonId).addClass('active');
+            scrollToTop();
+            
+        }
+
+    function scrollToTop() {
+        // Scroll to the top of the page with smooth scrolling
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+</script>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function ($) {
+        $(document).on('click', '#pdflink', function (event) {
+            event.preventDefault();
+
+            var print1 = document.getElementById('whatToPrint1');
+            var print2 = document.getElementById('whatToPrint2');
+            var print3 = document.getElementById('whatToPrint3');
+            var print4 = document.getElementById('slipdiv');
+
+            var element; // Variable to hold the element to be printed
+
+            if (print1.style.display !== 'none') {
+                element = document.getElementById('printdiv1');
+            } else if (print2.style.display !== 'none') {
+                element = document.getElementById('printdiv2');
+            } else if (print3.style.display !== 'none') {
+                element = document.getElementById('printdiv3');
+            } else if (print4.style.display !== 'none') {
+                element = document.getElementById('printslip');
+            }
+
+            if (element) {
+                var opt = {
+                    margin: 1,
+                    filename: 'DebitNote' + '.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                };
+
+                // Generate PDF from the selected element
+                html2pdf().set(opt).from(element).save();
+            } else {
+                console.error('No element selected for printing.');
+            }
+        });
+    });
+</script>
+
+
+<script>
+    function printfun(){
+        print4 = document.getElementById('slipdiv')
+        if (print4.style.display !== 'none'){
+            var printContents = document.getElementById("slipdiv").innerHTML;
+        }else{
+            var printContents = document.getElementById("whatToPrint").innerHTML;
+        }
+        var $printerDiv = $('<div class="printContainer"></div>');
+        $printerDiv.css({
+            'border': '1px solid black', // Adjust border styling as needed
+            'padding': '10px', // Adjust padding as needed
+            'box-shadow': 'none' // Remove any box shadow
+        });
+        $printerDiv.html(printContents); 
+        $('body').append($printerDiv).addClass("printingContent"); 
+        window.print(); 
+        $printerDiv.remove();
+        $('body').removeClass("printingContent");
+    }
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Add a click event handler to the dropdown items
+        $(".close-dropdown-link").click(function() {
+            // Close the dropdown
+            $("#myDropdown").hide();
+        });
+    });
+</script>
+<script>
+    
+    function shareOnWhatsApp() {
+        var url = window.location.href;
+        var text = url;
+        text = encodeURIComponent(text);
+        var whatsappUrl = "whatsapp://send?text=" + text;
+        window.location.href = whatsappUrl;
+    }
+</script>
+
+{% endblock %}    
+
+{% comment %} sales invoice list old {% endcomment %}
+
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+
+
+<style>
+    .bs{
+        box-shadow: 2px 2px 10px 3px rgba(0, 0, 0, 0.397);
+    }
+    .bs_sm{
+        box-shadow: inset 2px 2px 5px 3px rgba(0, 0, 0, 0.199);
+    }
+    .tb{
+        color: black;
+        
+    }
+    table td{
+        border-bottom: 1px solid #ddd;
+    }
+    table th{
+        background-color:rgb(61, 68, 101);color: white;
+        margin-top: 4vh;
+        
+    }
+    .tg{
+        color: rgb(0, 140, 7);
+    }
+    .tr{
+        color: rgb(218, 0, 0);
+    }
+    .btn_add{
+        background-color: orange;
+        color: black;
+    }
+    .btn_add:hover{
+        background-color: rgb(234, 152, 0);
+        color: black;
+    }
+    ::-webkit-scrollbar{
+        display: none
+    }
+    .bg-pink{
+        background-color: rgb(239, 3, 82)
+    }
+
+    
+    .heading-with-dropdown {
+        display: flex;
+        align-items: center;
+    }
+    
+    .heading-with-dropdown span {
+        margin-right: 5px; /* Adjust as needed */
+    }
+    
+</style>
+
+
+<style>
+    .custom-dropdown {
+        position: relative;
+        display: inline-block;
+        }
+
+        .dropdown-toggle {
+        padding: 10px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        }
+
+        .dropdown-content {
+        z-index: 1;
+        display: none;
+        position: absolute;
+        top: 40px;
+        left: 2px;
+        background-color: #b4b4b450;
+        backdrop-filter: blur(5px);
+        padding: 10px;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        box-shadow: 3px 5px 5px 5px rgba(0, 0, 0, 0.201);
+        }
+
+        .dropdown-content input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        background-color: white;
+        border-radius: 5px;
+        border: 1px solid rgb(168, 168, 168);
+        }
+
+        .dropdown-content button {
+        padding: 8px 15px;
+        background-color: rgb(0, 154, 108);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        border-radius: 3px;
+        }
+
+        .custom-dropdown .dropdown-content .cls{
+            position: absolute;
+            right: -7px;
+            top: -7px;
+            padding: 3px 5px;
+            color: white;
+            text-shadow: 0px 0px 2px black ;
+            border-radius: 50%;
+            font-size: 15px;
+            background-color: rgba(255, 0, 0, 0.424);
+        }
+        .custom-dropdown .dropdown-content .title
+        {
+            background-color: rgb(255, 255, 255);
+            font-weight: 500;
+            color: rgb(0, 0, 0);
+            text-shadow: 0px 0px 20px rgb(255, 255, 255);
+            padding: 5px;
+            border-radius: 5px;
+        }
+        /* tooltip */
+        .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted #ccc; /* Add a dotted underline for visual indication */
+        cursor: help; /* Change the cursor to a help cursor on hover */
+        }
+
+        .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+        }
+
+        .filter-option {
+        width: 100%;
+        padding: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 1px;
+    }
+
+    #myTable tbody{
+        cursor: pointer;
+        
+    }
+   
+    .custom-container {
+        
+        min-height: 100vh;
+        padding: 50px;
+         
+    }
+    .content-body {
+        width: 100%;
+        margin-left: 0%;
+        display: flex;
+        justify-content: center; /* Center the content horizontally */
+        align-items: center; /* Center the content vertically */
+        height: 100%; /* Full height of the viewport */
+        background-color: rgb(130, 144, 199);
+    }
+ 
+</style>
+
+<div class="content-body" style="margin-left: 1vw;">
+    <div class="custom-container col-md-12 mr-1">
+        <div class="col-md-6  " style=" margin-left: 20%; margin-top: -10vh; width: 50%;">
+            <h1><ul>Sales Invoice</ul></h1>
+        </div>
+    <div class="d-flex mt-2"  style="background-color: white;height: 6vw;margin-left: 20vw;border-radius: 15px 15px 15px 15px;">
+        <div class="date-range-box rounded" style="margin-left: 2vw;  margin-top: 2vh; background-color: white;height: 10vh; padding-top: 3vh;width: 30vw;padding-left: 1vw;">
+            <label for="" style="color: rgb(0, 0, 0); font-size: 1.3vw;"><b>Date</b></label>
+            <input type="date" id="fromDate" class="date-input"> TO
+            <input type="date" id="toDate" class="date-input">
+        </div>
+        <div class="ml-auto rounded " style="margin-left: 24vw; margin-top: 2vh; background-color: white;padding-right: 1vw;height: 10vh;" >
+            <a href="{% url 'salesinvoice_graph' %}">
+            <button class="btn p-0 ps-2 pe-2 ms-2" type="button">
+                <span>
+                   <img width="30px" src="{% static 'images/graph.png' %}" alt="graph Icon">
+                   <br><span style="color: black; font-size: small; ">Graph</span>
+                </span>
+            </button></a>
+            
+
+            <button class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="exportToExcel()">
+                <span>
+                    <img width="22px" src="{% static 'images/excel2.png' %}" alt="Excel Icon">
+                    <br><span style="color: black; font-size: small; ">Export</span>
+                </span>
+            </button>
+
+            
+
+            <label for="file-input" title="import excel" class="btn p-0 ps-2 pe-2 ms-2" type="button">
+                <span style="position: relative; display: inline-block;">
+                    <img width="23px" src="{% static 'images/import.png' %}" alt="no img" style="position: absolute; top: 2vh; left: 50%; transform: translateX(-50%);">
+                    <span style="color: black; font-size: small; display: block; text-align: center; padding-top: 5.5vh;">Import</span>
+                </span>
+                <input id="file-input" type="file" name="file" style="display:none;" onchange="uploadFile()">
+            </label>
+            
+                  
+                
+            <button id="printButton" class="btn p-0 ps-2 pe-2 ms-2" type="button" onclick="printSalesInvoice()">
+                <span>
+                    <img width="28px" src="{% static 'images/printer.jpeg' %}" alt="Printer Icon">
+                    <br><span style="color: black; font-size: small; ">Printer</span>
+                </span>
+            </button>
+        </div>
+    </div>
+    <div style="background-color: white; margin-left:20vw;margin-top: 5vh;border-radius: 15px 15px 15px 15px;">
+    <div class="row">
+        
+        <div class="col-md-6 d-flex align-items-center" style="padding-top: 2%; margin-bottom: 2vh;margin-left: 59%;">
+            <input type="text"  autocomplete="off" id="myInput1" onkeyup="filter(this);" onclick="myFunction1()" class="form-control w-35 border-secondary text-dark pt-1 pb-1 pe-1 rounded" placeholder="search" />
+            <a style="color: white; height: 45px; width: 150px; margin-left: 10px;background-color:rgb(61, 68, 101);" class="btn pt-2 " href="{% url 'sales_invoice_add' %}">
+                Add 
+            </a>
+        </div>
+        
+    </div>
+    
+    <!-- Add a container to display search results -->
+    <div id="searchResultsContainer"></div>
+    <script>
+        function printSalesInvoice() {
+            // Clone the table to avoid modifying the original
+            var clonedTable = document.getElementById('printTable').cloneNode(true);
+    
+            // Remove any dropdown elements from the cloned table
+            var dropdowns = clonedTable.querySelectorAll('select');
+            dropdowns.forEach(function(dropdown) {
+                dropdown.remove();
+            });
+    
+            // Hide any dropdowns in the original table
+            var originalDropdowns = document.getElementById('printTable').querySelectorAll('select');
+            originalDropdowns.forEach(function(dropdown) {
+                dropdown.style.display = 'none';
+            });
+    
+            // Create a new window for printing
+            var printWindow = window.open('', '_blank');
+            printWindow.document.write('<html><head><title>Print</title>');
+            printWindow.document.write('<style>');
+            printWindow.document.write('/* Add any print-specific styling here */');
+            printWindow.document.write('h1 { margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid black; }');
+            printWindow.document.write('table { border-collapse: collapse; width: 100%; }');
+            printWindow.document.write('th, td { border: 1px solid black; padding: 8px; text-align: left; }');
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body>');
+    
+            // Add the heading "Sales Invoice" before the table with a styled boundary
+            printWindow.document.write('<h1>Sales Invoice</h1>');
+    
+            // Add the table content
+            printWindow.document.write('<table>' + clonedTable.innerHTML + '</table>');
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+    
+            // Trigger the print dialog in the new window
+            printWindow.print();
+    
+            // Show the original dropdowns after printing
+            originalDropdowns.forEach(function(dropdown) {
+                dropdown.style.display = 'block';
+            });
+        }
+    </script>
+    
+    
+    
+    
+    <script>
+        function exportToExcel() {
+            // Make an AJAX request to the Django view
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "{% url 'export_sales_invoices_to_excel' %}", true);
+            xhr.responseType = "blob";
+    
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    // Create a link element and trigger the download
+                    var blob = new Blob([xhr.response], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                    var link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = "sales_invoices.xlsx";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            };
+    
+            xhr.send();
+        }
+    </script>
+    
+    
+    <script>
+        function searchInvoices(query) {
+            // Replace '/search_invoices/' with the actual URL for the search view
+            const searchUrl = `/InvoiceSearchView/?query=${query}`;
+    
+            // Perform AJAX request
+            fetch(searchUrl)
+                .then(response => response.json())
+                .then(data => displaySearchResults(data))
+                .catch(error => console.error('Error fetching search results:', error));
+        }
+    
+        function displaySearchResults(results) {
+            const searchResultsContainer = document.getElementById('searchResultsContainer');
+    
+            // Clear previous search results
+            searchResultsContainer.innerHTML = '';
+    
+            // Display the new search results
+            if (results.length > 0) {
+                const resultList = document.createElement('ul');
+                resultList.classList.add('list-group');
+    
+                results.forEach(result => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('list-group-item');
+                    listItem.textContent = result.name;  // Assuming 'name' is a property of the search result
+                    resultList.appendChild(listItem);
+                });
+    
+                searchResultsContainer.appendChild(resultList);
+            } else {
+                // Display a message if no results are found
+                const noResultsMessage = document.createElement('p');
+                noResultsMessage.textContent = 'No results found.';
+                searchResultsContainer.appendChild(noResultsMessage);
+            }
+        }
+
+
+        function filter(input) {
+    var filterValue = input.value.toLowerCase();
+    var tableRows = document.querySelectorAll('#InvoiceTable tbody tr');
+
+    tableRows.forEach(function(row) {
+        var cells = row.querySelectorAll('td'); // Assuming all data cells are td elements
+
+        var rowMatch = Array.from(cells).some(function(cell) {
+            var cellValue = cell.textContent || cell.innerText;
+            return cellValue.toLowerCase().includes(filterValue);
+        });
+
+        if (rowMatch) {
+            row.style.display = "table-row";
+        } else {
+            row.style.display = "none";
+        }
+    });
+}
+
+
+
+    </script>
+    
+    
+    
+    
+  
+       <div class="col-md-12  table-container" style="width: 100%;">
+           <div class="table-responsive" style="border-radius: 15px 15px 15px 15px; gray; width: 100%;">
+            <table class="text-dark"  id="InvoiceTable" style=" background-color: rgb(255, 255, 255);">
+                <thead style="border-bottom: 1px solid #ddd; ">
+                    
+                    <!-- Example for the first column -->
+                <th class="text-center fs-8" style="width: 30vw; padding-top: 15px; padding-bottom: 2vh; ">
+                    <div>
+                        <span style="margin-left: 2px;">DATE</span>
+                        
+                    </div>
+                </th>
+
+                    <th class="text-center fs-8 " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown ">
+                            <span style="white-space: nowrap;  ">INVOICE NO</span>
+                        
+                        
+                                                
+                                            </div>
+                    </th>
+                
+                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="white-space: nowrap;">PARTY NAME</span>
+                            
+                                
+                        </div>
+                    </th>
+                    <th class="text-center fs-8  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span>TRANSACTION</span>
+                           
+                        </div>
+                    </th>
+                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="white-space: nowrap;">PAYMENT</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-9  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown"style="margin-right: -1vw;">
+                            <span style="width: 6vw;">AMOUNT</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown" >
+                            <span style=" width: 6vw;">BALANCE</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-8 no-export " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="margin-left: 20px;width: 5vw;">ACTION</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center fs-8 no-export  " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;">
+                        <div class="heading-with-dropdown">
+                            <span style="margin-left: 25px;width: 1vw; ">BY</span>
+                            
+                        </div>
+                    </th>
+                    <th class="text-center p-0 m-0 no-export  " style="padding-right: 5px;padding-top: 15px; padding-bottom: 2vh;"></th> 
+            </thead>
+                <tbody class="text-dark" style="color: black;">
+                    {% for s in sales_invoices %}
+                                            <tr class="sales-row">                                               
+                                                <td class="text-center date-cell td_date clickable-row" id="filterByDate" data-href="salesinvoice_template/{{ s.id }}">{{s.date|date:"d-m-y"}}</td>
+                                                <td class="text-center td_invoice clickable-row" id="filterByInvoiceNumber" data-href="salesinvoice_template/{{ s.id }}">{{s.invoice_no}}</td>
+                                                <td class="text-center td_name clickable-row" id="filterByName" data-href="salesinvoice_template/{{ s.id }}">{{s.party_name}}</td>
+                                                <td class="text-center td_transcation clickable-row"  id="filterByTransaction" data-href="salesinvoice_template/{{ s.id }}">Sale Invoice</td>
+                                                <td class="text-center td_payment clickable-row" id="filterByPayment" data-href="salesinvoice_template/{{ s.id }}">{{ s.paymenttype }}</td>
+                                                <td class="text-center td_amount clickable-row" id="filterByAmount" data-href="salesinvoice_template/{{ s.id }}">{{s.grandtotal}}</td>
+                                                <td class="text-center td_balance clickable-row" id="filterByBalance'" data-href="salesinvoice_template/{{ s.id }}">{{ s.totalbalance }}</td>
+                                                <td class="text-center td_action no-export clickable-row" id="filterByAction" data-href="salesinvoice_template/{{ s.id }}">{{ s.action }}</td>
+                                                <td class="text-center td_by no-export clickable-row" id="filterByBy" data-href="salesinvoice_template/{{ s.id }}">{{s.company.company_name}}</td>
+                                                <td>
+                            <div class="btn-group mb-1">
+                                <div class="dropdown" style="margin-bottom: 4vh;">
+                                    <button class="btn" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                       <span class="fa fa-ellipsis-v text-dark fs-5 ps-"></span>
+                                    </button>
+                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                        <ul>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_v" onclick="redirectToView(event, {{ s.id }})">
+                                                    <span class="fa fa-eye pe-2 tg"></span> View
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_e" onclick="redirectToEdit(event, {{ s.id }})">
+                                                    <span class="fa fa-edit pe-2 text-primary mt-2"></span> Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 20px;" class="hide_table_text_d" onclick="redirectToDelete(event, {{ s.id }})">
+                                                    <span class="fa-solid fa-trash" style="margin-left: -.7vw;padding-right: .7vw;"></span> Delete
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" style="color: black; padding-left: 10px;" class="hide_table_text_h" onclick="redirectToHistory(event, {{ s.id }})">
+                                                    <span class="fa fa-history pe-2 th mt-2"></span> History
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    
+                                    <script>
+                                        function redirectToView(event, id) {
+                                            event.preventDefault();
+                                            window
+                                            window.location.href = "{% url 'salesinvoice_template' 0 %}".replace('0', id);
+                                        }
+                                    
+                                        function redirectToEdit(event, id) {
+                                            event.preventDefault();
+                                            window.location.href = "{% url 'invoice_edit' 0 %}".replace('0', id);
+                                        }
+                                    
+                                        function redirectToDelete(event, id) {
+                                            event.preventDefault();
+                                            window.location.href = "{% url 'delete_sales_invoice' 0 %}".replace('0', id);
+                                        }
+                                    
+                                        function redirectToHistory(event, id) {
+                                            event.preventDefault();
+                                            window.location.href = "{% url 'salesinvoice_history' 0 %}".replace('0', id);
+                                        }
+                                    </script>
+                                    
+                                    
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+           </div>
+       </div>
+    </div>
+   </div>
+
+   </div>
+</div>
+
+<table id="printTable" style="display: none;">
+    <thead >
+        
+        <tr class="fs-2 tb" >
+            <th> DATE </th>
+            <th> INVOICE NO </th>
+            <th> PARTY NAME </th>
+            <th> TRANSCATION </th>
+            <th> PAYMENT TYPE </th>
+            <th> AMOUNT </th>
+            <th> BALANCE DUE </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for t in sales_invoices %}
+        <tr>
+            <td>{{t.date | date:'d-m-Y'}}</td>
+            <td style="justify-content: center;text-align: center;">{{t.invoice_no}}</td>
+            <td>{{t.party.party_name}}</td>
+            <td>Sale Invoice</td>
+            <td>{{t.paymenttype}}</td>
+            <td>{{t.grandtotal}}</td>
+            <td>{{t.totalbalance}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+<table id="tablemodel" hidden>
+    <thead>
+        <tr>
+            <th>Party Name</th>
+            <th>Party Email</th>
+            <th>Date</th>
+            <th>Supply State</th>
+            <th>Payment Method</th>
+            <th>Payment No</th>
+            <th>Adjustment</th>
+            <th>Advance</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>State/Other State</td>
+            <td>Cash/Cheque/UPI/Bank Name</td>
+            <td>Cheque ID/UPI ID/Bank no</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<table id="tableitemmodel" hidden>
+    <thead>
+        <tr>
+            <th>Invoice</th>
+            <th>Item Name</th>
+            <th>Item HSN</th>
+            <th>Quantity</th>
+            <th>Tax</th>
+            <th>Discount</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Corresponding Row no from invoice Model </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+<script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Check if the cookie name matches the CSRF cookie name
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    function uploadFile() {
+        const fileInput = document.getElementById("file-input");
+        const file = fileInput.files[0];
+        const csrfToken = getCookie('csrftoken')
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("/import_excel", {
+            method: "POST",
+            headers: { 'X-CSRFToken': csrfToken },
+            body: formData
+        })
+        window.location.href = '/sales_invoice_list';
+
+
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Function to filter rows based on date range
+        function filterRowsByDate() {
+            var fromDate = new Date(document.getElementById("fromDate").value);
+            var toDateInput = document.getElementById("toDate");
+            var toDate = new Date(toDateInput.value);
+
+            // Set the min attribute of toDate input to the selected fromDate
+            toDateInput.min = document.getElementById("fromDate").value;
+
+            var rows = document.querySelectorAll(".sales-row");
+
+            rows.forEach(function (row) {
+                var dateCell = row.querySelector(".date-cell");
+
+                if (dateCell) {
+                    var rowDate = new Date(dateCell.textContent.replace(/(\d{2})-(\d{2})-(\d{2})/, '20$3-$2-$1'));
+
+                    
+                    // Show/hide rows based on the date range (inclusive)
+                    if (rowDate >= fromDate && rowDate <= toDate) {
+                        row.style.display = "table-row";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            });
+        }
+
+        // Attach the filter function to the date input change event
+        document.getElementById("fromDate").addEventListener("change", filterRowsByDate);
+        document.getElementById("toDate").addEventListener("change", filterRowsByDate);
+    });
+</script>
+
+<script>
+    function printTable() {
+        // Get the table element by its ID
+        var table = document.getElementById('myTable');
+        
+
+        // Exclude the last column (ACTION) from export
+        var noExportCols = Array.from(table.querySelectorAll('th.no-export, td.no-export'));
+        noExportCols.forEach(col => col.style.display = 'none');
+
+        
+
+        // Open a new window and write the table HTML content to it
+        var newWin = window.open('', 'Print-Window');
+        newWin.document.open();
+        newWin.document.write('<html><head><style>@media print {table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #000; padding: 8px;}} </style></head><body>');
+        newWin.document.write('<h1>Sales Invoice</h1>');
+        newWin.document.write('<html><head><style>@media print {table {width: 100%;border-collapse: collapse;} th, td {border: 1px solid #000; padding: 8px;}}</style></head><body>' + table.outerHTML + '</body></html>');
+        newWin.document.close();
+
+        // Restore the display of excluded columns after export
+        noExportCols.forEach(col => col.style.display = '');
+
+        // Trigger the print action
+        newWin.print();
+    }
+</script>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.10/xlsx.full.min.js"></script>
+
+
+<script>
+
+
+    function ExportToExcel() {
+        const table = document.querySelector('#excelinvoicetable');
+        const ws = XLSX.utils.table_to_sheet(table);
+    
+        // Specify column widths (in Excel characters, e.g., "15px")
+        ws['!cols'] = [
+            { wch: 12 }, // DATE
+            { wch: 15 }, // INVOICE NO
+            { wch: 20 }, // PARTY NAME
+            { wch: 15 }, // TRANSCATION
+            { wch: 15 }, // PAYMENT TYPE
+            { wch: 12 }, // AMOUNT
+            { wch: 15 }, // BALANCE DUE
+        ];
+    
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+        XLSX.writeFile(wb, 'SalesInvoice.xlsx');
+    }
+    
+ 
+    
+
+    $(document).ready(function() {
+        $("#search_input1").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tbody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value)>-1);
+            });
+        });
+    });
+    $(document).ready(function(){
+        $('#search_item').click(function(){
+            $(this).attr('hidden',true)
+            $('#search_item_input').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',true)
+        })
+    })
+    $(document).ready(function(){
+        $('#close_seacrh').click(function(){
+            $('#search_item_input').val('')
+            $('#search_item_input').attr('hidden',true)
+            $('#search_item').attr('hidden',false)
+            $('#add_item_btn').attr('hidden',false)
+            $('#close_seacrh').attr('hidden',true)
+        })
+    })
+ 
+</script>
+
+{% comment %} <script>
+
+    function updateTotalBalance() {
+        $.ajax({
+            url: '/get_total_balance/', 
+            type: 'GET',
+            success: function(data) {
+                $('#total-balance').text('₹' + data.total_balance);
+                $('#total-paidoff').text('₹' + data.paid_off);
+                $('#grand_total').text('₹' + data.grand_total);
+            },
+            error: function(error) {
+                console.log('Error fetching total balance:', error);
+            }
+        });
+    }
+    updateTotalBalance();
+</script> {% endcomment %}
+
+<script>
+    calculatetotal()
+
+    function calculatetotal() {
+        var table = document.getElementById('myTable');
+        var rows = table.getElementsByTagName('tr');
+        var tpaid = 0;
+        var tunpaid = 0;
+        var ttotal = 0;
+    
+        for (var i = 1; i < rows.length; i++) {
+            if (rows[i].style.display != 'none') {
+                var paidCell = rows[i].querySelector('.td_paidoff'); 
+                var unpaidCell = rows[i].querySelector('.td_balance'); 
+                var totalCell = rows[i].querySelector('.td_amount'); 
+    
+                tpaid += parseFloat(paidCell.textContent) || 0;
+                tunpaid += parseFloat(unpaidCell.textContent) || 0;
+                ttotal += parseFloat(totalCell.textContent) || 0;
+            }
+        }
+    
+        document.getElementById('paidval').textContent = tpaid.toFixed(2);
+        document.getElementById('unpaidval').textContent = tunpaid.toFixed(2);
+        document.getElementById('totalval').textContent = ttotal.toFixed(2);
+    }
+    
+</script>
+
+<script>
+    jQuery(document).ready(function($) {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
+        });
+    });
+</script>
+
+
+
+
+<div class="modal" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="excelModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="excelModalLabel">Upload File
+                    <label for="" style="color: red; font-size: x-small;" >* Refer Downloaded Sheet For Format </label><br></h5>
+                    <button type="button" class="btn close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" style="font-size: x-large;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="excelForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="file" style="color: black;">Choose Excel File for Sales invoice- </label> <br>
+                            <input type="file" class="form-control-file" id="billfile" name="billfile" accept=".xls, .xlsx"><br><br>
+                            
+
+                            <label for="file" style="color: black;">Choose Excel File for Sales invoice product- </label> <br>
+                            <input type="file" class="form-control-file" id="prdfile" name="prdfile" accept=".xls, .xlsx"><br>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="uploadFile()" data-dismiss="modal">Upload</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Define global variables to store filter state
+var filters = {};
+
+// Function to toggle dropdown visibility
+function toggleDropdown(index) {
+        var dropdownContent = document.getElementById('dropdownContent' + index);
+        var isVisible = dropdownContent.style.display === 'block';
+        var allDropdowns = document.querySelectorAll('.dropdown-content');
+        allDropdowns.forEach(function (dropdown) {
+            dropdown.style.display = 'none';
+        });
+        dropdownContent.style.display = isVisible ? 'none' : 'block';
+    }
+
+// Function to clear dropdown filter
+function cleardropdown(columnIndex) {
+    $('#filterInput' + columnIndex).val('');
+    filters[columnIndex] = '';
+    filterTable(columnIndex);
+}
+
+// Function to filter the table based on the selected filter
+function filterTable(index) {
+        var input;
+        document.getElementById('dropdownContent' + index).style.display = 'none';
+        if (index === 0) {
+            input = document.getElementById('filterInput' + index).value;
+        } else {
+            input = document.getElementById('filterInput' + index).value.toUpperCase();
+        }
+        var table = document.getElementById('InvoiceTable');
+        var rows = table.getElementsByTagName('tr');
+        var emptyMessage = document.getElementById('emptyMessage');
+        var isEmpty = true;
+        for (var i = 1; i < rows.length; i++) {
+            var cells = rows[i].getElementsByTagName('td');
+            var cell = cells[index];
+            if (cell) {
+                var textValue = cell.textContent || cell.innerText;
+                if (index === 0) {
+                    if (input==''){
+                        rows[i].style.display = 'table-row';
+                            isEmpty = false;
+                    }else{
+                        dateval  = textValue.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2-$1-$3");
+                        inputval  = input.replace(/(\d{2})-(\d{2})-(\d{2})/, "$2-$1-$3");
+                        const formattedDate = formatDateString(input);
+                        if (dateval === formattedDate) {
+                            rows[i].style.display = 'table-row';
+                            isEmpty = false;
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+                } else {
+                    if (textValue.toUpperCase().includes(input)) {
+                        rows[i].style.display = 'table-row';
+                        isEmpty = false;
+                    } else {
+                        rows[i].style.display = 'none';
+                    }
+                }
+            }
+        }
+        emptyMessage.style.display = isEmpty ? 'block' : 'none';
+        calculatetotal()
+    }
+
+
+// Close the dropdown if the user clicks outside of it
+$(window).on('click', function (e) {
+    if (!$(e.target).closest('.dropdown-content').length) {
+        $('.dropdown-content').removeClass('show');
+    }
+});
+function filterDateColumn() {
+    var filterInput = $('#filterInput0');
+    var filterValue = filterInput.val();
+
+    $('#InvoiceTable tbody tr').each(function () {
+        var row = $(this);
+        var cellValue = row.find('td').eq(0).text().trim();
+
+        // Check if the cell value matches the filter value
+        if (cellValue === filterValue) {
+            row.show();
+        } else {
+            row.hide();
+        }
+    });
+
+    // Close the dropdown
+    toggleDropdown(0);
+}
+
+// Update your existing filterTable function to use the new date filter function
+function filterTable(columnIndex) {
+    if (columnIndex === 0) {
+        filterDateColumn();
+    }
+}
+
+        </script>
+{% endblock %}
