@@ -1,113 +1,135 @@
 {% extends 'base.html' %}
-{% block content %}
-{% load custom_filters %}
 {% load static %}
+{% block content %}
+
 
 <style>
-    table td, table th {
-        color: black;
-        padding: 15px 25px; /* Add space between table cells */
-        border-bottom: 1px solid #ddd; /* Add line separation between rows */
-    }
-
-    table td {
-        font-size: 17px;
-    }
-
-    body {
+    body{
         background-color: rgb(130, 144, 199);
+        
     }
 
-    .container-fluid {
-        padding-right: 15px;
-        padding-left: 15px;
-        margin-right: auto;
-        margin-left: auto;
+
+    .tablediv{
+        margin-left: 1vh;
+        margin-right: 1vh;
+        margin-top: 1vh;
     }
 
-    .content-body {
-        display: flex;
-        justify-content: center; /* Center the content horizontally */
-        align-items: center; /* Center the content vertically */
-        height: 100vh; /* Full height of the viewport */
+    h4{
+        text-align: left; 
+        margin-top:2vh; 
+        margin-bottom: 2vh;
+        margin-left: 1vh;
+    }
+    td,tr,th,table{
+        border:2px 2px 2px 2px black;
     }
 
-    .custom-container {
-        background-color: rgb(130, 144, 199);
-        min-height: 100vh;
-        padding: 50px;
-        transition: margin-left 0.5s; /* Add transition for smooth animation */
+    ::-webkit-scrollbar{
+        display: none
     }
 
-    .transaction-container {
-        box-shadow: 3px 3px 3px gray;
-        border-radius: 15px;
-        padding: 20px;
+    @media(min-width:768px){
+        .history-div{
+        background: linear-gradient(#3d4465 0, #3d4465 116px, white 0px, white 100px);
+    }
+    .body-wrapper{
+        margin-left:18%
+    }
+    
+    }
+
+    @media(max-width:768px){
+        .history-div{
+        background: linear-gradient(#3d4465 0, #3d4465 189px, white 0px, white 100px);
+    }
+    }
+
+    .button-hover{
         background-color: white;
+        color: #3d4465;
     }
-
-    .btn-back {
-        background-color: #3d4465;
+    .button-hover:hover{
+        background-color:#4d5fbc ;
         color: white;
     }
-
-    .btn-back:hover {
-        background-color: #480ceb;
-    }
-
-    @media (max-width: 768px) {
-        .custom-container {
-            margin-left: 0;
-            padding: 20px;
-        }
-    }
-
-    /* Hide the navbar */
-    .navbar {
-        width: 0;
-    }
+    
 </style>
-
-<div class="content-body">
-    <div class="custom-container col-md-10 mr-1">
-        <div class="transaction-container col-md-12">
-            <h2>Transaction History
-                <div style="float: right;">
-                    <a class="btn btn-back" href="{% url 'sales_invoice_list' %}">
-                        <i class="fa-solid fa-arrow-left"></i> Back
-                    </a>
+<br><br><br>
+<body>
+    <div class="body-wrapper ">
+        <br><br>
+           <div class="p-3 text-center " style="display: flex;justify-content: center; ">
+            <div class="card col-md-9 history-div" style="background-color: white;width:50rem; ">
+                <div class="row">
+                    <div class="col-md-4">
+                        <h3 class="mb-3 mt-3 text-white">Transaction History</h3> 
+                        {% comment %} <h4 class="fs-3" style="color:white ; font-weight:bold;text-align:center;margin-top:5%;">Transaction History</h4> {% endcomment %}
+                    </div>
+                    <div class="col-6"></div>
+                    <div class="col my-3">
+                        <a href="javascript:window.history.back();" class="btn button-hover" ><i class="fa fa-arrow-left"></i> Back</a>
+                    </div>
                 </div>
-            </h2>
-            <div class="col-md-12">
-                <table class="table-responsive">
-                    <thead>
+                <div class="tablediv table-responsive" style="height: 28rem;  ">
+                    <table class="table  " id="billtable"  style="text-align: center;  ">
+                        <thead style="background-color:rgb(61, 68, 101); ">
+                            <tr style="width:35%; ">
+                                <th class=" text-white" style="background-color: #3d4465; "     >
+                                    # 
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    DATE 
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    INVOICE NUMBER 
+                                </th>
+                                <th class="text-white" style="background-color: #3d4465;" >
+                                    NAME 
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    AMOUNT
+                                </th>
+                                <th class="text-white" style="background-color: #3d4465;">
+                                    BY
+                                </th>
+                                <th class=" text-white" style="background-color: #3d4465;">
+                                    ACTION
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-bordered">
+                            {% for h in history %}
                         <tr>
-                            <th style="font-size: larger;">DATE</th>
-                            <th style="font-size: larger;">ACTION</th>
-                            <th style="font-size: larger;">DONE BY</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if history %}
-                            {% for i in history %}
-                            <tr>
-                                <td class="text-center tb">{{ i.date }}</td>
-                                <td class="text-center tb">{{ i.action }}</td>
-                                <td class="text-center tb">{{staff.first_name|upper}} {{staff.last_name|upper}}</td>
-                            </tr>
-                            {% endfor %}
+                            <td>{{forloop.counter}}</td>
+                            <td style="color: black;">{{ h.date | date:'d-m-Y' }}</td>
+                            <td style="color: black;">{{ h.salesinvoice.invoice_no }}</td>
+                            <td style="color: black;">{{ h.salesinvoice.party.party_name }}</td>
+                            <td style="color: black;">{{ h.salesinvoice.grandtotal }}</td>
+                            <td style="color: black;">
+                                {% if h.staff %}
+                                    {{ h.staff.first_name }} {{ h.staff.last_name }}
+                                {% else %}
+                                    {{ h.salesinvoice.company.company_name }}
+                                {% endif %}
+                            </td>
+                            {% if h.action == 'Created' %}
+                            <td style="color: red;" >{{h.action}}</td>
                         {% else %}
-                            <tr>
-                                <td><p class="text-center tb fw-5">No Data is Available</p></td>
-                                <td><p class="text-center tb fw-5">No Data is Available</p></td>
-                                <td><p class="text-center tb fw-5">No Data is Available</p></td>
-                            </tr>
+                            <td style="color: #154c79;" >{{h.action}}</td>
                         {% endif %}
-                        
-                    </tbody>
-                </table>
+                           
+                        </tr>
+                        {% endfor %}
+                            
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
-{% endblock %}
+    </body>
+
+
+{% endblock  %}

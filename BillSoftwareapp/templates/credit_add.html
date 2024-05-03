@@ -196,11 +196,11 @@
                                     <div class='party'>
                                         <h4>Party</h4>
                                         <label class="toggle-control">
-                                            <input class='abc' type="checkbox" name="abc" id="partyCheckbox" checked>
+                                            <input class='abc' type="checkbox" name="abc" id="partyCheckbox">
                                             <span class="control"></span>
                                         </label>
                                     </div>
-                                    <div id="partyForm" class="form-group row">
+                                    <div id="partyForm" style="display: none;" class="form-group row">
                                         <div class="col-md-4 custom-dropdown">
                                             <label for=""> Party Name</label>
                                             <div class="d-flex">
@@ -244,7 +244,7 @@
                                                     <option value="{{ bill_number }}">{{ bill_number }}</option>
                                                 {% endfor %}
                                             </select>
-                                            <input id="bno-input" type="text" name="billNo" class="form-control border-secondary" placeholder="Invoice Number" style="display: none;">
+                                            <input id="bno-input" type="text" name="billNo" class="form-control border-secondary" placeholder="Invoice Number">
                                         </div>
                                         <div class="col">
                                             <label for="">Invoice Date</label>
@@ -252,7 +252,7 @@
                                                 <option value="" selected hidden>Select</option>
                                                 <!-- Options will be dynamically added here using JavaScript -->
                                             </select>
-                                            <input id="bdt-input" type="date" name="billDate" class="form-control border-secondary" placeholder="Bill Date" style="display: none;">
+                                            <input id="bdt-input" type="date" name="billDate" class="form-control border-secondary" placeholder="Bill Date">
                                         </div>
                                     </div>
                                     <div class="row form-group">
@@ -1246,8 +1246,8 @@
         var bdtSelect = document.getElementById('bdt');
     
         // Initially hide input fields
-        bnoInput.style.display = 'none';
-        bdtInput.style.display = 'none';
+        bnoSelect.style.display = 'none';
+        bdtSelect.style.display = 'none';
     
         // Toggle input fields based on party checkbox state
         partyCheckbox.addEventListener('change', function() {
