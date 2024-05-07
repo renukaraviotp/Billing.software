@@ -294,12 +294,12 @@
                                                 
                                             </div>
                                         </th>
-                                        <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
+                                        {% comment %} <th class="text-center fs-8  " style="width: 15vw;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
                                             <div class="heading-with-dropdown" >
                                                 <span style=" width: 6vw;">BALANCE</span>
                                                 
                                             </div>
-                                        </th>
+                                        </th> {% endcomment %}
                                         <th class="text-center fs-8 no-export " style="width: 15vw;padding-right: 10px;padding-top: 15px; padding-bottom: 2vh;background-color:#3d4465; color:white;">
                                             <div class="heading-with-dropdown">
                                                 <span style="margin-left: 20px;width: 5vw;">ACTION</span>
@@ -323,7 +323,7 @@
                                                                     <td class="text-center td_transcation clickable-row"  id="filterByTransaction" data-href="salesinvoice_template/{{ s.id }}">Sale Invoice</td>
                                                                     <td class="text-center td_payment clickable-row" id="filterByPayment" data-href="salesinvoice_template/{{ s.id }}">{{ s.paymenttype }}</td>
                                                                     <td class="text-center td_amount clickable-row" id="filterByAmount" data-href="salesinvoice_template/{{ s.id }}">{{s.grandtotal}}</td>
-                                                                    <td class="text-center td_balance clickable-row" id="filterByBalance'" data-href="salesinvoice_template/{{ s.id }}">{{ s.totalbalance }}</td>
+                                                                    {% comment %} <td class="text-center td_balance clickable-row" id="filterByBalance'" data-href="salesinvoice_template/{{ s.id }}">{{ s.totalbalance }}</td> {% endcomment %}
                                                                     <td class="text-center td_action no-export clickable-row" id="filterByAction" data-href="salesinvoice_template/{{ s.id }}">{{ s.action }}</td>
                                                                     <td class="text-center td_by no-export clickable-row" id="filterByBy" data-href="salesinvoice_template/{{ s.id }}">{{s.company.company_name}}</td>
                                                                     <td>
