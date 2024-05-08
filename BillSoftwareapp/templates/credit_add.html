@@ -349,7 +349,7 @@
                                    
                                 
                                     {% comment %} <div class="row clearfix"> {% endcomment %}
-                                        <div class=" table-responsive mt-3">
+                                        {% comment %} <div class=" table-responsive mt-3">
                                             <table class="item-table table table-bordered table-hover  mt-3" id="tab_logic" >
                                                 <thead >
                                                     <tr style="color: white; background-color:rgb(61, 68, 101);">
@@ -422,8 +422,103 @@
                                                     <td style="border: none;"><a class="btn  ml-1" role="button" style="background-color:rgb(61, 68, 101);color: white;" id="add" ><span class="fa fa-plus"></span></a></td>
                                                 </tr>
                                             </table>
-                                        </div>
+                                        </div> {% endcomment %}
                                     {% comment %} </div> {% endcomment %}
+
+                                    <div class="invoicemain" id="items">
+                                        <div class="row clearfix">
+                                            <div class="col-md-12 table-responsive-md mt-3">
+                                                <table class="table table-bordered table-hover  mt-3" id="tab_logic" >
+                                                    <thead>
+                                                        <tr style="color: rgb(250, 246, 246);">
+                                                            <th class="text-center">#</th>
+                                                            <th class="text-center">PRODUCT</th>
+                                                            <th class="text-center">HSN</th>
+                                                            <th class="text-center">QTY</th>
+                                                            <th class="text-center">PRICE</th>
+                                                            <th class="text-center">VAT (%)</th>
+                                                            <th class="text-center">DISCOUNT</th>
+                                                            <th class="text-center">TOTAL</th>
+                                                            <th class="text-center">FIELD</th>
+                                                        </tr>
+                                                    </thead>
+                                                   
+                                                    
+                                                    
+                                                    <tbody id="items-table-body">
+                                                     
+                                                        
+                                                        <tr id='addr01'>
+                                                            <td class="nnum" style="text-align: center; color: black; width:2%">1</td>
+                    
+                                                            <td style="width:18%">
+                                                                <div class="d-flex">
+                                                                    <!-- 1111 -->
+                                                                    <select name='product[]' id="product" class="form-control  product select2 itemselect"  onchange="changeprd1()" style="color: black; background-color: white; ">
+                                                                        <option selected disabled>Select Item</option>
+                                                                         {% for item in items %}
+                                                                            {% if i.cid_id == cmp.cid %}
+                                                                                <option style="border-color: #FFADB0;" value="{{ item.id }}" >{{ item.itm_name  }} </option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select> &nbsp;&nbsp;&nbsp;
+                                                                    <button type="button" class="btn button_border" id="itmodalBtn" data-bs-toggle="modal"
+                                                                    data-bs-target="#itModal" data-bs-whatever="@mdo">
+                                                                    <span class="fa fa-plus"></span>
+                                                                </button>
+                                                                </div>
+                                                            </td>
+                    
+                                                            <td style="width:15%">
+                                                                <input type="text" name='hsn[]' id="hsn" class="form-control  HSNCODE" style="color: black; background-color: white ;" readonly />
+                                                            </td>
+                    
+                                                            <td style="width:13%">
+                                                                <input type="number" name='qty[]' id="qty"  class="form-control  qty mb-1" step=0 min=0 style="color: black; background-color: white ;" value=0  required />
+                                                            </td>
+                                                        
+                                                            <td style="width:12%">
+                                                                <input type="number" name='price[]' id="unit" class="form-control  price" step="0.00" min="0" style="color: black; background-color: white ;" value=0 readonly />
+                                                            </td>
+                                                            <td style="width:12%">
+                                                                <input type="text" name='vat[]' id="Vat" class="form-control  seltax"  step="0.00" min="0" style="color: black; background-color: white ;" value=0 readonly />
+                                                            </td>
+                                                           
+                    
+                                                            <td style="width: 10%;">
+                                                                <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc" value=0 class="form-control  disc" step=0 min=0 style="  color: black; background-color:white;"  />
+                                                            </td>
+                                        
+                                                            <td style="width:13%">
+                                                                <input type="number" name='total[]' id="total" class="form-control  total" value=0 readonly style="color: black; background-color:white;"  />
+                                                            </td>
+                                                            <td hidden><input disabled type="number"  id="taxamount" class="taxamount" value=0 /></td>
+                                                            
+                                                            <td style="width:5%">
+                                                                
+                                                                <button type="button" id="1" class="btn button_border  remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> Delete</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                  
+                                                </table>
+                                                <a class="btn  ml-1" role="button" id="add" style="border-color: #68020F;" ><span class="fa fa-plus"></span></a>
+                                            </div>
+                                        </div>
+                
+                                    </div>
+
+                                    <div class="inn" id="inn" hidden>
+                                        <div class="row clearfix">
+                                            <div class="col-md-12 table-responsive-md mt-3" >
+                                                <div id="activityBox">
+                
+                                                </div>
+                                                
+                                               
+                                            </div>
+                                        </div>
+                                    </div>
     
                                     <div class="clearfix" style="margin-top:10px;">
                                         <div class="row" style="margin-left: 2vh;" >
