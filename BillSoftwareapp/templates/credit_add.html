@@ -234,8 +234,8 @@
                                         <label class="col-form-label">Billing Address</label>
                                         <textarea class="form-control mb-3 border-secondary" name="dbname" id="dbname" rows="2" type="text" style="color: black;background-color: white;" placeholder="Billing Address..." readonly></textarea>
                                     </div>
-                                    <div class="form-group row">
-                                        <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div>
+                                    <div class="form-group row" id="salesinvoiceid">
+                                        {% comment %} <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div> {% endcomment %}
                                         <div class="col">
                                             <label for="">Invoice No.</label>
                                             <select class="form-control border-secondary" name="billNod" id="bno" style="color: black; background-color: white;">
@@ -256,6 +256,7 @@
                                         </div>
                                     </div>
                                     <div class="row form-group">
+                                        <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div>
                                         <div class="col"><label for="">Date</label><input type="date" id="dt" name="date" value="{{todayDate}}" class="form-control border-secondary"></div>
                                 
                                         <div class="col">
@@ -430,17 +431,17 @@
                                             <div class="col-md-12 table-responsive-md mt-3">
                                                 <table class="table table-bordered table-hover  mt-3" id="tab_logic" >
                                                     <thead>
-                                                        <tr style="color: rgb(250, 246, 246);">
-                                                            <th class="text-center">#</th>
-                                                            <th class="text-center">PRODUCT</th>
-                                                            <th class="text-center">HSN</th>
-                                                            <th class="text-center">QTY</th>
-                                                            <th class="text-center">PRICE</th>
-                                                            <th class="text-center">VAT (%)</th>
-                                                            <th class="text-center">DISCOUNT</th>
-                                                            <th class="text-center">TOTAL</th>
-                                                            <th class="text-center">FIELD</th>
-                                                        </tr>
+                                                        <tr style="color: white; background-color:rgb(61, 68, 101);">
+                                                        <th class="text-center " style="background-color:rgb(61, 68, 101);color: white;">#</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">PRODUCT</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">HSN</th>
+                                                        <th class="text-center"style="background-color:rgb(61, 68, 101);color: white;" required>QTY</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">PRICE</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">TAX (%)</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">DISCOUNT</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">TOTAL</th>
+                                                        <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">FIELD</th>
+                                                    </tr>
                                                     </thead>
                                                    
                                                     
@@ -449,60 +450,63 @@
                                                      
                                                         
                                                         <tr id='addr01'>
-                                                            <td class="nnum" style="text-align: center; color: black; width:2%">1</td>
-                    
-                                                            <td style="width:18%">
+                                                            <td class="nnum" style="text-align: center; color: black;">1</td>
+        
+                                                            <td >
                                                                 <div class="d-flex">
-                                                                    <!-- 1111 -->
-                                                                    <select name='product[]' id="product" class="form-control  product select2 itemselect"  onchange="changeprd1()" style="color: black; background-color: white; ">
-                                                                        <option selected disabled>Select Item</option>
-                                                                         {% for item in items %}
+                                                                    <select name='product[]' id="product1" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
+                                                                        <option value="" selected hidden>Select</option>
+                                                                        {% for i in item %}
                                                                             {% if i.cid_id == cmp.cid %}
-                                                                                <option style="border-color: #FFADB0;" value="{{ item.id }}" >{{ item.itm_name  }} </option>
+                                                                                <option value="{{ i.id }}" >{{ i.item_name  }} </option>
                                                                             {% endif %}
                                                                         {% endfor %}
                                                                     </select> &nbsp;&nbsp;&nbsp;
-                                                                    <button type="button" class="btn button_border" id="itmodalBtn" data-bs-toggle="modal"
-                                                                    data-bs-target="#itModal" data-bs-whatever="@mdo">
+                                                                <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
                                                                     <span class="fa fa-plus"></span>
                                                                 </button>
                                                                 </div>
                                                             </td>
-                    
-                                                            <td style="width:15%">
-                                                                <input type="text" name='hsn[]' id="hsn" class="form-control  HSNCODE" style="color: black; background-color: white ;" readonly />
+        
+                                                            <td >
+                                                                <input type="text" name='hsn[]' id="hsn1" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
                                                             </td>
-                    
-                                                            <td style="width:13%">
-                                                                <input type="number" name='qty[]' id="qty"  class="form-control  qty mb-1" step=0 min=0 style="color: black; background-color: white ;" value=0  required />
+        
+                                                            <td >
+                                                                <input type="number" name='qty[]' id="qty1" class="form-control border-secondary qty mb-1 quantity-input" step="1" min="1" style="color: black; background-color: white;" value="0" required/>
                                                             </td>
+                                                            
                                                         
-                                                            <td style="width:12%">
-                                                                <input type="number" name='price[]' id="unit" class="form-control  price" step="0.00" min="0" style="color: black; background-color: white ;" value=0 readonly />
+                                                            <td >
+                                                                <input type="number" name='price[]' id="unit1" class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" value=0 readonly />
                                                             </td>
-                                                            <td style="width:12%">
-                                                                <input type="text" name='vat[]' id="Vat" class="form-control  seltax"  step="0.00" min="0" style="color: black; background-color: white ;" value=0 readonly />
+                                                            
+                                                            <td >
+                                                                <input type="text" id="intrataxval1" hidden>
+                                                                <input type="text" id="intertaxval1" hidden>
+                                                                <input type="text" name='tax[]' id="tax1" class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST"  readonly />
                                                             </td>
-                                                           
-                    
-                                                            <td style="width: 10%;">
-                                                                <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc" value=0 class="form-control  disc" step=0 min=0 style="  color: black; background-color:white;"  />
+        
+                                                            <td >
+                                                                <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc1" value=0 class="form-control border-secondary disc" step=0 min=0 style="  color: black; background-color: white;"  />
                                                             </td>
                                         
-                                                            <td style="width:13%">
-                                                                <input type="number" name='total[]' id="total" class="form-control  total" value=0 readonly style="color: black; background-color:white;"  />
+                                                            <td >
+                                                                <input type="number" name='total[]' id="total1" class="form-control border-secondary total" value=0 readonly style="color: black; background-color: white;"  />
                                                             </td>
-                                                            <td hidden><input disabled type="number"  id="taxamount" class="taxamount" value=0 /></td>
+                                                            <td hidden><input type="number" name='taxamount1' id="taxamount1" class="form-control border-secondary taxamount" /></td>
                                                             
-                                                            <td style="width:5%">
-                                                                
-                                                                <button type="button" id="1" class="btn button_border  remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> Delete</button>
+                                                            <td >
+                                                               
+                                                                <button type="button" id="1" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
-                                                  
+                                                    <tr>
+                                                        <td style="border: none;"><a class="btn  ml-1" role="button" style="background-color:rgb(61, 68, 101);color: white;" id="add" ><span class="fa fa-plus"></span></a></td>
+                                                    </tr>
                                                 </table>
-                                                <a class="btn  ml-1" role="button" id="add" style="border-color: #68020F;" ><span class="fa fa-plus"></span></a>
+                                                {% comment %} <td style="border: none;"><a class="btn  ml-1" role="button" style="background-color:rgb(61, 68, 101);color: white;" id="add" ><span class="fa fa-plus"></span></a></td> {% endcomment %}
                                             </div>
                                         </div>
                 
@@ -520,7 +524,7 @@
                                         </div>
                                     </div>
     
-                                    <div class="clearfix" style="margin-top:10px;">
+                                    <div class="clearfix" style="margin-top:10px;" id="cal1">
                                         <div class="row" style="margin-left: 2vh;" >
                                             <div class="col-md-7 table-responsive mt-3 " id="tab_logic_total" style=" color: black; border: 1px solid rgba(61, 68, 101); margin-left: -2vh; background-color: rgba(61, 68, 101); ">
                                                 <div class="p-3">
@@ -1084,6 +1088,21 @@
             );
             reloadItem();
             productsearch(roinc);
+            $('#tab_logic1').on('change', '.qty, .hsn', function() {
+                validateRows1();
+            });
+            function validateRows1() {
+                var isValid = true;
+               
+                return isValid;
+            }
+            var table = document.getElementById('tab_logic1');
+            var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    var cells = rows[i].getElementsByTagName('td');
+                    cells[0].innerText = i + 1;
+                    
+                }
             
         });
     });
@@ -1407,6 +1426,7 @@
 </script>
 
 <script>
+    
     $(document).ready(function () {
         $('#employee2').on('change', function() {
             $.ajax({
@@ -1418,6 +1438,12 @@
                 },
              
                 success: function(data){
+                    $('#bno').html('')
+                    $('#bno').append($('<option>', {
+                                value: '',
+                                text: 'select an Invoice number',
+                                hidden:true
+                            }));
                     if (data.phno == ''){
                         if(data.address == ''){
                             document.getElementById('daddressdiv').style.display = 'none';
@@ -1452,6 +1478,63 @@
                         document.getElementById('balancediv').style.display = 'block';
                         document.getElementById('balval').innerText = data.bal;
                         document.getElementById('balval').style.color = 'green';
+                    }
+                    if (data.bno && data.bdt) {
+                        for (var i = 0; i < data.bno.length; i++) {
+                            var optionText = data.bno[i];
+                            var optionTexts = data.bdt[i];
+                            console.log(optionText)
+                            console.log(optionTexts)
+                            $('#bno').append($('<option>', {
+                                value: data.bno[i],
+                                text: optionText
+                            }));
+                            $('#bdt').append($('<option>', {
+                                value: data.bdt[i],
+                                text: optionTexts
+                            }));
+                        }
+                        // Show salesinvoiceid div if valid data is available
+                        $('#salesinvoiceid').show();
+                        $('#inn').show();
+                        $('.inn').removeAttr('hidden');
+                        $('#cal1').attr('hidden', true);
+                        $('.invoicemain').attr('hidden', true);
+                        $('.product').attr('disabled', true);
+                        $('.HSNCODE').attr('disabled', true);
+                        $('.qty').attr('disabled', true);
+                        $('.price').attr('disabled', true);
+                        $('.seltax').attr('disabled', true);
+                        $('.disc').attr('disabled', true);
+                        $('.total').attr('disabled', true);
+                        $('#sub_total').attr('disabled', true);
+                        $('#tax_amount').attr('disabled', true);
+                        $('#adj').attr('disabled', true);
+                        $('#grandtotal').attr('disabled', true);
+    
+                        
+                    
+                    } else {
+                        // Hide salesinvoiceid div if no valid data is available
+                        $('#salesinvoiceid').hide();
+                        $('#invoiceno').val('');
+                        $('#invoicedate').val('');
+                        $('.inn').attr('hidden', true);
+                        $('#cal1').removeAttr('hidden');
+                        $('.invoicemain').removeAttr('hidden');
+                        $('.product').removeAttr('disabled');
+                        $('.HSNCODE').removeAttr('disabled');
+                        $('.qty').removeAttr('disabled');
+                        $('.price').removeAttr('disabled');
+                        $('.seltax').removeAttr('disabled');
+                        $('.disc').removeAttr('disabled');
+                        $('.total').removeAttr('disabled');
+                        $('#sub_total').removeAttr('disabled');
+                        $('#tax_amount').removeAttr('disabled');
+                        $('#adj').removeAttr('disabled');
+                        $('#grandtotal').removeAttr('disabled');
+                        
+                        
                     }
                 }
             });
@@ -2230,6 +2313,27 @@
           document.getElementById('dt').value = todayDate;
         })();
       });
+</script>
+<script>
+    $('#bno').change(function() {
+        var selectedInvoiceNo = $(this).val(); // Get the selected invoice number
+        $.ajax({
+            url: "{% url 'get_invoice_item' %}",
+       // Replace "your_server_endpoint" with the actual URL to fetch the invoice date
+            method: "POST", // or "POST" depending on your server endpoint
+            data: { invoiceno: selectedInvoiceNo },
+            success: function(response) {
+                // Update the invoicedate input field with the corresponding invoice date
+                var invoiceitem = response.items;
+                $('#activityBox').html(response);
+             
+
+                
+                console.log(response,"dfgdfgdfg")
+            },
+            
+        });
+     });
 </script>
 
 

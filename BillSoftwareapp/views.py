@@ -3603,6 +3603,9 @@ def pdftomailcredit(request,pk):
             return redirect('template1',pk=pk)
           
 def partydata(request):
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id) 
     if request.method == 'POST':
         cid = request.POST.get('id')
         part = Parties.objects.get(id=cid)
@@ -3610,7 +3613,24 @@ def partydata(request):
         address = part.billing_address
         pay = part.to_pay
         bal = part.opening_balance
-        return JsonResponse({'phno': phno, 'address': address, 'pay': pay, 'bal': bal})
+        sales_invoice = SalesInvoice.objects.filter(company=cmp,party=part)
+        if sales_invoice:
+          invoice_n = []
+          invoice_d =[]
+          invoice_p =[]
+          for i in sales_invoice:
+              invoice_n.append(i.invoice_no)
+              invoice_d.append(i.date)
+              invoice_p.append(i.address)
+          
+          print(invoice_n)
+        
+        
+        else:
+          invoice_n = None
+          invoice_d = None
+          invoice_p = None
+        return JsonResponse({'phno': phno, 'address': address, 'pay': pay, 'bal': bal,'bno':invoice_n,'bdt':invoice_d})
     else:
         return JsonResponse({'error': 'Invalid request method'})
         
@@ -4332,3 +4352,17 @@ def getItemDetailsinvoice(request):
         }
     return JsonResponse(context)
     
+def get_invoice_item(request):
+
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id) 
+    invoiceno = request.GET.get('bno') 
+    print(invoiceno, 'ftydf')  # Output the invoice number for debugging
+    try:
+        # Retrieve the invoice object with the given invoice number or return a 404 error if not found
+        invoice = get_object_or_404(SalesInvoice, invoice_no=invoiceno)
+        invoice_items = SalesInvoiceItem.objects.filter(company=cmp, salesinvoice=invoice)
+    except SalesInvoice.DoesNotExist:
+        return redirect('credit_add')
+    return render(request, 'tab_logic.html',{"items":invoice_items})

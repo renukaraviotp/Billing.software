@@ -223,6 +223,7 @@ urlpatterns = [
     path('salesreport_graph',views.salesreport_graph, name='salesreport_graph'),
     
     path('getItemDetailsinvoice',views.getItemDetailsinvoice, name='getItemDetailsinvoice'),
+    path('get_invoice_item',views.get_invoice_item, name='get_invoice_item'),
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     
