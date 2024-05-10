@@ -4357,11 +4357,11 @@ def get_invoice_item(request):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
     cmp = company.objects.get(id=staff.company.id) 
-    invoiceno = request.GET.get('bno') 
-    print(invoiceno, 'ftydf')  # Output the invoice number for debugging
+    bno = request.GET.get('bno') 
+    print(bno, 'ftydf')  # Output the invoice number for debugging
     try:
         # Retrieve the invoice object with the given invoice number or return a 404 error if not found
-        invoice = get_object_or_404(SalesInvoice, invoice_no=invoiceno)
+        invoice = get_object_or_404(SalesInvoice, invoice_no=bno)
         invoice_items = SalesInvoiceItem.objects.filter(company=cmp, salesinvoice=invoice)
     except SalesInvoice.DoesNotExist:
         return redirect('credit_add')

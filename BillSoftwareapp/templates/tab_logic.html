@@ -18,9 +18,22 @@
     
         <tr id='addrr0{{ forloop.counter }}' data-rowno="{{ forloop.counter }}">
            
-            <td style="text-align: center; width:2%" class="nnum">
-                {{ forloop.counter }}
-            </td>
+            <td class="nnum" style="text-align: center; color: black;">1</td>
+            {% comment %} <td >
+                <div class="d-flex">
+                    <select name='product[]' id="product{{ j.id }}" class="form-control border-secondary product1 select2 itemselect"  onchange="changeprd11(this,`{{j.id}}`)" style="color: black; background-color: white;">
+                        <option value="" selected hidden>Select</option>
+                        {% for i in item %}
+                            {% if i.cid_id == cmp.cid %}
+                                <option value="{{ i.id }}" >{{ i.item_name  }} </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select> &nbsp;&nbsp;&nbsp;
+                <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
+                    <span class="fa fa-plus"></span>
+                </button>
+                </div>
+            </td> {% endcomment %}
             <td style="width:18%" >
                 <div class="d-flex">
                     <select name='product[]' id="product{{ j.id }}" class="form-control  product1 select2 itemselect"  onchange="changeprd11(this,`{{j.id}}`)" style="color: black; background-color: white; ">
@@ -32,10 +45,9 @@
                             {% endif %}
                         {% endfor %}
                     </select> &nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn button_border" id="itmodalBtn" data-bs-toggle="modal"
-                    data-bs-target="#itModal" data-bs-whatever="@mdo">
-                    <span class="fa fa-plus"></span>
-                </button>
+                    <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
+                        <span class="fa fa-plus"></span>
+                    </button>
                     
                     
                 </div>
@@ -69,64 +81,111 @@
             <td style="display: none;">
                 <input type="number" step="any" name='taxamount1' id="taxamount{{ j.id }}" class="form-control taxamount" />
             </td>
-
-            <td style="width:5%">
-
-                <button type="button" id="{{forloop.counter}}" class="btn button_border remove_row1 px-2 py-1 mx-1 fa fa-close" title="Remove Row">Delete </button>
+            <td >
+                                                               
+                <button type="button" id="{{forloop.counter}}" class="btn btn-danger remove_row1 px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
             </td>
+
+            {% comment %} <td style="width:5%">
+
+                <button type="button" id="{{forloop.counter}}" class="btn button_border remove_row1 px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
+            </td> {% endcomment %}
         </tr>
     {% endfor %}
     </tbody>
+    <tr>
+        <td style="border: none;"><a class="btn  ml-1" role="button" style="background-color:rgb(61, 68, 101);color: white;" id="add1" ><span class="fa fa-plus"></span></a></td>
+    </tr>
     
 </table>
-<a class="btn button_border ml-1" role="button" id="add1" >+</a>
+{% comment %} <a class="btn button_border ml-1" role="button" id="add1" >+</a> {% endcomment %}
 <div class="clearfix" style="margin-top:10px" id="cal">
-                        <div class="row" style="margin-left: 2vh;" >
-                            <div class="col-md-5 table-responsive-md mt-3 " id="tab_logic_total" style=" color: black; border: 1px solid #68020F ; margin-left: -2vh;" >
-                                <div class="p-3">
-                                    <div class="row container-fluid p-2 m-0">
-                                        <div class="col-sm-4 mt-2"><label class="text-center">Sub Total</label></div>
-                                        <div class="col-sm-1 mt-2">:</div>
-                                        <div class="col-sm-7">
-                                            <input type="number" step="any" name='subtotal' value=0.00 readonly style="color: black; background-color:white;" class="form-control " id="sub_total">
-                                        </div>
-                                        <div class="col-sm-4 m-0 p-0"></div>
-                                    </div>
-
-                               
-
-                                    <div class="row container-fluid p-2 m-0">
-                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">VAT Amount</label></div>
-                                        <div class="col-sm-1 mt-2">:</div>
-                                        <div class="col-sm-7">
-                                        <input type="text" step="any" name='disvatper' id="tax_amount" value=0.00  style="color: black; background-color: white;" class="form-control tax_amount"/>
-                                        </div>
-                                        <div class="col-sm-4 m-0 p-0"></div>
-                                    </div>
-
-                                    <div class="row container-fluid p-2 m-0">
-                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Adjustment</label></div>
-                                        <div class="col-sm-1 mt-2">:</div>
-                                        <div class="col-sm-7">
-                                        <input type="number" step="any" name='adjustment' id="adj" value=0.00 class="form-control " style="color: black; background-color: white;"/>
-                                        </div>
-                                        <div class="col-sm-4 m-0 p-0"></div>
-                                    </div>
-                                    
-                                    <div class="row container-fluid p-2 m-0">
-                                        <div class="col-sm-4 mt-2"><label for="a" class="text-center">Grand Total</label></div>
-                                        <div class="col-sm-1 mt-2">:</div>
-                                        <div class="col-sm-7">
-                                        <input type="text" name='grandtotal' id="grandtotal" value=0.00  style="color: black; background-color:white;" class="form-control "/>
-                                        </div>
-                                        <div class="col-sm-4 m-0 p-0"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
+    <div class="row" style="margin-left: 2vh;" >
+        <div class="col-md-7 table-responsive mt-3 " id="tab_logic_total" style=" color: black; border: 1px solid rgba(61, 68, 101); margin-left: -2vh; background-color: rgba(61, 68, 101); ">
+            <div class="p-3">
+                <div class="row container-fluid p-2 m-0">
+                    <div class="col-sm-4 mt-2"><label class="text-center" style="color:white;">Sub Total</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                        <input type="number" step="any" name='subtotal' value=0.00 readonly style="color: black; background-color: white;" class="form-control border-secondary" id="sub_total">
                     </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+
+                <div class="row container-fluid p-2 m-0" id="igstdiv">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">IGST</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                        <input type="number" name='igst' step="any" id="igst" value=0.00 readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+            
+                <div class="row container-fluid p-2 m-0" style="display: none;" id="cgstdiv">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">CGST</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                        <input type="number" name='cgst' step="any" id="cgst" value=0.00 readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+
+                <div class="row container-fluid p-2 m-0" style="display: none;" id="sgstdiv">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">SGST</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                    <input type="number" name='sgst' step="any" id="sgst" value=0.00 readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+
+                <div class="row container-fluid p-2 m-0">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">Tax Amount</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                    <input type="number" step="any" name='taxamount' id="tax_amount" value=0.00 readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+
+                <div class="row container-fluid p-2 m-0">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">Adjustment</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                    <input type="number" step="any" name='adj' id="adj" value=0.00 class="form-control border-secondary" style="color: black; background-color: white;"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+                
+                <div class="row container-fluid p-2 m-0">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">Grand Total</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                    <input type="number" name='grandtotal' id="grandtotal" value=0.00 readonly style="color: black; background-color: white;" class="form-control border-secondary"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+                <div class="row container-fluid p-2 m-0">
+                    <div class="col-sm-4 mt-2"><label for="a" style="color:white;" class="text-center">Description</label></div>
+                    <div class="col-sm-1 mt-2">:</div>
+                    <div class="col-sm-7">
+                    <input type="text" name='des' id="des" style="color: black; background-color: white;" class="form-control"/>
+                    </div>
+                    <div class="col-sm-4 m-0 p-0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1 mt-4"></div>
+        <div class="col-md-5 mt-3 d-flex" style="margin-left:5vh">
+            <input type="submit" class="btn me-3" style="background-color:rgb(61, 68, 101);" name="Next" value="SAVE & NEXT"></input> 
+            <input type="submit" class="btn " style="background-color:rgb(61, 68, 101);" name="Save" value="SAVE"></input>
+        </div>
+    </div>
+
+
+</div>
 
 <script>
         $(document).ready(function(){
@@ -169,57 +228,61 @@
                                     {% endif %}
                                 {% endfor %}
                             </select>&nbsp;&nbsp;&nbsp;
-                            <button type="button" class="btn button_border" id="itmodalBtn" data-bs-toggle="modal"
-                    data-bs-target="#itModal" data-bs-whatever="@mdo">
-                    <span class="fa fa-plus"></span>
-                </button>
-                    
-                            
-                            
+                            <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
+                                <span class="fa fa-plus"></span>
+                            </button>
                         </div>
                     </td>
 
-                    <td tyle="width:15%">
-                        <input type="text" name='hsn[]' id="hsn${roinc}" class="form-control button_border px-1" style="color: black; background-color: white;" readonly />
+                    <td style="width:14%">
+                        <input type="text"  name='id[]' style="color:black;" value="0" hidden>
+                        <input type="text" name='hsn[]'  value="" id="hsn${roinc}" class="form-control " style="color: black; background-color: white;" readonly />
                     </td>
 
-                    <td style="width:10%">
-                        <input type="number" name='qty[]' value=0 id="qty${roinc}" class="form-control button_border qty mb-1" step=0 min=0 style="color: black; background-color: white;" />
+                    <td style="width: 10%;">
+                        <input type="number" name='qty[]' placeholder='Enter Qty' id="qty${roinc}" value=0 class="form-control qty mb-1 " step=0 min=0 style="color: black; background-color: white;" />
                     </td>
 
-                    <td tyle="width:12%">
-                        <input type="number" name='price[]' id="unit${roinc}" value=0 class="form-control button_border price" step="0.00" min="0" style="color: black; background-color: white;" readonly/>
+                    <td style="width:12%">
+                        <input type="number" name='price[]' value="0" id="unit${roinc}"class="form-control  price" step="0.00" min="0" style="color: black; background-color: white;" readonly />
                     </td>
 
-                    <td tyle="width:12%">
-                        <input type="text" name='vat[]' id="Vat${roinc}" value=0 class="form-control button_border seltax" value="{{0}}" step="0.00" min="0" style="color: black; background-color: white;" readonly/>
+                    <td style="width: 15%;">
+                        <input type="text" id="intrataxval${roinc}" value="" hidden>
+                        <input type="text" id="intertaxval${roinc}" value="" hidden>
+                        {% if crd.state_of_supply  == 'State'  %}
+                            <input type="text" name='tax[]' id="tax${roinc}" class="form-control  tax" style="color: black; background-color: white;" value=""  readonly />
+                        {% else %}
+                            <input type="text" name='tax[]' id="tax${roinc}" class="form-control  tax" style="color: black; background-color: white;" value="" readonly   />
+                        {% endif %}
                     </td>  
 
-                    <td tyle="width:8%">
-                        <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control button_border disc" step=0 min=0 style="color: black; background-color: white;">
-                    </td>
-
                     <td style="width:10%">
-                        <input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control button_border total" value=0 step="any" style="color: black; background-color: white;" readonly />
+                        <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${roinc}" value="0" class="form-control disc " step=0 min=0 style="color: black; background-color: white;">
                     </td>
 
-                    <td hidden><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class=" taxamount" /></td>
+                    <td style="width:13%">
+                        <input type="number" name='total[]' value="0" id="total${roinc}" placeholder=0 class="form-control total " value=0 step="any" readonly style="color: black; background-color: white;" />
+                    </td>
+                    <td style="display: none;">
+                        <input type="hidden" step="any" id="taxamount${roinc}" class="form-control taxamount" />
+                    </td>
                     
-                    <td style="width:10%">
-                        <button type="button" id="${roinc}" class="btn button_border px-2 mx-1 py-1 remove_row1 fa fa-close">Delete</button>
+                    <td style="width:5%">
+                        <button type="button" id="${roinc}" class="btn btn-danger remove_row1 px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
                     </td>
                 </tr>`
             );
             $(`.itemselect3${roinc}`).select2()
             reloadItem1();
             $('#tab_logic1').on('change', '.qty, .hsn', function() {
-    validateRows1();
-});
-function validateRows1() {
-    var isValid = true;
-   
-    return isValid;
-}
+            validateRows1();
+            });
+            function validateRows1() {
+                var isValid = true;
+            
+                return isValid;
+            }
 
             var table = document.getElementById('tab_logic1');
             var rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
@@ -232,9 +295,18 @@ function validateRows1() {
                
         
             });
+
             $(document).on('change', '.product1',function(){ 
                 var n = $(this).data("rowno");
                 console.log(n,'jhgjhg')
+                var selectedItems = [];
+                if (selectedItems.includes(value)) {
+                    alert('This item has already been selected in another row.');
+                    var $select = $(document.getElementById('product' + n));
+                    //var selectize = $select[0].selectize;
+                    //selectize.clear();  // Clear the selected option
+                    return;
+                }
                 $.ajax({
                     url: "{% url 'itemdetails' %}",
                     type : 'GET',
@@ -244,21 +316,34 @@ function validateRows1() {
                         },
                     
                     success: function(response) {
-                        data = response.hsn
-                        data3 = response.price
-                        data4 = response.vat
-                        data5 = response.qty
-                        
-                        
-                        document.getElementById('hsn'+n).value = data;
-                        document.getElementById('unit'+n).value = data3;
-                        document.getElementById('Vat'+n).value = data4;
-                        document.getElementById('qty'+n).value = data5;
+                        selectedItems.push(value);
+
+                var bc = document.getElementById("psu").value;
+                if (bc == 'State') {
+                    document.getElementById('intrataxval' + n).value = response.gst;
+                    document.getElementById('intertaxval' + n).value = response.igst;
+                    document.getElementById('hsn' + n).value = response.hsn;
+                    document.getElementById('unit' + n).value = response.price;
+                    document.getElementById('tax' + n).value = response.gst;
+                    calc();
+                } else if (bc == 'Other State') {
+                    document.getElementById('intrataxval' + n).value = response.gst;
+                    document.getElementById('intertaxval' + n).value = response.igst;
+                    document.getElementById('hsn' + n).value = response.hsn;
+                    document.getElementById('unit' + n).value = response.price;
+                    document.getElementById('tax' + n).value = response.igst;
+                    calc();
+                } else {
+                    alert('Please Select Place of Supply');
+                    //var $select = $(document.getElementById('product' + n));
+                    //var selectize = $select[0].selectize;
+                    //selectize.setValue("");
+                }
                         
         
                         
                         
-                    },
+                },
                     
                 });
                 calc1();

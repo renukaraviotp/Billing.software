@@ -1514,7 +1514,7 @@
     
                         
                     
-                    } else {
+                    } else { 
                         // Hide salesinvoiceid div if no valid data is available
                         $('#salesinvoiceid').hide();
                         $('#invoiceno').val('');
@@ -2320,8 +2320,8 @@
         $.ajax({
             url: "{% url 'get_invoice_item' %}",
        // Replace "your_server_endpoint" with the actual URL to fetch the invoice date
-            method: "POST", // or "POST" depending on your server endpoint
-            data: { invoiceno: selectedInvoiceNo },
+            method: "GET", // or "POST" depending on your server endpoint
+            data: { bno: selectedInvoiceNo },
             success: function(response) {
                 // Update the invoicedate input field with the corresponding invoice date
                 var invoiceitem = response.items;
