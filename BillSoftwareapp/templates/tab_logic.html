@@ -1,4 +1,12 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
+<div class="col">
+    <label class="col-form-label ">State of Supply</label>
+    <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
+        <option value="" selected hidden>Select</option>
+        <option value="State">State</option>
+        <option value="Other State">Other State</option>
+    </select> 
+</div>
 <table class="table table-bordered table-hover mt-3" id="tab_logic1">
     <thead>
         <tr style="color: white; background-color:rgb(61, 68, 101);">
@@ -353,7 +361,7 @@
             url: "{% url 'item_dropdown' %}",
             type: "GET",
             dataType: "json",
-            data: $(this).serialize(),
+            data: $(this).serialize(), 
             csrfmiddlewaretoken: '{{ csrf_token }}',
 
             success: function(data) {

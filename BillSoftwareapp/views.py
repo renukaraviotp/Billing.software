@@ -3335,6 +3335,23 @@ def credit_save(request):
 
         # Save the instance
         credit_note.save()
+        
+        if checkbtn=='on':
+          party_details = request.POST.get('partyname')
+          party_id = party_details.split()[0]
+          party = Parties.objects.get(pk=party_id,company=cmp)
+          
+          print(party.party_name)
+          credit_note.party=party
+          credit_note.save()
+          salesinvoice = SalesInvoice.objects.filter(company=cmp, party=party)
+          if salesinvoice:
+            idsales=request.POST['bno']
+            credit_note.salesinvoice=SalesInvoice.objects.get(invoice_no=idsales,company=cmp)
+            credit_note.save()
+          else:
+            pass
+        
         history = CreditnoteHistory(company=cmp, staff=staff, credit=credit_note, action='Created')
         history.save()
 
@@ -4366,3 +4383,23 @@ def get_invoice_item(request):
     except SalesInvoice.DoesNotExist:
         return redirect('credit_add')
     return render(request, 'tab_logic.html',{"items":invoice_items})
+  
+def get_pbill_item(request):
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id) 
+
+    itemm = ItemModel.objects.filter(company=cmp)
+    itemm_data = list(itemm.values('id','item_name','current_stock'))
+
+    invid = request.GET['bill_no']
+        
+    inn = PurchaseBill.objects.get(id = invid,company=cmp)
+    invvv = PurchaseBillItem.objects.filter(purchasebill=inn,company=cmp)
+    invvv_data = list(invvv.values('hsn','quantity','price','tax_rate','discount','total','Items'))
+    
+    context = {
+            'invvv': invvv_data,
+            'itemm':itemm_data,
+        }
+    return JsonResponse(context)

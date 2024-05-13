@@ -224,6 +224,7 @@ urlpatterns = [
     
     path('getItemDetailsinvoice',views.getItemDetailsinvoice, name='getItemDetailsinvoice'),
     path('get_invoice_item',views.get_invoice_item, name='get_invoice_item'),
+    path('get_pbill_item',views.get_pbill_item, name='get_pbill_item'),
 
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     

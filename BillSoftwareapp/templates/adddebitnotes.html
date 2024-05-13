@@ -346,10 +346,16 @@
         <div class="col-md-6 mt-2" id="invTypeDiv" style="display: none;" >
             <div class="row">
               <div class="col-md-3">
-                <label for="" class="labels">Invoice Type</label>
+                <label for="" class="labels">Bill Type</label>
               </div>
               <div class="col-md-9">
-                <input readonly type="text" class="form-control bg-black text-white" name="BillType"  id="BillType" >
+                <select class="form-control border-secondary" name="BillType"  id="BillType" style="color: black;background-color: white;">
+                    <option value="" selected hidden>Select</option>
+                    {% for i in billno %}
+                        <option value="{{ i.billno }}">{{ i.billno }}</option>
+                    {% endfor %}
+                </select>
+                {% comment %} <input readonly type="text" class="form-control bg-black text-white" name="BillType"  id="BillType" > {% endcomment %}
                 
               </div>
             </div>
@@ -395,6 +401,73 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="items-table-body">
+                                                        {% if invvv %}
+                                                        {% for j in invvv %}
+                                                        <tr id='addr01'>
+                                                            <td class="nnum" style="text-align: center; color: black;">1</td>
+                                                            <td style="width:21%">
+                                                                <div class="d-flex">
+                                                                    <select name='product[]' id="product{{ j.id }}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
+                                                                        <option value="{{ j.item.id }}" selected >{{ j.item.itm_name }}</option>
+                                                                        <option value="" disabled>Select Product</option>
+                                                                        {% for i in item %}
+                                                                            {% if i.cid_id == cmp.cid %}
+                                                                                <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>&nbsp;&nbsp;&nbsp;
+                                                                    <a href="#">
+                                                                        <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
+                                                                    </a>
+                                                                </div>
+                                                                <!-- <div class="d-flex">
+                                                                    <select name='product[]' id="product1" class="form-control border-secondary product" onchange="changeprd(this.id,this.value)" style="color: black; background-color: white; width: 150px;" required>
+                                                                        <option value="" selected hidden>Select Product</option>
+                                                                        {% for i in item %}
+                                                                            {% if i.cid_id == cmp.cid %} 
+                                                                                <option value="{{ i.id }}">{{ i.item_name }}</option>
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                    </select>
+                                                                    
+                                                                    <button id="modal_closing" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
+                                                                        <span class="fa fa-plus"></span>
+                                                                    </button>
+                                                                </div>   -->
+                                                            </td>
+                                                            <td>
+                                                                <input type="hidden" name="itemId[]" id="itemId1">
+                                                                <input type="text" name='hsn[]' value="{{ j.hsn }}" id="hsn1" class="form-control border-secondary HSNCODE" style="color: black; background-color: white; width: 150px;" readonly />
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name='qty[]' id="qty1"  class="form-control border-secondary qty mb-1" step=0 min=0 style="color: black; background-color: white;" value=0 onchange="changeqty(this.id)" />
+                                                                <input type="text" id="avl1" style="display: none;">
+                                                                <div class="d-flex" style="color: black; font-size: small;display: none;"><span> <span id="qtyspan1" class=''style="display:none;"></span></span></div>
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name='price[]' id="unit1" class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white; width: 150px;" value=0 readonly />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" id="intrataxval1" hidden>
+                                                                <input type="text" id="intertaxval1" hidden>
+                                                                <input type="text" name='tax[]' id="tax1" class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST RATE" width="150px;"  readonly />
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc1" value=0 class="form-control  border-secondary disc" step=0 min=0 style=" color: black; background-color: white;" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" name='total[]' id="total1" class="form-control border-secondary total" value=0 readonly style="color: black; background-color: white;"  />
+                                                            </td>
+                                                            <td style="display: none;">
+                                                                <input type="text" name='taxamount1' id="taxamount1" class="form-control taxamount"/>
+                                                            </td>
+                                                            <td>
+                                                      
+                                                                <button type="button" id="1" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row">-</button>
+                                                            </td>
+                                                        </tr>
+                                                        {% endfor %}
+                                                        {% else %}
                                                         <tr id='addr01'>
                                                             <td class="nnum" style="text-align: center; color: black;">1</td>
                                                             <td style="width:21%">
@@ -457,6 +530,7 @@
                                                                 <button type="button" id="1" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row">-</button>
                                                             </td>
                                                         </tr>
+                                                        {% endif %}
                                                     </tbody>
                                                     
                                                         <tr>
@@ -1596,13 +1670,13 @@ $(document).ready(function() {
         var selectedOption = $(this).find('option:selected');
         if(selectedOption.val() == ''){
             $('#BillType').val('');
-            $('#invTypeDiv').hide();
+            //$('#invTypeDiv').hide();
         }else{       
                 var invTyp = selectedOption.data('invtype');
                 var invId = selectedOption.val();
                 $.ajax({
                     type: 'GET',
-                    url: '',
+                    url: '{% url "get_pbill_item" %}',
                     data: {
                         'invTyp': invTyp,
                         'idd' : invId
@@ -1617,61 +1691,60 @@ $(document).ready(function() {
                         roinc++;
                         response.invvv.forEach(function(item,index){
                             $('#items-table-body').append(
-                            `
-                            <tr id='addr0${roinc}'>
-                            <td class="nnum  bg-black text-white" style="text-align: center;">${roinc}</td>
-                            <td style="width:21%">
-                                <div class="d-flex">
-                                    <select name='product[]' id="product${roinc}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
-                                        <option value="" selected hidden>Select Product</option>
-                                        {% for i in item %}
-                                            {% if i.cid_id == cmp.cid %}
-                                                <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>&nbsp;&nbsp;&nbsp;
-                                <a href="#">
-                                    <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
-                                </a>
-                            </div>
-        
-                            </td>
-        
-                            <td tyle="width:12%">
-                                <input type="hidden" name="itemId[]" id="itemId${roinc}">
-                                <input type="text" name='hsn[]' id="hsn${roinc}" class="form-control border-secondary" style="color: black; background-color: white;" readonly />
-                            </td>
-        
-                            <td style="width:13%">
-                                <input type="number" name='qty[]' value=0 id="qty${roinc}" class="form-control border-secondary qty mb-1" step=0 min=0 style="color: black; background-color: white;" />
-                            </td>
-        
-                            <td tyle="width:12%">
-                                <input type="number" name='price[]' id="unit${roinc}" value=0 class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" readonly/>
-                            </td>
-        
-                            <td style='width:15%;'>
-                                <input type="text" id="intrataxval${roinc}" hidden>
-                                <input type="text" id="intertaxval${roinc}" hidden>
-                                <input type="text" name='tax[]' id="tax${roinc}"  class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST" readonly/>
-                            </td>  
-        
-                            <td tyle="width:10%">
-                                <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control border-secondary disc" step=0 min=0 style="color: black; background-color: white;">
-                            </td>
-        
-                            <td style="width:13%">
-                                <input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control border-secondary total" value=0 step="any" style="color: black; background-color: white;" readonly />
-                            </td>
-        
-                            <td hidden><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control border-secondary taxamount" /></td>
-                            
-                            <td style="width:13%">
-                                
-                                <button type="button" id="${roinc}" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
-                            </td>
-                        </tr>
-                            `);
+                                `<tr id='addr0${roinc}'>
+                                    <td class = 'nnum' style="text-align: center; width:2%"">${roinc}</td>
+                                    <td style="width:21%">
+                                        <div class="d-flex">
+                                            <select name='product[]' id="product${roinc}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
+                                                <option value="" selected hidden>Select Product</option>
+                                                {% for i in item %}
+                                                    {% if i.cid_id == cmp.cid %}
+                                                        <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>&nbsp;&nbsp;&nbsp;
+                                        <a href="#">
+                                            <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
+                                        </a>
+                                    </div>
+                
+                                    </td>
+                
+                                    <td tyle="width:12%">
+                                        <input type="hidden" name="itemId[]" id="itemId${roinc}">
+                                        <input type="text" name='hsn[]' id="hsn${roinc}" class="form-control border-secondary" style="color: black; background-color: white;" readonly />
+                                    </td>
+                
+                                    <td style="width:13%">
+                                        <input type="number" name='qty[]' value=0 id="qty${roinc}" class="form-control border-secondary qty mb-1" step=0 min=0 style="color: black; background-color: white;" />
+                                    </td>
+                
+                                    <td tyle="width:12%">
+                                        <input type="number" name='price[]' id="unit${roinc}" value=0 class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" readonly/>
+                                    </td>
+                
+                                    <td style='width:15%;'>
+                                        <input type="text" id="intrataxval${roinc}" hidden>
+                                        <input type="text" id="intertaxval${roinc}" hidden>
+                                        <input type="text" name='tax[]' id="tax${roinc}"  class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST" readonly/>
+                                    </td>  
+                
+                                    <td tyle="width:10%">
+                                        <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control border-secondary disc" step=0 min=0 style="color: black; background-color: white;">
+                                    </td>
+                
+                                    <td style="width:13%">
+                                        <input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control border-secondary total" value=0 step="any" style="color: black; background-color: white;" readonly />
+                                    </td>
+                
+                                    <td hidden><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control border-secondary taxamount" /></td>
+                                    
+                                    <td style="width:13%">
+                                        
+                                        <button type="button" id="${roinc}" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
+                                    </td>
+                                </tr>`
+                                );
                             // $('#item' + roinc).val(item['Items'] || item['item']);
                             $('#hsn' + roinc).val(item['hsn']);
                             $('#qty' + roinc).val(item['quantity']);
@@ -1681,8 +1754,6 @@ $(document).ready(function() {
                             $('#taxIGST' + roinc).val(item['tax_rate']); 
                             $('#disc' + roinc).val(item['discount']);
                             $('#total' + roinc).val(item['total']);
-                            $('#advance').val(response.paid);
-                            $('#ship').val(response.shipping);
                             $('#adj').val(response.adjustment);
 
                             
@@ -1711,8 +1782,9 @@ $(document).ready(function() {
 
                             refreshTax();
                               calc();
-                            reloadItems();
-                            checkPriceList();
+                            reloadItem();
+                            refreshIndex();
+                            productsearch(roinc)
                         
                     },
                     error: function(xhr, status, error) {
@@ -1727,9 +1799,11 @@ $(document).ready(function() {
         $('#BillType').val(invType);
         }
         
-    });
+    }); 
 });
-{% comment %} $(document).ready(function(){
+
+
+$(document).ready(function(){
         $('#add').click(function(){
             var roinc = $("#items-table-body tr").length;
             roinc++
@@ -1949,7 +2023,7 @@ $(document).ready(function() {
         // Optionally, you might want to focus on the input field after showing the error.
         element.focus();
     }
-} {% endcomment %}
+}
 
 
 

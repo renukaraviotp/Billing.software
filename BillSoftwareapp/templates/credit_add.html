@@ -258,7 +258,7 @@
                                     <div class="row form-group">
                                         <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div>
                                         <div class="col"><label for="">Date</label><input type="date" id="dt" name="date" value="{{todayDate}}" class="form-control border-secondary"></div>
-                                
+                                        
                                         <div class="col">
                                             <label class="col-form-label ">State of Supply</label>
                                             <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
@@ -1273,7 +1273,7 @@
                 // Update your fields with the response data
 
                 // Add the selected item to the array
-                selectedItems.push(value);
+                selectedItems.push(value); 
 
                 var bc = document.getElementById("psu").value;
                 if (bc == 'State') {
