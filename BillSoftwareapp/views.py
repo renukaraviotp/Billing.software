@@ -4437,28 +4437,51 @@ def get_invoice_item(request):
 
 #     return JsonResponse({'error': 'Invalid request'}, status=400)
 
+# def get_pbill_item(request):
+#         sid = request.session.get('staff_id')
+#         staff = staff_details.objects.get(id=sid)
+#         cmp = company.objects.get(id=staff.company.id) 
+
+#         itemm = ItemModel.objects.filter(company=cmp)
+#         itemm_data = list(itemm.values('id','item_name'))
+
+#         # invtype = request.GET['invTyp']
+#         invid = request.GET['bill_no']
+        
+        
+#         inn = PurchaseBill.objects.get(billno = invid,company=cmp)
+#         invvv = PurchaseBillItem.objects.filter(purchasebill=inn,company=cmp)
+#         invvv_data = list(invvv.values('qty','tax','discount','total'))
+        
+
+#         context = {
+#             'invvv': invvv_data,
+            
+#              'itemm':itemm_data,
+            
+#         }
+#         return JsonResponse(context)
+
 def get_pbill_item(request):
-        sid = request.session.get('staff_id')
-        staff = staff_details.objects.get(id=sid)
-        cmp = company.objects.get(id=staff.company.id) 
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id) 
 
-        itemm = ItemModel.objects.filter(company=cmp)
-        itemm_data = list(itemm.values('id','item_name'))
-
-        # invtype = request.GET['invTyp']
-        invid = request.GET['bill_no']
+    invid = request.GET['bill_no']
         
-        
-        inn = PurchaseBill.objects.get(billno = invid,company=cmp)
-        invvv = PurchaseBillItem.objects.filter(purchasebill=inn,company=cmp)
-        invvv_data = list(invvv.values('qty','tax','discount','total'))
-        
+    inn = PurchaseBill.objects.get(billno=invid, company=cmp)
+    invvv = PurchaseBillItem.objects.filter(purchasebill=inn, company=cmp).select_related('product')
+    invvv_data = [{
+        'qty': item.qty,
+        'total': item.total,
+        'item_name': item.product.item_name,
+        'hsn': item.product.item_hsn,
+        'price': item.product.item_sale_price,
+        'tax': item.product.item_gst,
+        'discount': item.discount,
+    } for item in invvv]
 
-        context = {
-            'invvv': invvv_data,
-            
-             'itemm':itemm_data,
-            
-        }
-        return JsonResponse(context)
-
+    context = {
+        'invvv_data': invvv_data,
+    }
+    return JsonResponse(context)
