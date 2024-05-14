@@ -4384,22 +4384,81 @@ def get_invoice_item(request):
         return redirect('credit_add')
     return render(request, 'tab_logic.html',{"items":invoice_items})
   
+# def get_pbill_item(request):
+
+#     sid = request.session.get('staff_id')
+#     staff = staff_details.objects.get(id=sid)
+#     cmp = company.objects.get(id=staff.company.id) 
+#     bno = request.GET.get('bill_no') 
+#     print(bno, 'ftydf')  # Output the invoice number for debugging
+#     try:
+#         # Retrieve the invoice object with the given invoice number or return a 404 error if not found
+#         purchasebill = get_object_or_404(PurchaseBill, billno=bno)
+#         purchasebill_items = PurchaseBillItem.objects.filter(company=cmp, purchasebill=purchasebill)
+#     except SalesInvoice.DoesNotExist:
+#         return redirect('add_debitnote')
+#     return render(request, 'tab_logic.html',{"items":purchasebill_items})
+  
+# def get_pbill_item(request):
+#     if request.is_ajax() and request.method == 'GET':
+#         selected_bill_no = request.GET.get('bill_no')
+
+#         # Query the database to retrieve item details based on the selected bill number
+#         try:
+#             items = PurchaseBillItem.objects.filter(purchasebill__bill_no=selected_bill_no)
+#             print(items)
+
+#             # Process the retrieved items and prepare the data to be sent as JSON
+#             item_data = [{'hsn': item.product.item_name, 'qty': item.qty, 'price': item.product.item_purchase_price,'tax':item.tax,'discount':item.discount,'total':item.total,} for item in items]
+#             print(item_data)
+
+#             # Return the item details as JSON response
+#             return JsonResponse(item_data, safe=False)
+#         except PurchaseBillItem.DoesNotExist:
+#             return JsonResponse({'error': 'No items found for the selected bill number'}, status=404)
+
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+  
+# def get_pbill_item(request):
+#     if request.headers.get('x-requested-with') == 'XMLHttpRequest' and request.method == 'GET':
+#         selected_bill_no = request.GET.get('bill_no')
+
+#         # Query the database to retrieve item details based on the selected bill number
+#         try:
+#             items = PurchaseBillItem.objects.filter(purchasebill=selected_bill_no)
+
+#             # Process the retrieved items and prepare the data to be sent as JSON
+#             item_data = [{'hsn': item.product.item_name, 'qty': item.qty, 'price': item.product.item_purchase_price,'tax':item.tax,'discount':item.discount,'total':item.total,} for item in items]
+
+#             # Return the item details as JSON response
+#             return JsonResponse(item_data, safe=False)
+#         except PurchaseBillItem.DoesNotExist:
+#             return JsonResponse({'error': 'No items found for the selected bill number'}, status=404)
+
+#     return JsonResponse({'error': 'Invalid request'}, status=400)
+
 def get_pbill_item(request):
-    sid = request.session.get('staff_id')
-    staff = staff_details.objects.get(id=sid)
-    cmp = company.objects.get(id=staff.company.id) 
+        sid = request.session.get('staff_id')
+        staff = staff_details.objects.get(id=sid)
+        cmp = company.objects.get(id=staff.company.id) 
 
-    itemm = ItemModel.objects.filter(company=cmp)
-    itemm_data = list(itemm.values('id','item_name','current_stock'))
+        itemm = ItemModel.objects.filter(company=cmp)
+        itemm_data = list(itemm.values('id','item_name'))
 
-    invid = request.GET['bill_no']
+        # invtype = request.GET['invTyp']
+        invid = request.GET['bill_no']
         
-    inn = PurchaseBill.objects.get(id = invid,company=cmp)
-    invvv = PurchaseBillItem.objects.filter(purchasebill=inn,company=cmp)
-    invvv_data = list(invvv.values('hsn','quantity','price','tax_rate','discount','total','Items'))
-    
-    context = {
+        
+        inn = PurchaseBill.objects.get(billno = invid,company=cmp)
+        invvv = PurchaseBillItem.objects.filter(purchasebill=inn,company=cmp)
+        invvv_data = list(invvv.values('qty','tax','discount','total'))
+        
+
+        context = {
             'invvv': invvv_data,
-            'itemm':itemm_data,
+            
+             'itemm':itemm_data,
+            
         }
-    return JsonResponse(context)
+        return JsonResponse(context)
+

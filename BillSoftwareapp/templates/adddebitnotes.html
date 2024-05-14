@@ -343,23 +343,6 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="col-md-6 mt-2" id="invTypeDiv" style="display: none;" >
-            <div class="row">
-              <div class="col-md-3">
-                <label for="" class="labels">Bill Type</label>
-              </div>
-              <div class="col-md-9">
-                <select class="form-control border-secondary" name="BillType"  id="BillType" style="color: black;background-color: white;">
-                    <option value="" selected hidden>Select</option>
-                    {% for i in billno %}
-                        <option value="{{ i.billno }}">{{ i.billno }}</option>
-                    {% endfor %}
-                </select>
-                {% comment %} <input readonly type="text" class="form-control bg-black text-white" name="BillType"  id="BillType" > {% endcomment %}
-                
-              </div>
-            </div>
-          </div>
             
         <div class="datediv">
             <label class="col-form-label">Bill Date</label>
@@ -401,73 +384,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody id="items-table-body">
-                                                        {% if invvv %}
-                                                        {% for j in invvv %}
-                                                        <tr id='addr01'>
-                                                            <td class="nnum" style="text-align: center; color: black;">1</td>
-                                                            <td style="width:21%">
-                                                                <div class="d-flex">
-                                                                    <select name='product[]' id="product{{ j.id }}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
-                                                                        <option value="{{ j.item.id }}" selected >{{ j.item.itm_name }}</option>
-                                                                        <option value="" disabled>Select Product</option>
-                                                                        {% for i in item %}
-                                                                            {% if i.cid_id == cmp.cid %}
-                                                                                <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
-                                                                            {% endif %}
-                                                                        {% endfor %}
-                                                                    </select>&nbsp;&nbsp;&nbsp;
-                                                                    <a href="#">
-                                                                        <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
-                                                                    </a>
-                                                                </div>
-                                                                <!-- <div class="d-flex">
-                                                                    <select name='product[]' id="product1" class="form-control border-secondary product" onchange="changeprd(this.id,this.value)" style="color: black; background-color: white; width: 150px;" required>
-                                                                        <option value="" selected hidden>Select Product</option>
-                                                                        {% for i in item %}
-                                                                            {% if i.cid_id == cmp.cid %} 
-                                                                                <option value="{{ i.id }}">{{ i.item_name }}</option>
-                                                                            {% endif %}
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    
-                                                                    <button id="modal_closing" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
-                                                                        <span class="fa fa-plus"></span>
-                                                                    </button>
-                                                                </div>   -->
-                                                            </td>
-                                                            <td>
-                                                                <input type="hidden" name="itemId[]" id="itemId1">
-                                                                <input type="text" name='hsn[]' value="{{ j.hsn }}" id="hsn1" class="form-control border-secondary HSNCODE" style="color: black; background-color: white; width: 150px;" readonly />
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" name='qty[]' id="qty1"  class="form-control border-secondary qty mb-1" step=0 min=0 style="color: black; background-color: white;" value=0 onchange="changeqty(this.id)" />
-                                                                <input type="text" id="avl1" style="display: none;">
-                                                                <div class="d-flex" style="color: black; font-size: small;display: none;"><span> <span id="qtyspan1" class=''style="display:none;"></span></span></div>
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" name='price[]' id="unit1" class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white; width: 150px;" value=0 readonly />
-                                                            </td>
-                                                            <td>
-                                                                <input type="text" id="intrataxval1" hidden>
-                                                                <input type="text" id="intertaxval1" hidden>
-                                                                <input type="text" name='tax[]' id="tax1" class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST RATE" width="150px;"  readonly />
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" name='discount[]'  placeholder='Enter Discount' id="disc1" value=0 class="form-control  border-secondary disc" step=0 min=0 style=" color: black; background-color: white;" />
-                                                            </td>
-                                                            <td>
-                                                                <input type="number" name='total[]' id="total1" class="form-control border-secondary total" value=0 readonly style="color: black; background-color: white;"  />
-                                                            </td>
-                                                            <td style="display: none;">
-                                                                <input type="text" name='taxamount1' id="taxamount1" class="form-control taxamount"/>
-                                                            </td>
-                                                            <td>
-                                                      
-                                                                <button type="button" id="1" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row">-</button>
-                                                            </td>
-                                                        </tr>
-                                                        {% endfor %}
-                                                        {% else %}
+                                        
                                                         <tr id='addr01'>
                                                             <td class="nnum" style="text-align: center; color: black;">1</td>
                                                             <td style="width:21%">
@@ -530,7 +447,7 @@
                                                                 <button type="button" id="1" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row">-</button>
                                                             </td>
                                                         </tr>
-                                                        {% endif %}
+                                                        {% comment %} {% endif %} {% endcomment %}
                                                     </tbody>
                                                     
                                                         <tr>
@@ -1217,6 +1134,12 @@
                     var selectize = $select[0].selectize;
                     selectize.setValue("Select Product");
                 }
+                var invc = document.getElementById('bill_no').value || 0;
+                if (invc != 0 ){
+                    setTimeout(() => {
+                    alert('Items have changed')
+                    }, 500);
+                }
             },
         });
     }
@@ -1531,11 +1454,28 @@
                 } else {
                     $('#addressdiv').hide();
                 }
+                if(data.billno.length === 0){
+                    var dropdown = $('#bill_no');
+                    dropdown.empty();
+                    dropdown.append($('<option></option>').attr('value', '').text('Null'));
+                }else{
+                    
+                    var dropdown = $('#bill_no');
+                    dropdown.empty();
+                    dropdown.append($('<option></option>').attr('value', '').text('Select'));
+
+                    $.each(data.billno, function(index, billno) { 
+                        var BillNumber = billno[1];
+                        var newOption = $('<option></option>').attr('value', billno[0]).attr('data-invtype', billno[2]).text(billno);
+                        dropdown.append(newOption);
+                    });
+                }
 
                 // Update balance information display
                 document.getElementById('balancediv').style.display = 'block';
                 document.getElementById('balval').innerText = data.bal;
                 document.getElementById('balval').style.color = (data.pay === 'To Pay') ? 'red' : 'green';
+                
                 // var billdrop=$('#bill_no')
                 // billdrop.empty()
                 // $.each(data.billno,function(key,value){
@@ -1669,17 +1609,17 @@ $(document).ready(function() {
         // Get the selected option
         var selectedOption = $(this).find('option:selected');
         if(selectedOption.val() == ''){
-            $('#BillType').val('');
+            $('#bill_no').val('');
             //$('#invTypeDiv').hide();
         }else{       
                 var invTyp = selectedOption.data('invtype');
-                var invId = selectedOption.val();
+                var invId = document.getElementById('bill_no').value
                 $.ajax({
                     type: 'GET',
                     url: '{% url "get_pbill_item" %}',
                     data: {
                         'invTyp': invTyp,
-                        'idd' : invId
+                        'bill_no' : invId
                     },
                     success: function(response) {
                         
@@ -1747,44 +1687,44 @@ $(document).ready(function() {
                                 );
                             // $('#item' + roinc).val(item['Items'] || item['item']);
                             $('#hsn' + roinc).val(item['hsn']);
-                            $('#qty' + roinc).val(item['quantity']);
-                            $('#qty2' + roinc).val(item['quantity']);
-                            $('#price' + roinc).val(item['price']);
-                            $('#taxGST' + roinc).val(item['tax_rate']);// Assuming 'tax_rate' is the value for the tax dropdown
-                            $('#taxIGST' + roinc).val(item['tax_rate']); 
+                            $('#qty' + roinc).val(item['qty']);
+                            //$('#qty2' + roinc).val(item['quantity']);
+                            //$('#price' + roinc).val(item['price']);
+                            $('#taxGST' + roinc).val(item['tax']);// Assuming 'tax_rate' is the value for the tax dropdown
+                            $('#taxIGST' + roinc).val(item['tax']); 
                             $('#disc' + roinc).val(item['discount']);
                             $('#total' + roinc).val(item['total']);
-                            $('#adj').val(response.adjustment);
+                            //$('#adj').val(response.adjustment);
 
                             
 
-                            response.itemm.forEach(function(itm, index) {
-                            if (itm['id'] == item['Items'] || itm['id'] == item['item']) {
+                            //response.itemm.forEach(function(itm, index) {
+                            //if (itm['id'] == item['Items'] || itm['id'] == item['item']) {
                                 // Update the value of the 'item' input field with the corresponding item_name
-                                $('#itemId' + roinc).val(itm['id']);
-                                $('#item' + roinc).val(itm['item_name']);
+                                //$('#itemId' + roinc).val(itm['id']);
+                                //$('#item' + roinc).val(itm['item_name']);
                                 // $('#qtyspan' + roinc).text(itm['current_stock']);
                                 // Exit the loop since we found a match
-                                return false;
-                            }
+                                //return false;
+                            //}
                         });
                         roinc++;
                         
                             
-                            });
+                            //});
 
-                            $('#items-table-body tr').each(function () {
-                            var inpId = $(this).find('.item-display').attr('id');
-                            var value = $(this).find('.item-display').val();
-                            var qtty = $(this).find('.item-quantity2').val();
-                            getItemStock(inpId, value, qtty);
-                        });
+                            //$('#items-table-body tr').each(function () {
+                            //var inpId = $(this).find('.item-display').attr('id');
+                            //var value = $(this).find('.item-display').val();
+                            //var qtty = $(this).find('.item-quantity2').val();
+                            //getItemStock(inpId, value, qtty);
+                        //});
 
-                            refreshTax();
-                              calc();
-                            reloadItem();
-                            refreshIndex();
-                            productsearch(roinc)
+                            //refreshTax();
+                             // calc();
+                            //reloadItem();
+                            //refreshIndex();
+                            //productsearch(roinc)
                         
                     },
                     error: function(xhr, status, error) {
@@ -1794,19 +1734,25 @@ $(document).ready(function() {
             
         
             // Get the value of data-invtype attribute from the selected option
-        var invType = selectedOption.data('invtype');
-        $('#invTypeDiv').show();
-        $('#BillType').val(invType);
+        //var invType = selectedOption.data('invtype');
+        //$('#invTypeDiv').show();
+        //$('#BillType').val(invType);
         }
         
     }); 
 });
 
 
+
+
+
 $(document).ready(function(){
         $('#add').click(function(){
             var roinc = $("#items-table-body tr").length;
             roinc++
+
+            var invc = document.getElementById('bill_no').value || 0;
+
             $('#items-table-body').append(
                 `<tr id='addr0${roinc}'>
                     <td class = 'nnum' style="text-align: center; width:2%"">${roinc}</td>
@@ -1865,7 +1811,14 @@ $(document).ready(function(){
              reloadItem()
              refreshIndex();
             productsearch(roinc)
-            
+            if (invc != 0 ){
+            var newlength = $("#items-table-body tr").length;
+            if( tablelength != newlength){
+                setTimeout(() => {
+                    alert('Items list have been changed')
+                }, 1000);
+                 }
+                }
             
             
             
@@ -2532,6 +2485,7 @@ $('#contact').blur(function() {
     });
     </script>
 
+    
 
     
 
