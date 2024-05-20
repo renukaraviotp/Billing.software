@@ -1690,8 +1690,8 @@ $(document).ready(function () {
                             $('#qty' + roinc).val(item['qty']);
                             //$('#qty2' + roinc).val(item['quantity']);
                             //$('#price' + roinc).val(item['price']);
-                            $('#taxGST' + roinc).val(item['tax']);// Assuming 'tax_rate' is the value for the tax dropdown
-                            $('#taxIGST' + roinc).val(item['tax']); 
+                            $('#intertaxval1' + roinc).val(item['tax']);// Assuming 'tax_rate' is the value for the tax dropdown
+                            $('#intrataxval1' + roinc).val(item['tax']); 
                             $('#disc' + roinc).val(item['discount']);
                             $('#total' + roinc).val(item['total']);
                             //$('#adj').val(response.adjustment);
@@ -2560,7 +2560,7 @@ $('#contact').blur(function() {
         
     </script> {% endcomment %}
 
-    <script>
+    {% comment %} <script>
         $(document).ready(function() {
             $('#bill_no').on('change', function() {
                 var selectedOption = $(this).find('option:selected');
@@ -2581,7 +2581,8 @@ $('#contact').blur(function() {
                                     $('#items-table-body').append(
                                         `<tr>
                                             <td>${index + 1}</td>
-                                            <td>
+                                            <td style="width:15%;">
+                                                <div class="d-flex">
                                                 <select class="form-control item-select" onchange="changeprd(this.id,this.value)">
                                                     <option value="${item.product_id}" selected>${item.item_name}</option>
                                                     {% for i in item %}
@@ -2590,7 +2591,10 @@ $('#contact').blur(function() {
                                                         {% endif %}
                                                     {% endfor %}
                                                 </select>
-                                                <button type="button" class="btn btn-outline-secondary ml-1" data-bs-toggle="modal" data-bs-target="#newItemModal">+</button>
+                                                <a href="#">
+                                                    <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
+                                                </a>
+                                            </div>
                                             </td>
                                             <td><input type="text" value="${item.hsn}" class="form-control hsn" readonly /></td>
                                             
@@ -2606,9 +2610,24 @@ $('#contact').blur(function() {
                                     );
                                 });
                                 
-                                
+                                // Event listeners for input fields
+                                $('.qty, .price, .tax, .discount').on('input', function() {
+                                    var row = $(this).closest('tr');
+                                    var qty = parseFloat(row.find('.qty').val()) || 0;
+                                    var price = parseFloat(row.find('.price').val()) || 0;
+                                    var tax = parseFloat(row.find('.tax').val()) || 0;
+                                    var discount = parseFloat(row.find('.discount').val()) || 0;
+                                    var total = (qty * price) + (qty * tax) - discount;
+                                    row.find('.total').val(total.toFixed(2));
+                                    
+                                });
                                 
                             }
+                            reloadItem();
+                            refreshIndex();
+                            productsearch(roinc);
+                            calc();
+                            calc_total()
                         },
                         error: function(xhr, status, error) {
                             console.error(xhr.responseText);
@@ -2618,7 +2637,125 @@ $('#contact').blur(function() {
             }); 
         });
         
-    </script>
+    </script> {% endcomment %}
+    <script>
+        $(document).ready(function() {
+            $('#bill_no').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                if (selectedOption.val() == '') {
+                    $('#bill_no').val('');
+                } else {
+                    var invId = document.getElementById('bill_no').value;
+                    $.ajax({
+                        type: 'GET',
+                        url: '{% url "get_pbill_item" %}',
+                        data: {
+                            'bill_no': invId
+                        },
+                        success: function(response) {
+                            if (response.invvv_data) {
+                                $("#items-table-body").empty();
+                                response.invvv_data.forEach(function(item, index) {
+                                    $('#items-table-body').append(
+                                        `<tr>
+                                            <td>${index + 1}</td>
+                                            <td style="width:15%;">
+                                                <div class="d-flex">
+                                                    <select class="form-control item-select" onchange="changeprd(this.id,this.value)" name='product[]' id="product1">
+                                                        <option value="${item.product_id}" selected>${item.item_name}</option>
+                                                        {% for i in item %}
+                                                            {% if i.cid_id == cmp.cid %}
+                                                                <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                    </select>
+                                                    <a href="#">
+                                                        <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
+                                                    </a>
+                                                </div>
+                                            </td>
+                                            <td><input type="text" value="${item.hsn}" class="form-control hsn" readonly /></td>
+                                            <td><input type="number" value="${item.qty}" class="form-control qty" /></td>
+                                            <td><input type="number" value="${item.price}" class="form-control price" readonly /></td>
+                                            <td><input type="text" value="${item.tax}" class="form-control tax" readonly /></td>
+                                            <td><input type="number" value="${item.discount}" class="form-control disc" /></td>
+                                            <td><input type="number" value="${item.total}" class="form-control total" readonly /></td>
+                                            <td>
+                                                <button type="button" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
+                                            </td>
+                                        </tr>`
+
+                                    );
+                                });
+        
+                                // Event listeners for input fields
+                                $('.qty, .price, .tax, .disc').on('input', function() {
+                                    var row = $(this).closest('tr');
+                                    var qty = parseFloat(row.find('.qty').val()) || 0;
+                                    var price = parseFloat(row.find('.price').val()) || 0;
+                                    var tax = parseFloat(row.find('.tax').val()) || 0;
+                                    var discount = parseFloat(row.find('.disc').val()) || 0;
+                                    var total = (qty * price) + (qty * tax) - discount;
+                                    row.find('.total').val(total.toFixed(2));
+                                    calc_total();
+                                });
+        
+                                calc(); // Call the calc function after populating the table
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });
+        
+        function calc() {
+            $('#tab_logic tbody tr').each(function () {
+                var html = $(this).html();
+                if (html != '') {
+                    var qty = $(this).find('.qty').val();
+                    var price = $(this).find('.price').val();
+                    var dis = $(this).find('.disc').val();
+                    var bc = $("#plosu").val();
+                    if(bc=='State'){
+                        taxval = $(this).find('.tax').val().slice(3);
+                        var tax = parseInt(taxval.match(/\d+/)[0], 10);
+                    }
+                    else{
+                        taxval = $(this).find('.tax').val().slice(4);
+                        var tax = parseInt(taxval.match(/\d+/)[0], 10);
+                    }
+                    $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
+                    $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
+                    calc_total();
+                }
+            });
+        }
+        
+        function calc_total() {
+            total = 0;
+            $('.total').each(function () {
+                total += parseFloat($(this).val());
+            });
+            taxamount = 0;
+            $('.taxamount').each(function () {
+                taxamount += parseFloat($(this).val());
+            });
+            $('#sub_total').val(total.toFixed(2));
+            $('#tax_amount').val(taxamount.toFixed(2));
+            adj_val = parseFloat($('#adj').val())
+            gtot = taxamount + total + adj_val;
+            $('#grandtotal').val(gtot.toFixed(2));
+            $('#baldue').val(gtot.toFixed(2));
+            adv_val = parseFloat($('#advance').val())
+            adv_val = gtot - adv_val
+            $('#balance').val(adv_val.toFixed(2));
+            taxfun();
+        }
+        </script>
+        
 
     
 

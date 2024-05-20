@@ -1,12 +1,5 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet" />
-<div class="col">
-    <label class="col-form-label ">State of Supply</label>
-    <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
-        <option value="" selected hidden>Select</option>
-        <option value="State">State</option>
-        <option value="Other State">Other State</option>
-    </select> 
-</div>
+
 <table class="table table-bordered table-hover mt-3" id="tab_logic1">
     <thead>
         <tr style="color: white; background-color:rgb(61, 68, 101);">
@@ -72,9 +65,14 @@
             <td style="width:12%">
                 <input type="number" name='price[]' value="{{ j.rate }}" id="unit{{ j.id }}"class="form-control button_border price" step="0.00" min="0" style="color: black; background-color: white;" />
             </td>
-            <td style="width:12%">
-                <input type="text" name='vat[]' id="Vat{{ j.id }}" value="{{ j.tax }}" class="form-control button_border seltax"  step="0.00" min="0" style="color: black; background-color: white;"  readonly />
+            <td >
+                <input type="text" id="intrataxval1{{ j.id }}" hidden>
+                <input type="text" id="intertaxval1{{ j.id }}" hidden>
+                <input type="text" name='tax[]' id="tax1{{ j.id }}" value="{{ j.tax }}" class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST"  readonly />
             </td>
+            {% comment %} <td style="width:12%">
+                <input type="text" name='vat[]' id="Vat{{ j.id }}" value="{{ j.tax }}" class="form-control button_border seltax"  step="0.00" min="0" style="color: black; background-color: white;"  readonly />
+            </td> {% endcomment %}
             
             </td>
 
@@ -107,7 +105,7 @@
     
 </table>
 {% comment %} <a class="btn button_border ml-1" role="button" id="add1" >+</a> {% endcomment %}
-<div class="clearfix" style="margin-top:10px" id="cal">
+<div class="clearfix" style="margin-top:10px;" id="cal1">
     <div class="row" style="margin-left: 2vh;" >
         <div class="col-md-7 table-responsive mt-3 " id="tab_logic_total" style=" color: black; border: 1px solid rgba(61, 68, 101); margin-left: -2vh; background-color: rgba(61, 68, 101); ">
             <div class="p-3">
@@ -333,14 +331,14 @@
                     document.getElementById('hsn' + n).value = response.hsn;
                     document.getElementById('unit' + n).value = response.price;
                     document.getElementById('tax' + n).value = response.gst;
-                    calc();
+                    calc1();
                 } else if (bc == 'Other State') {
                     document.getElementById('intrataxval' + n).value = response.gst;
                     document.getElementById('intertaxval' + n).value = response.igst;
                     document.getElementById('hsn' + n).value = response.hsn;
                     document.getElementById('unit' + n).value = response.price;
                     document.getElementById('tax' + n).value = response.igst;
-                    calc();
+                    calc1();
                 } else {
                     alert('Please Select Place of Supply');
                     //var $select = $(document.getElementById('product' + n));
@@ -419,62 +417,54 @@
         
                 
             });
+
             function calc1() {
-        $('#tab_logic1 tbody tr').each(function () {
-            var html = $(this).html();
-            if (html != '') {
-                var qty = $(this).find('.qty').val();
-                var price = $(this).find('.price').val();
-                var dis = $(this).find('.disc').val();
-                var taxString = $(this).find('.seltax').val(); // Get the value from the input field
-                var tax = parseInt(taxString.replace(/\D/g, ''), 10); // Extract integer part using regular expression
-
-                console.log(taxString)
-                console.log(tax)
-               
-       
-                $(this).find('.total').val((parseFloat(qty) *parseFloat(price))-parseFloat(dis));
-                $(this).find('.taxamount').val(((qty * price)-dis) * (tax / 100));
-                
-                calc_total();
+                $('#tab_logic1 tbody tr').each(function () {
+                    var html = $(this).html();
+                    if (html != '') {
+                        var qty = $(this).find('.qty').val();
+                        var price = $(this).find('.price').val();
+                        var dis = $(this).find('.disc').val();
+                        var bc = $("#psu").val();
+                        var taxval = $(this).find('.tax').val().slice(bc == 'State' ? 3 : 4);
+                        var tax = parseInt(taxval.match(/\d+/)[0], 10);
+                        $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
+                        $(this).find('.taxamount').val(((qty * price) - dis) * (tax / 100));
+                        calc_total();
+                    }
+                });
             }
-        });
-    }
-
-    function calc_total() {
-        total = 0.00;
-        $('.total').each(function () {
-            total += parseFloat($(this).val());
-        });
-        taxamount = 0.00;
-        $('.taxamount').each(function () {
-            taxamount += parseFloat($(this).val());
-            console.log( parseFloat($(this).val()),"tax")
-        });
-        console.log( taxamount,"tax1")
-        $('#sub_total').val(total.toFixed(2));
-        $('#tax_amount').val(taxamount.toFixed(2));
-        adj_val = parseFloat($('#adj').val())
-        gtot = taxamount + total + adj_val;
-        $('#grandtotal').val(gtot.toFixed(2));
-        $('#baldue').val(gtot.toFixed(2));
-        adv_val = parseFloat($('#advance').val())
-        adv_val = gtot - adv_val
-        $('#balance').val(adv_val.toFixed(2));
-       
-
-    }
-
-        
-
-    $(document).on("change", "#adj", function(){
-        var subtot = $('#sub_total').val();
-        var tax = $('#tax_amount').val();
-        var adj = $("#adj").val();
-        var adv = $("#advance").val();
-        $('#grandtotal').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(adj)).toFixed(2));
-        $('#balance').val((parseFloat(subtot)+parseFloat(tax)+parseFloat(adj)-parseFloat(adv)).toFixed(2));
-    });
+            
+            function calc_total() {
+                var total = 0;
+                $('.total').each(function () {
+                    total += parseFloat($(this).val());
+                });
+                var taxamount = 0;
+                $('.taxamount').each(function () {
+                    taxamount += parseFloat($(this).val());
+                });
+                $('#sub_total').val(total.toFixed(2));
+                $('#tax_amount').val(taxamount.toFixed(2));
+                var adj_val = parseFloat($('#adj').val());
+                var gtot = taxamount + total + adj_val;
+                $('#grandtotal').val(gtot.toFixed(2));
+                $('#baldue').val(gtot.toFixed(2));
+                var adv_val = parseFloat($('#advance').val());
+                adv_val = gtot - adv_val;
+                $('#balance').val(adv_val.toFixed(2));
+                taxfun();
+            }
+            
+            $(document).on("change", "#adj", function () {
+                var subtot = $('#sub_total').val();
+                var tax = $('#tax_amount').val();
+                var adj = $("#adj").val();
+                var adv = $("#advance").val();
+                $('#grandtotal').val((parseFloat(subtot) + parseFloat(tax) + parseFloat(adj)).toFixed(2));
+                $('#balance').val((parseFloat(subtot) + parseFloat(tax) + parseFloat(adj) - parseFloat(adv)).toFixed(2));
+            });
+            
 </script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet"  defer/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" defer></script>

@@ -4384,6 +4384,31 @@ def get_invoice_item(request):
         return redirect('credit_add')
     return render(request, 'tab_logic.html',{"items":invoice_items})
   
+# def get_invoice_item(request):
+#         sid = request.session.get('staff_id')
+#         staff = staff_details.objects.get(id=sid)
+#         cmp = company.objects.get(id=staff.company.id) 
+
+#         itemm = ItemModel.objects.filter(company=cmp)
+#         itemm_data = list(itemm.values('id','item_name'))
+
+#         # invtype = request.GET['invTyp']
+#         invid = request.GET['bno']
+        
+        
+#         inn = Creditnote.objects.get(invoice_no = invid,company=cmp)
+#         invvv = CreditnoteItem.objects.filter(credit=inn,company=cmp)
+#         invvv_data = list(invvv.values('product','hsn','qty','tax','discount','total','price'))
+        
+
+#         context = {
+#             'invvv': invvv_data,
+            
+#              'itemm':itemm_data,
+            
+#         }
+#         return JsonResponse(context)
+  
 # def get_pbill_item(request):
 
 #     sid = request.session.get('staff_id')
@@ -4485,3 +4510,34 @@ def get_pbill_item(request):
         'invvv_data': invvv_data,
     }
     return JsonResponse(context)
+  
+def fetch_item_details(request):
+    if request.method == 'GET' and request.is_ajax():
+        party_id = request.GET.get('party_id')
+        bill_no = request.GET.get('bill_no')
+
+        try:
+            # Query to fetch item details based on party ID and bill number
+            items = PurchaseBillItem.objects.filter(
+                purchasebill__party_id=party_id,
+                purchasebill__billno=bill_no
+            )
+
+            # Serialize item details
+            item_details = []
+            for item in items:
+                item_details.append({
+                    'product_name': item.product.item_name,
+                    'hsn': item.product.item_hsn,
+                    'qty': item.qty,
+                    'price': item.total,
+                    'tax': item.tax,
+                    'discount': item.discount,
+                    'taxamount': item.taxamount  # Add tax amount if available in the model
+                })
+
+            return JsonResponse({'item_details': item_details})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+
+    return JsonResponse({'error': 'Invalid request method or not AJAX.'}, status=400)
