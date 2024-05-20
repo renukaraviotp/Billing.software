@@ -535,6 +535,52 @@
         // Optionally, call calc1() here if it's not dependent on the response data
     }
     
+    function changeprd12(d){
+        const itemselect = document.querySelector(`.itemselect3${d}`)
+        const selectedOption = itemselect.options[itemselect.selectedIndex]
+        const selectedvalue = selectedOption.value
+        console.log(selectedvalue)
+        document.getElementById(`qty${d}`).value = 0
+        document.getElementById(`total${d}`).value = 0
+        document.getElementById(`tax${d}`).value = 0
+        document.getElementById(`disc${d}`).value = 0
+        document.getElementById(`taxamount${d}`).value = 0
+    
+       
+        $.ajax({
+            url: "{% url 'itemdetails' %}",
+            type: 'GET',
+            data: {
+                id: selectedvalue,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                data = response.hsn
+                data3 = response.price
+                data4 = response.tax
+    
+                document.getElementById(`hsn${d}`).value = data;
+                document.getElementById(`unit${d}`).value = data3;
+                document.getElementById(`tax${d}`).value = data4;
+                var bc = document.getElementById("psu").value;
+                if (bc == 'State') {
+                    document.getElementById(`intrataxval${d}`).value = data4;
+                    document.getElementById(`intertaxval${d}`).value = data4;
+                    document.getElementById(`tax${d}`).value = data4;
+                    calc1();
+                } else if (bc == 'Other State') {
+                    document.getElementById(`intertaxval${d}`).value = data4;
+                    document.getElementById(`tax${d}`).value = data4;
+                    calc1();
+                } else {
+                    alert('Please Select Place of Supply');
+                }
+    
+                calc1();
+            },
+            // Optionally, add error handling here
+        });
+    }
     </script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet"  defer/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" defer></script>
