@@ -259,7 +259,7 @@
                                         <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div>
                                         <div class="col"><label for="">Date</label><input type="date" id="dt" name="date" value="{{todayDate}}" class="form-control border-secondary"></div>
                                         
-                                        <div class="col">
+                                        <div class="col" class="supplys">
                                             <label class="col-form-label ">State of Supply</label>
                                             <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
                                                 <option value="" selected hidden>Select</option>
@@ -1368,6 +1368,7 @@
                         $('#tax_amount').attr('disabled', true);
                         $('#adj').attr('disabled', true);
                         $('#grandtotal').attr('disabled', true);
+                        $('.supplys').attr('disabled', true);
     
                         
                     
@@ -1390,6 +1391,7 @@
                         $('#tax_amount').removeAttr('disabled');
                         $('#adj').removeAttr('disabled');
                         $('#grandtotal').removeAttr('disabled');
+                        $('.supplys').removeAttr('disabled');
                         
                         
                     }
@@ -2208,7 +2210,7 @@
                 id: selectedvalue,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
-            success: function(response) {
+            success: function(response) { 
                 data = response.hsn;
                 data3 = response.price;
                 data4 = response.tax;
