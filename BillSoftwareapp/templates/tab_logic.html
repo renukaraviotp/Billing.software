@@ -456,6 +456,22 @@
                 taxfun();
             }
             
+            function taxfun() {
+                var bc = $("#psu").val();
+                var d = 0;
+                if (bc == 'State') {
+                    console.log(bc,'gvdhsg')
+                    var gst = taxamount / 2;
+                    $('#cgst').val(parseFloat(gst.toFixed(2)));
+                    $('#sgst').val(parseFloat(gst.toFixed(2)));
+                    $('#igst').val(parseFloat(d.toFixed(2)));
+                } else {
+                    $('#igst').val(taxamount.toFixed(2));
+                    $('#cgst').val(d.toFixed(2));
+                    $('#sgst').val(d.toFixed(2));
+                }
+            }
+            
             $(document).on("change", "#adj", function () {
                 var subtot = $('#sub_total').val();
                 var tax = $('#tax_amount').val();
@@ -465,6 +481,60 @@
                 $('#balance').val((parseFloat(subtot) + parseFloat(tax) + parseFloat(adj) - parseFloat(adv)).toFixed(2));
             });
             
+
+            
 </script>
+<script>
+
+    function changeprd11(a, b) {
+        var selectedvalue = a.value;
+        console.log(selectedvalue, 'hihi');
+        
+        // Add an alert message
+        alert('Are you ready to change invoice item!');
+    
+        $.ajax({
+            url: "{% url 'itemdetails' %}",
+            type: 'GET',
+            data: {
+                id: selectedvalue,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                data = response.hsn;
+                data3 = response.price;
+                data4 = response.tax;
+                data5 = response.qty;
+                console.log(data5);
+    
+                document.getElementById(`hsn${b}`).value = data;
+                document.getElementById(`unit${b}`).value = data3;
+                document.getElementById(`qty${b}`).value = data5;
+                //document.getElementById(`psu${b}`).value= data6;
+    
+                var bc = document.getElementById("psu").value;
+                console.log(bc,'jsdvhgfv')
+                if (bc == 'State') {
+                    document.getElementById(`intrataxval${b}`).value = data4;
+                    document.getElementById(`intertaxval${b}`).value = data4;
+                    document.getElementById(`tax${b}`).value = data4;
+                    calc1();
+                } else if (bc == 'Other State') {
+                    document.getElementById(`intertaxval${b}`).value = data4;
+                    document.getElementById(`tax${b}`).value = data4;
+                    calc1();
+                } else {
+                    alert('Please Select Place of Supply');
+                }
+    
+                // Optionally, call calc1() here if it's dependent on the response data
+            },
+            // Optionally, add error handling here
+        });
+        calc1();
+        // Optionally, call calc1() here if it's not dependent on the response data
+    }
+    
+    </script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.1.0-beta.1/css/select2.min.css" rel="stylesheet"  defer/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" defer></script>
