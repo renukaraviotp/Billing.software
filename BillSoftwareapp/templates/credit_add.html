@@ -259,7 +259,7 @@
                                         <div class="col"><label for=""> Return No.</label><input id="returnno" value="{{refno}}" type="text" value="" name="returnno" class="form-control border-secondary" placeholder="Return Number" readonly></div>
                                         <div class="col"><label for="">Date</label><input type="date" id="dt" name="date" value="{{todayDate}}" class="form-control border-secondary"></div>
                                         
-                                        <div class="col" class="supplys">
+                                        <div class="col" id="supplys">
                                             <label class="col-form-label ">State of Supply</label>
                                             <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
                                                 <option value="" selected hidden>Select</option>
@@ -1368,7 +1368,10 @@
                         $('#tax_amount').attr('disabled', true);
                         $('#adj').attr('disabled', true);
                         $('#grandtotal').attr('disabled', true);
-                        $('.supplys').attr('disabled', true);
+                        $('#supplys').attr('disabled', true);
+                        $('#supplys').attr('hidden', true);
+                        $('#psu').attr('disabled', true);
+                        $('#psu').attr('hidden', true);
     
                         
                     
@@ -1391,7 +1394,10 @@
                         $('#tax_amount').removeAttr('disabled');
                         $('#adj').removeAttr('disabled');
                         $('#grandtotal').removeAttr('disabled');
-                        $('.supplys').removeAttr('disabled');
+                        $('#supplys').removeAttr('disabled');
+                        $('#supplys').removeAttr('hidden');
+                        $('#psu').removeAttr('disabled');
+                        $('#psu').removeAttr('hidden');
                         
                         
                     }
@@ -2185,9 +2191,6 @@
                 // Update the invoicedate input field with the corresponding invoice date
                 var invoiceitem = response.items;
                 $('#activityBox').html(response);
-             
-
-                
                 console.log(response,"dfgdfgdfg")
             },
             
@@ -2199,6 +2202,7 @@
     function changeprd11(a, b) {
         var selectedvalue = a.value;
         console.log(selectedvalue, 'hihi');
+        var n = $(this).data("rowno");
         
         // Add an alert message
         alert('Are you ready to change invoice item!');
@@ -2222,18 +2226,27 @@
                 document.getElementById(`qty${b}`).value = data5;
                 //document.getElementById(`psu${b}`).value= data6;
     
-                var bc = document.getElementById("psu").value;
+                var bc = document.getElementById("plsu").value;
+                console.log (bc,'tab')
                 if (bc == 'State') {
-                    document.getElementById(`intrataxval${b}`).value = data4;
-                    document.getElementById(`intertaxval${b}`).value = data4;
-                    document.getElementById(`tax${b}`).value = data4;
+                    document.getElementById('intrataxval' + n).value = response.gst;
+                    document.getElementById('intertaxval' + n).value = response.igst;
+                    document.getElementById('hsn' + n).value = response.hsn;
+                    document.getElementById('unit' + n).value = response.price;
+                    document.getElementById('tax' + n).value = response.gst;
                     calc1();
                 } else if (bc == 'Other State') {
-                    document.getElementById(`intertaxval${b}`).value = data4;
-                    document.getElementById(`tax${b}`).value = data4;
+                    document.getElementById('intrataxval' + n).value = response.gst;
+                    document.getElementById('intertaxval' + n).value = response.igst;
+                    document.getElementById('hsn' + n).value = response.hsn;
+                    document.getElementById('unit' + n).value = response.price;
+                    document.getElementById('tax' + n).value = response.igst;
                     calc1();
                 } else {
                     alert('Please Select Place of Supply');
+                    //var $select = $(document.getElementById('product' + n));
+                    //var selectize = $select[0].selectize;
+                    //selectize.setValue("");
                 }
     
                 // Optionally, call calc1() here if it's dependent on the response data
@@ -2271,18 +2284,27 @@
                 document.getElementById(`hsn${d}`).value = data;
                 document.getElementById(`unit${d}`).value = data3;
                 document.getElementById(`tax${d}`).value = data4;
-                var bc = document.getElementById("psu").value;
+                var bc = document.getElementById("plsu").value;
+                console.log (bc,'tab')
                 if (bc == 'State') {
-                    document.getElementById(`intrataxval${b}`).value = data4;
-                    document.getElementById(`intertaxval${b}`).value = data4;
-                    document.getElementById(`tax${b}`).value = data4;
+                    document.getElementById('intrataxval' + n).value = response.gst;
+                    document.getElementById('intertaxval' + n).value = response.igst;
+                    document.getElementById('hsn' + n).value = response.hsn;
+                    document.getElementById('unit' + n).value = response.price;
+                    document.getElementById('tax' + n).value = response.gst;
                     calc1();
                 } else if (bc == 'Other State') {
-                    document.getElementById(`intertaxval${b}`).value = data4;
-                    document.getElementById(`tax${b}`).value = data4;
+                    document.getElementById('intrataxval' + n).value = response.gst;
+                    document.getElementById('intertaxval' + n).value = response.igst;
+                    document.getElementById('hsn' + n).value = response.hsn;
+                    document.getElementById('unit' + n).value = response.price;
+                    document.getElementById('tax' + n).value = response.igst;
                     calc1();
                 } else {
                     alert('Please Select Place of Supply');
+                    //var $select = $(document.getElementById('product' + n));
+                    //var selectize = $select[0].selectize;
+                    //selectize.setValue("");
                 }
     
                 calc1();
