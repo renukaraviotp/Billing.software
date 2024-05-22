@@ -928,7 +928,7 @@
                         <button type="button" id="${roinc}" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
                     </td>
                 </tr>`
-            );
+            );  
             reloadItem();
             productsearch(roinc);
             $('#tab_logic').on('change', '.qty, .hsn', function() {
@@ -1852,7 +1852,7 @@
             alert('Please provide a valid Purchase Price');
         } else if (!/^\d{6}$/.test(hsn)) {
             // Check if HSN is exactly 6 digits
-            alert('HSN must be a 6-digit number');
+            alert('Please provide a valid HSN');
         } else {
             console.log(hsn)
             // Perform HSN existence check

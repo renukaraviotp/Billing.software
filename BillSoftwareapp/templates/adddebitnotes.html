@@ -1562,6 +1562,11 @@ $(document).ready(function () {
             success: function (data) {
                 // Clear existing options in the dropdowns
                 $('#bill_no').empty();
+                $('#bill_no').append($('<option>', {
+                    value: '',
+                    text: 'select a bill number',
+                    hidden:true
+                }));
                 $('#billdate').empty();
 
                 if (data.bill_numbers && data.bill_dates) {
@@ -2711,12 +2716,25 @@ $('#contact').blur(function() {
     </script> {% endcomment %}
     <script>
         $(document).ready(function() {
+            var usedBillNumbers = []; // List to maintain used bill numbers
+        
+            // Function to check if a bill number is already used
+            function isBillNumberUsed(billNo) {
+                return usedBillNumbers.includes(billNo);
+            }
+        
             $('#bill_no').on('change', function() {
                 var selectedOption = $(this).find('option:selected');
                 if (selectedOption.val() == '') {
                     $('#bill_no').val('');
                 } else {
                     var invId = document.getElementById('bill_no').value;
+        
+                    if (isBillNumberUsed(invId)) {
+                        alert('This bill number has already been used for a debit note.');
+                        return;
+                    }
+        
                     $.ajax({
                         type: 'GET',
                         url: '{% url "get_pbill_item" %}',
@@ -2765,7 +2783,6 @@ $('#contact').blur(function() {
                                                 <button type="button" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
                                             </td>
                                         </tr>`
-
                                     );
                                 });
         
@@ -2780,16 +2797,27 @@ $('#contact').blur(function() {
                                     row.find('.total').val(total.toFixed(2));
                                     calc_total();
                                 });
-                                if (invc != 0 ){
+        
+                                // Alert when quantity is changed
+                                $('.qty').on('input', function() {
+                                    alert('Quantity changed to ' + $(this).val());
+                                });
+        
+                                if (invc != 0){
                                     var newlength = $("#items-table-body tr").length;
-                                    if( tablelength != newlength){
+                                    if(tablelength != newlength){
                                         setTimeout(() => {
                                             alert('Items list have been changed')
                                         }, 1000);
-                                         }
-                                        }
+                                    }
+                                }
         
                                 calc(); // Call the calc function after populating the table
+
+                                // Mark the bill number as used and remove from dropdown
+                                usedBillNumbers.push(invId);
+                                $("#bill_no option[value='" + invId + "']").remove();
+        
                             }
                         },
                         error: function(xhr, status, error) {
@@ -2835,7 +2863,6 @@ $('#contact').blur(function() {
                     }
                 }
             });
-            
         }
         
         function calc_total() {
@@ -2861,6 +2888,7 @@ $('#contact').blur(function() {
             $('#balance').val(adv_val.toFixed(2));
             taxfun();
         }
+        
         </script>
         
 
