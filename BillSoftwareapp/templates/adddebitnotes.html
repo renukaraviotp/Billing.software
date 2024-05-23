@@ -2717,6 +2717,7 @@ $('#contact').blur(function() {
     <script>
         $(document).ready(function() {
             var usedBillNumbers = []; // List to maintain used bill numbers
+            console.log(usedBillNumbers,'eeeee')
         
             // Function to check if a bill number is already used
             function isBillNumberUsed(billNo) {
@@ -2801,6 +2802,11 @@ $('#contact').blur(function() {
                                 // Alert when quantity is changed
                                 $('.qty').on('input', function() {
                                     alert('Quantity changed to ' + $(this).val());
+                                });
+
+                                // Alert when item is changed
+                                $('.item-select').on('change', function() {
+                                    alert('Item changed to ' + $(this).find('option:selected').text());
                                 });
         
                                 if (invc != 0){
@@ -2889,7 +2895,7 @@ $('#contact').blur(function() {
             taxfun();
         }
         
-        </script>
+    </script>
         
 
     

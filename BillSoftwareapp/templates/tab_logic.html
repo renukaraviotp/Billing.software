@@ -21,7 +21,7 @@
             <th class="text-center" style="background-color:rgb(61, 68, 101);color: white;">FIELD</th>
         </tr>
     </thead>
-    <tbody id="items-table-body1">
+    <tbody id="items-table-body1"> 
     {% for j in items %}
     
         <tr id='addrr0{{ forloop.counter }}' data-rowno="{{ forloop.counter }}">
@@ -427,6 +427,7 @@
             });
 
             function calc1() {
+                console.log('calc1 function working')
                 $('#tab_logic1 tbody tr').each(function () {
                     var html = $(this).html();
                     if (html != '') {
@@ -434,13 +435,14 @@
                         var priceElement = $(this).find('.price');
                         var disElement = $(this).find('.disc');
                         var taxElement = $(this).find('.tax');
+                        console.log('calc1 function working 2')
                         
                         if (qtyElement.length && priceElement.length && disElement.length && taxElement.length) {
                             var qty = qtyElement.val();
                             var price = priceElement.val();
                             var dis = disElement.val();
                             var bc = $("#plsu").val();
-                            
+                            console.log('calc1 function working 3')
                             if (bc == 'State') {
                                 var taxval = taxElement.val().slice(3);
                             } else {
@@ -448,6 +450,7 @@
                             }
                             
                             var tax = parseInt(taxval.match(/\d+/)[0], 10);
+                            console.log('calc1 function working4')
                             
                             $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
                             $(this).find('.taxamount').val(((qty * price) - dis) * (tax / 100));
@@ -542,11 +545,17 @@
                 var bc = document.getElementById("plsu").value;
                 console.log (bc,'tab')
                 if (bc == 'State') {
+                    console.log('intrataxval function working1')
                     document.getElementById('intrataxval' + n).value = response.gst;
+                    console.log('intrataxval function working2')
                     document.getElementById('intertaxval' + n).value = response.igst;
+                    console.log('intrataxval function working3')
                     document.getElementById('hsn' + n).value = response.hsn;
+                    console.log('intrataxval function working4')
                     document.getElementById('unit' + n).value = response.price;
+                    console.log('intrataxval function working5')
                     document.getElementById('tax' + n).value = response.gst;
+                    console.log('intrataxval function working6')
                     calc1();
                 } else if (bc == 'Other State') {
                     document.getElementById('intrataxval' + n).value = response.gst;

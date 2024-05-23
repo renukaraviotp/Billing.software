@@ -1060,7 +1060,7 @@ def create_debitnotes(request):
 
   context = {
         'billno': billno,
-        'billdate':billdate
+        'billdate':billdate, 
         # Add other context variables as needed
     }
   if request.method == 'POST': 
@@ -4383,6 +4383,29 @@ def get_invoice_item(request):
     except SalesInvoice.DoesNotExist:
         return redirect('credit_add')
     return render(request, 'tab_logic.html',{"items":invoice_items})
+  
+def get_invoiceitem(request):
+
+    sid = request.session.get('staff_id')
+    staff = staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id) 
+    bno = request.GET.get('invoice_no') 
+    print(bno, 'ftydf')  # Output the invoice number for debugging
+    # Retrieve the invoice object with the given invoice number or return a 404 error if not found
+    invoice = get_object_or_404(SalesInvoice, invoice_no=bno)
+    invoice_items = SalesInvoiceItem.objects.filter(company=cmp, salesinvoice=invoice)
+    items=ItemModel.objects.filter(company=cmp)
+    for i in items:
+      allitem=[(i.id,i.item_name,i.item_current_stock)]
+      
+    for i in invoice_items:
+      c=str(i.item)
+      itemlist=[(c,i.item.item_name,i.hsn,i.quantity,i.tax,i.discount,i.totalamount,i.rate)]
+    context={
+      'itemlist':itemlist,
+      'allitem':allitem
+    }
+    return JsonResponse(context)
   
 # def get_invoice_item(request):
 #         sid = request.session.get('staff_id')
