@@ -3345,12 +3345,12 @@ def credit_save(request):
           credit_note.party=party
           credit_note.save()
           salesinvoice = SalesInvoice.objects.filter(company=cmp, party=party)
-          if salesinvoice:
-            idsales=request.POST['bno']
-            credit_note.salesinvoice=SalesInvoice.objects.get(invoice_no=idsales,company=cmp)
-            credit_note.save()
-          else:
-            pass
+          # if salesinvoice:
+          #   idsales=request.POST['bno']
+          #   credit_note.salesinvoice=SalesInvoice.objects.get(invoice_no=idsales,company=cmp)
+          #   credit_note.save()
+          # else:
+          #   pass
         
         history = CreditnoteHistory(company=cmp, staff=staff, credit=credit_note, action='Created')
         history.save()
@@ -4400,7 +4400,7 @@ def get_invoiceitem(request):
       
     for i in invoice_items:
       c=str(i.item)
-      itemlist=[(c,i.item.item_name,i.hsn,i.quantity,i.tax,i.discount,i.totalamount,i.rate)]
+      itemlist=[(c,i.item.item_name,i.hsn,i.quantity,i.tax,i.discount,i.totalamount,i.item.item_sale_price)]
     context={
       'itemlist':itemlist,
       'allitem':allitem
