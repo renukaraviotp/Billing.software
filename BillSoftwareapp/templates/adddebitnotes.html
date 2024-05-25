@@ -338,9 +338,9 @@
             <label class="col-form-label">Bill No.</label>
             <select class="form-control border-secondary" name="billno" id="bill_no" style="color: black;background-color: white;">
                 <option value="" selected hidden>Select</option>
-                {% for i in billno %}
+                {% comment %} {% for i in billno %}
                     <option value="{{ i.billno }}">{{ i.billno }}</option>
-                {% endfor %}
+                {% endfor %} {% endcomment %}
             </select>
         </div>
             
@@ -1547,6 +1547,8 @@
     });
 });
 
+
+
 $(document).ready(function () {
     // Event listener for the 'customer' dropdown
     $('#customer').on('change', function () {
@@ -2716,13 +2718,6 @@ $('#contact').blur(function() {
     </script> {% endcomment %}
     <script>
         $(document).ready(function() {
-            var usedBillNumbers = []; // List to maintain used bill numbers
-            console.log(usedBillNumbers,'eeeee')
-        
-            // Function to check if a bill number is already used
-            function isBillNumberUsed(billNo) {
-                return usedBillNumbers.includes(billNo);
-            }
         
             $('#bill_no').on('change', function() {
                 var selectedOption = $(this).find('option:selected');
@@ -2730,11 +2725,6 @@ $('#contact').blur(function() {
                     $('#bill_no').val('');
                 } else {
                     var invId = document.getElementById('bill_no').value;
-        
-                    if (isBillNumberUsed(invId)) {
-                        alert('This bill number has already been used for a debit note.');
-                        return;
-                    }
         
                     $.ajax({
                         type: 'GET',
@@ -2819,11 +2809,6 @@ $('#contact').blur(function() {
                                 }
         
                                 calc(); // Call the calc function after populating the table
-
-                                // Mark the bill number as used and remove from dropdown
-                                usedBillNumbers.push(invId);
-                                $("#bill_no option[value='" + invId + "']").remove();
-        
                             }
                         },
                         error: function(xhr, status, error) {

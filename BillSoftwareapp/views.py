@@ -38,6 +38,7 @@ from io import BytesIO
 from django.core.mail import send_mail
 from django.utils.dateparse import parse_date
 from collections import defaultdict
+from django.db.models import Subquery
 # Create your views here.
 
 def home(request):
@@ -984,6 +985,9 @@ def add_debitnote(request):
   item=ItemModel.objects.filter(company=cmp,user=cmp.user)
   item_units = ItemUnitModel.objects.filter(user=cmp.user,company=staff.company)
   billno=PurchaseBill.objects.filter(company=cmp).values('billno')
+  print(billno,'bill number')
+  prbill=purchasedebit.objects.filter(company=cmp).values('billno')
+  print(prbill,'jhbj')
   
  
   debt_count = purchasedebit.objects.filter(company=cmp).order_by('-pdebitid').first()
@@ -994,7 +998,7 @@ def add_debitnote(request):
     next_count = 1
 
   print(billno)
-  return render(request,'adddebitnotes.html',{'staff':staff,'allmodules':allmodules,'party':party,'item':item,'count':next_count,'item_units':item_units, 'tod':tod, 'cmp':cmp,'billno':billno})
+  return render(request,'adddebitnotes.html',{'staff':staff,'allmodules':allmodules,'party':party,'item':item,'count':next_count,'item_units':item_units, 'tod':tod, 'cmp':cmp,'billno':billno,'prbill':prbill})
 
 
 def add_parties(request):
@@ -1056,6 +1060,8 @@ def create_debitnotes(request):
   cmp = company.objects.get(id=staff.company.id)
   partys=Parties.objects.get(id=request.POST.get('customername'))
   billno = purchasedebit.objects.filter(party=partys).values_list('billno', flat=True)
+  print(billno)
+    
   billdate = purchasedebit.objects.filter(party=partys).values_list('billdate', flat=True)
 
   context = {
@@ -1081,7 +1087,7 @@ def create_debitnotes(request):
                       grandtotal=request.POST.get('grandtotal'),
                       company=cmp,staff=staff)
     pdebt.save()
-
+    
    
           
     product = tuple(request.POST.getlist("product[]"))
@@ -1090,6 +1096,8 @@ def create_debitnotes(request):
     total =  tuple(request.POST.getlist("total[]"))
     tax =  tuple(request.POST.getlist("tax[]"))
     pdebitid = purchasedebit.objects.get(pdebitid=pdebt.pdebitid, company=cmp)
+    
+    
    
 
  
@@ -1109,7 +1117,13 @@ def create_debitnotes(request):
           
     pdebt.tot_debt_no = pdebt.pdebitid
     pdebt.save()
+    
+    # selected_bill_no = request.POST.get('billno')
+    # if selected_bill_no:
+    #   purchasedebit.objects.filter(party=partys, billno=selected_bill_no).delete()
+      
 
+  
     DebitnoteTransactionHistory.objects.create(debitnote=pdebt,staff=staff,company=cmp,action='Created')
 
     if 'Next' in request.POST:
@@ -1340,38 +1354,84 @@ def custdata1(request):
   print(b,'billno')
   return JsonResponse({ 'phno':phno, 'address':address, 'bal':bal,'billno':b})
 
+# def purchasebilldata(request):
+#     sid = request.session.get('staff_id')
+#     staff =  staff_details.objects.get(id=sid)
+#     cmp = company.objects.get(id=staff.company.id)
+#     try:
+#         party_name = request.POST['id']
+#         party_instance = Parties.objects.get(id=party_name)
+
+#         # Initialize lists to store multiple bill numbers and dates
+#         bill_numbers = []
+#         bill_dates = []
+
+#         try:
+#             # Retrieve all PurchaseBill instances for the party
+#             bill_instances = PurchaseBill.objects.filter(party=party_instance)
+#             prbill=purchasedebit.objects.filter(company=cmp)
+#             for b in bill_instances:
+#               c=False 
+#               for p in prbill:
+#                 if c == False and p.billno != b.billno: 
+#                     c=True
+                    
+#               if c == True:
+#                     bill_numbers.append(b.billno)
+#                     bill_dates.append(b.billdate)
+#               else:
+#                   pass 
+              
+              
+              
+#             #   if bill_instance.billno not in prbill.billno:
+#             #       c=True
+#             #   if c:    
+#             #       bill_numbers.append(bill_instance.billno)
+#             #       bill_dates.append(bill_instance.billdate)
+#             # print(bill_numbers,'hbhh')
+#             # print(bill_dates,'rrd')
+
+#         except PurchaseBill.DoesNotExist:
+#             pass
+
+#         # Return a JSON response with the list of bill numbers and dates
+#         if not bill_numbers and not bill_dates:
+#             return JsonResponse({'bill_numbers': ['nobill'], 'bill_dates': ['nodate']})
+
+#         return JsonResponse({'bill_numbers': bill_numbers, 'bill_dates': bill_dates})
+
+#     except KeyError:
+#         return JsonResponse({'error': 'The key "id" is missing in the POST request.'})
+
+#     except party.DoesNotExist:
+#         return JsonResponse({'error': 'Party not found.'})
+
 def purchasebilldata(request):
     try:
-        party_name = request.POST['id']
-        party_instance = Parties.objects.get(id=party_name)
+        selected_party_id = request.POST.get('id')
+        party_instance = get_object_or_404(Parties, id=selected_party_id)
+        
+        # Subquery to get the used bill numbers
+        used_bill_numbers_subquery = purchasedebit.objects.filter(billno__in=Subquery(PurchaseBill.objects.filter(party=party_instance).values('billno'))).values('billno')
 
-        # Initialize lists to store multiple bill numbers and dates
+        # Fetch only the bills belonging to the selected party and not used in credit notes
+        bill_instances = PurchaseBill.objects.filter(party=party_instance).exclude(billno__in=Subquery(used_bill_numbers_subquery))
+
         bill_numbers = []
         bill_dates = []
 
-        try:
-            # Retrieve all PurchaseBill instances for the party
-            bill_instances = PurchaseBill.objects.filter(party=party_instance)
+        for bill_instance in bill_instances:
+            bill_numbers.append(bill_instance.billno)
+            bill_dates.append(bill_instance.billdate)
 
-            # Loop through each PurchaseBill instance and collect bill numbers and dates
-            for bill_instance in bill_instances:
-                bill_numbers.append(bill_instance.billno)
-                bill_dates.append(bill_instance.billdate)
-
-        except PurchaseBill.DoesNotExist:
-            pass
-
-        # Return a JSON response with the list of bill numbers and dates
         if not bill_numbers and not bill_dates:
-            return JsonResponse({'bill_numbers': ['nobill'], 'bill_dates': ['nodate']})
+            return JsonResponse({'bill_numbers': ['No Bill'], 'bill_dates': ['No Date']})
 
         return JsonResponse({'bill_numbers': bill_numbers, 'bill_dates': bill_dates})
 
-    except KeyError:
-        return JsonResponse({'error': 'The key "id" is missing in the POST request.'})
-
     except party.DoesNotExist:
-        return JsonResponse({'error': 'Party not found.'})
+        return JsonResponse({'error': 'Party not found'})
     
 def get_bill_date(request):
     selected_bill_no = request.POST.get('bill_no', None)
@@ -3345,6 +3405,11 @@ def credit_save(request):
           credit_note.party=party
           credit_note.save()
           salesinvoice = SalesInvoice.objects.filter(company=cmp, party=party)
+          # Remove selected invoice number from dropdown if credit note created for the selected party
+          if checkbtn == 'on' and party:
+              selected_invoice = request.POST.get('billNod')
+              if selected_invoice:
+                  SalesInvoice.objects.filter(company=cmp, party=party, invoice_no=selected_invoice).delete()
           # if salesinvoice:
           #   idsales=request.POST['bno']
           #   credit_note.salesinvoice=SalesInvoice.objects.get(invoice_no=idsales,company=cmp)

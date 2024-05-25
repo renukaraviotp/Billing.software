@@ -1448,6 +1448,11 @@
                 success: function (data) {
                     // Clear existing options in the dropdowns
                     $('#bno').empty();
+                    $('#bno').append($('<option>', {
+                        value: '',
+                        text: 'select a Invoice number',
+                        hidden:true
+                    }));
                     $('#bdt').empty();
     
                     if (data.bill_numbers && data.bill_dates) {
