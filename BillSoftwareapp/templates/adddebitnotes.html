@@ -338,9 +338,9 @@
             <label class="col-form-label">Bill No.</label>
             <select class="form-control border-secondary" name="billno" id="bill_no" style="color: black;background-color: white;">
                 <option value="" selected hidden>Select</option>
-                {% comment %} {% for i in billno %}
-                    <option value="{{ i.billno }}">{{ i.billno }}</option>
-                {% endfor %} {% endcomment %}
+                {% for bill_number in bill_numbers %}
+                    <option value="{{ bill_number }}">{{ bill_number }}</option>
+                {% endfor %}
             </select>
         </div>
             
@@ -762,25 +762,46 @@
                         <div id="main_form_div">
                             <div class="row" style="margin-left: -1vh;">
                                 <div class="col-md-3">
-                                    <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" required>
+                                    <label for="">Item Type:</label>
+                                    <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" onchange="updateLabelAndPlaceholder()" required>
                                         <option selected value="" hidden>Select Type</option>
-                                        <option value="Goods">Products</option>
+                                        <option value="Products">Products</option>
                                         <option value="Services">Services</option>
                                     </select>
+                                    <script>
+                                        function updateLabelAndPlaceholder() {
+                                            var select = document.getElementById("type");
+                                            var selectedOption = select.options[select.selectedIndex].value;
+                                            var label = document.getElementById("hsnLabel");
+                                            var input = document.getElementById("hsn");
+                                    
+                                            if (selectedOption === "Products") {
+                                                label.innerHTML = "Item HSN :";
+                                                input.placeholder = "ITEM HSN";
+                                            } else if (selectedOption === "Services") {
+                                                label.innerHTML = "Item SAC :";
+                                                input.placeholder = "ITEM SAC";
+                                            }
+                                        }
+                                    </script>
                                 </div>
                                 <div class="col-md-3">
+                                    <label for="">Item Name:</label>
                                     <input style="color: black;" class="form-control border-dark fw-bolder" type="text" placeholder="ITEM NAME" autocomplete="off" id="item_name" name="item_name" required>
                                     <label id="item_error" style="color:red;"></label>
                                     <label style="color: rgb(101, 3, 3);"></label>
                                     <div class="text-danger m-2" id="warnitem"></div>
                                 </div>
                                 <div class="col-md-3">
+                                    <label id="hsnLabel"> Item HSN :</label>
                                     <input style="color: black;" class="form-control border-dark fw-bolder" type="number" placeholder="ITEM HSN" autocomplete="off" id="hsn" name="hsn" onchange="checkhsn(this)" required>
                                     <label id="hsn_error" style="color:red;"></label>
                                     <label style="color: rgb(101, 3, 3);"></label>
                                     <div class="text-danger m-2" id="warnhsn"></div>
                                 </div>
-                                <div class="col-md-3 d-flex">
+                                <div class="col-md-3">
+                                    <label for="">Item Unit:</label>
+                                    <div class="d-flex">
                                     <select style="color: black;" class="form-control border-dark bg-light" id="unit" name="unit" required>
                                         <option selected value="" hidden >Select a unit</option>
                                         <option value="NOS">NOS</option>
@@ -793,6 +814,7 @@
                                     <button type="button" class="btn" id="unitAddButton" style="background-color:rgb(60, 61, 101); height:34px; text-align:center;" data-bs-toggle="modal" data-bs-target="#addUnitModal">
                                         +
                                     </button>
+                                </div>
                                 </div>
                             </div>
                             <div>
@@ -1255,6 +1277,7 @@
         var gstin=document.getElementById('gstin').value;
         var gsttype=document.getElementById('modalgsttype').value;
         var email=document.getElementById('email').value;
+        var partyPhone = $("#contact").val().trim();
         
 
 
@@ -1266,7 +1289,12 @@
         if (party_name === ''){
             alert('Please provide a party Name');
 
-        }else if(email===''){
+        }// Validate phone number
+        else if (partyPhone === '') {
+            $("#warnphone").text('Please provide a Phone Number');
+            return;
+        }
+        else if(email===''){
             alert('Please provide an email address');
         
         }            // Validate email format
@@ -1670,144 +1698,6 @@ $(document).ready(function () {
 });
 
 
-{% comment %} $(document).ready(function() {
-    // Add change event listener to the dropdown
-    $('#bill_no').on('change', function() {
-        // Get the selected option
-        var selectedOption = $(this).find('option:selected');
-        if(selectedOption.val() == ''){
-            $('#bill_no').val('');
-            //$('#invTypeDiv').hide();
-        }else{       
-                var invTyp = selectedOption.data('invtype');
-                var invId = document.getElementById('bill_no').value
-                $.ajax({
-                    type: 'GET',
-                    url: '{% url "get_pbill_item" %}',
-                    data: {
-                        'invTyp': invTyp,
-                        'bill_no' : invId
-                    },
-                    success: function(response) {
-                        
-                        if(response.invvv){
-                            $("#items-table-body").empty();
-                        }
-                        
-                        var roinc = $("#items-table-body tr").length;
-                        roinc++;
-                        response.invvv.forEach(function(item,index){
-                            $('#items-table-body').append(
-                                `<tr id='addr0${roinc}'>
-                                    <td class = 'nnum' style="text-align: center; width:2%"">${roinc}</td>
-                                    <td style="width:21%">
-                                        <div class="d-flex">
-                                            <select name='product[]' id="product${roinc}" class="form-control border-secondary product"  onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
-                                                <option value="" selected hidden>Select Product</option>
-                                                {% for i in item %}
-                                                    {% if i.cid_id == cmp.cid %}
-                                                        <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </select>&nbsp;&nbsp;&nbsp;
-                                        <a href="#">
-                                            <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
-                                        </a>
-                                    </div>
-                
-                                    </td>
-                
-                                    <td tyle="width:12%">
-                                        <input type="hidden" name="itemId[]" id="itemId${roinc}">
-                                        <input type="text" name='hsn[]' id="hsn${roinc}" class="form-control border-secondary" style="color: black; background-color: white;" readonly />
-                                    </td>
-                
-                                    <td style="width:13%">
-                                        <input type="number" name='qty[]' value=0 id="qty${roinc}" class="form-control border-secondary qty mb-1" step=0 min=0 style="color: black; background-color: white;" />
-                                    </td>
-                
-                                    <td tyle="width:12%">
-                                        <input type="number" name='price[]' id="unit${roinc}" value=0 class="form-control border-secondary price" step="0.00" min="0" style="color: black; background-color: white;" readonly/>
-                                    </td>
-                
-                                    <td style='width:15%;'>
-                                        <input type="text" id="intrataxval${roinc}" hidden>
-                                        <input type="text" id="intertaxval${roinc}" hidden>
-                                        <input type="text" name='tax[]' id="tax${roinc}"  class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST" readonly/>
-                                    </td>  
-                
-                                    <td tyle="width:10%">
-                                        <input type="number" name='discount[]' placeholder='Enter Discount' value=0 id="disc${roinc}" class="form-control border-secondary disc" step=0 min=0 style="color: black; background-color: white;">
-                                    </td>
-                
-                                    <td style="width:13%">
-                                        <input type="number" name='total[]' id="total${roinc}" placeholder=0 class="form-control border-secondary total" value=0 step="any" style="color: black; background-color: white;" readonly />
-                                    </td>
-                
-                                    <td hidden><input type="number" step="any" name='taxamount1' id="taxamount${roinc}" class="form-control border-secondary taxamount" /></td>
-                                    
-                                    <td style="width:13%">
-                                        
-                                        <button type="button" id="${roinc}" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
-                                    </td>
-                                </tr>`
-                                );
-                            // $('#item' + roinc).val(item['Items'] || item['item']);
-                            $('#hsn' + roinc).val(item['hsn']);
-                            $('#qty' + roinc).val(item['qty']);
-                            //$('#qty2' + roinc).val(item['quantity']);
-                            //$('#price' + roinc).val(item['price']);
-                            $('#intertaxval1' + roinc).val(item['tax']);// Assuming 'tax_rate' is the value for the tax dropdown
-                            $('#intrataxval1' + roinc).val(item['tax']); 
-                            $('#disc' + roinc).val(item['discount']);
-                            $('#total' + roinc).val(item['total']);
-                            //$('#adj').val(response.adjustment);
-
-                            
-
-                            //response.itemm.forEach(function(itm, index) {
-                            //if (itm['id'] == item['Items'] || itm['id'] == item['item']) {
-                                // Update the value of the 'item' input field with the corresponding item_name
-                                //$('#itemId' + roinc).val(itm['id']);
-                                //$('#item' + roinc).val(itm['item_name']);
-                                // $('#qtyspan' + roinc).text(itm['current_stock']);
-                                // Exit the loop since we found a match
-                                //return false;
-                            //}
-                        });
-                        roinc++;
-                        
-                            
-                            //});
-
-                            //$('#items-table-body tr').each(function () {
-                            //var inpId = $(this).find('.item-display').attr('id');
-                            //var value = $(this).find('.item-display').val();
-                            //var qtty = $(this).find('.item-quantity2').val();
-                            //getItemStock(inpId, value, qtty);
-                        //});
-
-                            //refreshTax();
-                             // calc();
-                            //reloadItem();
-                            //refreshIndex();
-                            //productsearch(roinc)
-                        
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
-                    }
-                });
-            
-        
-            // Get the value of data-invtype attribute from the selected option
-        //var invType = selectedOption.data('invtype');
-        //$('#invTypeDiv').show();
-        //$('#BillType').val(invType);
-        }
-        
-    }); 
-}); {% endcomment %}
 
 
 
@@ -2050,7 +1940,7 @@ $(document).ready(function(){
         // If the HSN number is valid and not repeated, clear the warning message
         document.getElementById('warnhsn').innerHTML = '';
     } else {
-        document.getElementById('warnhsn').innerHTML = 'Please provide a valid 6-digit HSN Number';
+        document.getElementById('warnhsn').innerHTML = 'Please provide a valid 6 or more digit HSN Number';
         // Optionally, you might want to focus on the input field after showing the error.
         element.focus();
     }
@@ -2261,6 +2151,22 @@ $('#contact').blur(function() {
             }
         });
     });
+
+    $(document).ready(function () {
+        $('.item-select').selectize({
+            sortField: 'value',
+            items: [''],
+            render: {
+                item: function (item, escape) {
+                    if (item.value === '') {
+                        return '';
+                    }
+                    return '<div>' + escape(item.text) + '</div>';
+                }
+            }
+        });
+    });
+
 
     function productsearch(roinc){
         $(`#product${roinc}`).selectize({
@@ -2563,159 +2469,6 @@ $('#contact').blur(function() {
     });
     </script>
 
-    {% comment %} <script>
-        $(document).ready(function() {
-            $('#bill_no').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                if (selectedOption.val() == '') {
-                    $('#bill_no').val('');
-                } else {       
-                    var invId = document.getElementById('bill_no').value;
-                    $.ajax({
-                        type: 'GET',
-                        url: '{% url "get_pbill_item" %}',
-                        data: {
-                            'bill_no': invId
-                        },
-                        success: function(response) {
-                            if (response.invvv_data) {
-                                $("#items-table-body").empty();
-                                response.invvv_data.forEach(function(item, index) {
-                                    $('#items-table-body').append(
-                                        `<tr>
-                                            <td>${index + 1}</td>
-                                            <td>
-                                                <select class="form-control item-select">
-                                                    <option value="${item.product_id}" selected>${item.item_name}</option>
-                                                    {% for i in item %}
-                                                        {% if i.cid_id == cmp.cid %}
-                                                            <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </select>
-                                                <a href="#">
-                                                    <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
-                                                </a>
-                                            </td>
-                                            <td><input type="text" value="${item.hsn}" class="form-control hsn" /></td>
-                                            
-                                            <td><input type="number" value="${item.qty}" class="form-control qty" /></td>
-                                            <td><input type="number" value="${item.price}" class="form-control price" readonly /></td>
-                                            <td><input type="text" value="${item.tax}" class="form-control tax" /></td>
-                                            <td><input type="number" value="${item.discount}" class="form-control discount" /></td>
-                                            <td><input type="number" value="${item.total}" class="form-control total" readonly /></td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
-                                            </td>
-                                        </tr>`
-                                    );
-                                });
-                                
-                                // Event listeners for input fields
-                                $('.qty, .price, .tax, .discount').on('input', function() {
-                                    var row = $(this).closest('tr');
-                                    var qty = parseFloat(row.find('.qty').val()) || 0;
-                                    var price = parseFloat(row.find('.price').val()) || 0;
-                                    var tax = parseFloat(row.find('.tax').val()) || 0;
-                                    var discount = parseFloat(row.find('.discount').val()) || 0;
-                                    var total = (qty * price) + (qty * tax) - discount;
-                                    row.find('.total').val(total.toFixed(2));
-                                });
-                                reloadItem();
-                                refreshIndex();
-                                productsearch(roinc);
-                                calc();
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
-            }); 
-        });
-        
-        
-    </script> {% endcomment %}
-
-    {% comment %} <script>
-        $(document).ready(function() {
-            $('#bill_no').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                if (selectedOption.val() == '') {
-                    $('#bill_no').val('');
-                } else {       
-                    var invId = document.getElementById('bill_no').value;
-                    $.ajax({
-                        type: 'GET',
-                        url: '{% url "get_pbill_item" %}',
-                        data: {
-                            'bill_no': invId
-                        },
-                        success: function(response) {
-                            if (response.invvv_data) {
-                                $("#items-table-body").empty();
-                                response.invvv_data.forEach(function(item, index) {
-                                    $('#items-table-body').append(
-                                        `<tr>
-                                            <td>${index + 1}</td>
-                                            <td style="width:15%;">
-                                                <div class="d-flex">
-                                                <select class="form-control item-select" onchange="changeprd(this.id,this.value)">
-                                                    <option value="${item.product_id}" selected>${item.item_name}</option>
-                                                    {% for i in item %}
-                                                        {% if i.cid_id == cmp.cid %}
-                                                            <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </select>
-                                                <a href="#">
-                                                    <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
-                                                </a>
-                                            </div>
-                                            </td>
-                                            <td><input type="text" value="${item.hsn}" class="form-control hsn" readonly /></td>
-                                            
-                                            <td><input type="number" value="${item.qty}" class="form-control qty" /></td>
-                                            <td><input type="number" value="${item.price}" class="form-control price" readonly /></td>
-                                            <td><input type="text" value="${item.tax}" class="form-control tax" readonly /></td>
-                                            <td><input type="number" value="${item.discount}" class="form-control discount" /></td>
-                                            <td><input type="number" value="${item.total}" class="form-control total" readonly /></td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
-                                            </td>
-                                        </tr>`
-                                    );
-                                });
-                                
-                                // Event listeners for input fields
-                                $('.qty, .price, .tax, .discount').on('input', function() {
-                                    var row = $(this).closest('tr');
-                                    var qty = parseFloat(row.find('.qty').val()) || 0;
-                                    var price = parseFloat(row.find('.price').val()) || 0;
-                                    var tax = parseFloat(row.find('.tax').val()) || 0;
-                                    var discount = parseFloat(row.find('.discount').val()) || 0;
-                                    var total = (qty * price) + (qty * tax) - discount;
-                                    row.find('.total').val(total.toFixed(2));
-                                    
-                                });
-                                
-                            }
-                            reloadItem();
-                            refreshIndex();
-                            productsearch(roinc);
-                            calc();
-                            calc_total()
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
-            }); 
-        });
-        
-    </script> {% endcomment %}
     <script>
         $(document).ready(function() {
         

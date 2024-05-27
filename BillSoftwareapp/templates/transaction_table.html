@@ -171,9 +171,9 @@
         }
     }
     
-    ::-webkit-scrollbar{
+    {% comment %} ::-webkit-scrollbar{
         display: none
-    }
+    } {% endcomment %}
     .button-row {
         display: flex;
         gap:2px;
@@ -234,7 +234,7 @@
                     
 
             
-                <div class="card p-0 bs" style="height: 36rem; width:100%;background: linear-gradient(#3d4465 0%, #3d4465 178.5px, white 17px, white 100%);">
+                <div class="card p-0 bs" style="height: 80rem; width:100%;background: linear-gradient(#3d4465 0%, #3d4465 178.5px, white 17px, white 100%);">
                     <div class="row m-0 p-0 pt-3">
                         <div class="col-sm-12 col-lg-3" style="margin-left: 5vh;">
                             <h3 class="tb fw-bolder pt-2 " style="color:white;">Credit Notes</h3>
@@ -255,7 +255,7 @@
 
                     <div class="row">
                         <div class="col-md-12 mt-1" style="margin-left: 2vh;">
-                            <div class="mt-3"  style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
+                            <div class="mt-3"  style="height: 28rem; width: 97%;" id="tablediv">
                                 <table class="table tb" id="credittable"  style="text-align: center;margin-left:3%;width:95%;">
                                     <thead >
                                         <tr class="fs-2 tb">

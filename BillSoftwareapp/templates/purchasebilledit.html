@@ -385,29 +385,54 @@
                                 <div id="main_form_div">
                                     <div class="row" style="margin-left: -1vh;">
                                         <div class="col-md-3">
-                                            <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" required>
+                                            <label for="">Item Type:</label>
+                                            <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" onchange="updateLabelAndPlaceholder()" required>
                                                 <option selected value="" hidden>Select Type</option>
                                                 <option value="Goods">Products</option>
                                                 <option value="Services">Services</option>
                                             </select>
+                                            <script>
+                                                function updateLabelAndPlaceholder() {
+                                                    var select = document.getElementById("type");
+                                                    var selectedOption = select.options[select.selectedIndex].value;
+                                                    var label = document.getElementById("hsnLabel");
+                                                    var input = document.getElementById("hsn");
+                                            
+                                                    if (selectedOption === "Products") {
+                                                        label.innerHTML = "Item HSN :";
+                                                        input.placeholder = "ITEM HSN";
+                                                    } else if (selectedOption === "Services") {
+                                                        label.innerHTML = "Item SAC :";
+                                                        input.placeholder = "ITEM SAC";
+                                                    }
+                                                }
+                                            </script>
                                         </div>
                                         <div class="col-md-3">
+                                            <label for="">Item Name:</label>
                                             <input style="color: black;" class="form-control border-dark " type="text" placeholder="ITEM NAME" autocomplete="off" id="item_name" name="item_name" required>
                                         </div>
                                         <div class="col-md-3">
+                                            <label id="hsnLabel"> Item HSN :</label>
                                             <input style="color: black;" class="form-control border-dark" type="number" placeholder="ITEM HSN" id="hsn" name="hsn" onchange="checkhsn(this)" required>
                                             <div class="text-danger m-2" id="warnhsn"></div>
                                         </div>
                                         <div class="col-md-3">
-                                            <select style="color: black;" class="form-control border-dark bg-light" id="unit" name="unit" required>
-                                                <option value="" hidden>Select a unit</option>
-                                                <option value="NOS">NOS</option>
-                                                <option value="BOX">BOX</option>
-                                                <option value="PACKET">PACKET</option>
-                                                {% for i in item_units %}
-                                                <option value="{{ i.unit_name|upper }}">{{ i.unit_name|upper }}</option>
-                                                {% endfor %}
-                                            </select>
+                                            <label for="">Item Unit:</label>
+                                            <div class="d-flex">
+                                                <select style="color: black;" class="form-control border-dark bg-light" id="unit" name="unit" required>
+                                                    <option value="" hidden>Select a unit</option>
+                                                    <option value="NOS">NOS</option>
+                                                    <option value="BOX">BOX</option>
+                                                    <option value="PACKET">PACKET</option>
+                                                    {% for i in item_units %}
+                                                    <option value="{{ i.unit_name|upper }}">{{ i.unit_name|upper }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="button" class="btn" id="unitAddButton" style="background-color:rgb(60, 61, 101); width:2px; height:34px; text-align:center;" data-bs-toggle="modal" data-bs-target="#addUnitModal">
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
 

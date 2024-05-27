@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'BillSoftware.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'billingsoftwaremultiuser',
+        'NAME': 'billingsoftwareindia',
         'USER':'root',
         'PASSWORD':'',
         'HOST':'localhost',

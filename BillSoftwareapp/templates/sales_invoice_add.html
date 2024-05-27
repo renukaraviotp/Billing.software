@@ -9,7 +9,6 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-HKoMqZ5Wp2EpTM3ucUgkMJ6BC2moe0aS8Oq7tuv/QfMw2wLmo5pYT74lPFuMzvK9D7HZu+k58xxmXosYLSy8yA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-yJWqUGZ1L6InWUzVxnWPI7iX28YrTrPx4+2q4hYi+FqO6d+vc83LA68b3NQ9UP5kGnJPEm3R6j1lgiaZ2OK8Fw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
     #input,select,textarea{ 
@@ -576,30 +575,29 @@
                                         </script>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="">Item Name:</label>
-                                        <input style="color: black;" class="form-control border-dark " type="text" placeholder="ITEM NAME" autocomplete="off" onchange="namecheck(this.value)" oninput="namecheck(this.value)" id="item_name" name="item_name" required>
-                                        <div class=" m-2" id="namemsg"></div>
-                
+                                        <label class="col-form-label" style="color: black;">Item Name</label>
+                                        <input style="color: black;" class="form-control border-dark " type="text" placeholder="ITEM NAME" autocomplete="off" id="item_name" name="item_name" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label id="hsnLabel"> Item HSN :</label>
-                                        <input style="color: black;" class="form-control border-dark" type="number" placeholder="ITEM HSN" id="hsn" name="item_hsn" onchange="hsncheck(this.value)" oninput="hsncheck(this.value)" required>
-                                        <div class=" m-2" id="hsnmsg"></div>
+                                        <label class="col-form-label" id="hsnLabel" style="color: black;">ITEM HSN</label>
+                                        <input style="color: black;" class="form-control border-dark" type="number" placeholder="ITEM HSN" id="hsn" name="hsn" onchange="checkhsn(this)" required>
+                                        <div class="text-danger m-2" id="warnhsn"></div>
                                     </div>
-                                    <div class="col-md-3 ">
-                                        <label for="">Item Unit:</label>
+                                    <div class="col-md-3">
+                                        <label class="col-form-label" style="color: black;">ITEM UNIT</label>
                                         <div class="d-flex">
-                                            <select style="color: black;" class="form-control border-dark bg-light" id="unit" name="item_unit" required>
+                                            <select style="color: black;" class="form-control border-dark bg-light" id="units" name="unit" required>
                                                 <option value="" hidden>Select a unit</option>
                                                 <option value="NOS">NOS</option>
                                                 <option value="BOX">BOX</option>
                                                 <option value="PACKET">PACKET</option>
-                                                
-                                            </select>&nbsp; &nbsp;
-                                            <button type="button" class="btn " id="unitAddButton" style="background-color:rgb(60, 61, 101); height:37px; text-align:center;" data-bs-toggle="modal" data-bs-target="#addUnitModal">
-                                                +
-                                            </button>
+                                                {% for i in item_units %}
+                                                <option value="{{ i.unit_name }}">{{ i.unit_name }}</option>
+                                                {% endfor %}
+                                            </select>&nbsp;&nbsp;&nbsp;
+                                            <button type="button" class="btn " style="background-color:rgb(60, 61, 101); height:6vh;" data-toggle="modal" data-target="#addUnitModal"><span class="fa fa-plus " style="color: #ffffff;" ></span></button>
                                         </div>
+                                        </div>                                                    
                                     </div>
                                 </div>
                                 <div>
@@ -618,22 +616,22 @@
                                         </div>
                                     </div>
                 
-                                    <div id="pricing_template" >
+                                    <div id="pricing_template" style="background-color: white;">
                                         <div class="row">
                                             <div class="col-sm-12  col-md-1"></div>
                                             <div class="col-sm-12 col-md-10 pb-4">
-                                                <div class="text- pt-5">
-                                                    <label class=" tb" for="item_tax_1" style=" user-select: none; color: black;">Taxable</label>
-                                                    <input class="me-3" name="item_taxable" type="radio" id="inclusive" value="Taxable" required>
-                                                    <label class="tb" for="item_tax_2" style=" user-select: none; color: black;">Non Taxable</label>
-                                                    <input name="item_taxable" type="radio" value="Non Taxable" id="check" required>
+                                                <div class="text-center pt-5">
+                                                    <label class=" tb fs-5" for="item_tax_1" style=" user-select: none; color: black;">Taxable</label>
+                                                    <input class="me-3" name="taxref" type="radio" id="inclusive" value="Taxable" required>
+                                                    <label class="tb fs-5" for="item_tax_2" style=" user-select: none; color: black;">Non Taxable</label>
+                                                    <input name="taxref" type="radio" value="Non Taxable" id="check" required>
                                                 </div>
                                                 <br>
                                                 <div id="taxdiv" style="display: none;">
                                                     <div class="d-flex">
-                                                        <div class="w-50 me-3">
+                                                        <div class="w-50 me-3" style="margin-left: 1vw;">
                                                             <label class="tb " for="" style="color: black;">GST</label><br>
-                                                            <select style="color: black;background-color: white;" class="form-control fw- border-secondary " id="intra_st" name="item_gst" >
+                                                            <select style="color: black;background-color: white;width: 32vw;" class="form-control fw- " id="intra_st" name="intra_st" >
                                                             <option value="GST0[0%]" selected>GST0[0%]</option>
                                                             <option value="GST3[3%]">GST3[3%]</option>
                                                             <option value="GST5[5%]">GST5[5%]</option>
@@ -642,9 +640,9 @@
                                                             <option value="GST28[28%]">GST28[28%]</option>
                                                             </select>
                                                         </div>
-                                                        <div class="w-50">
+                                                        <div class="w-50" style="margin-left: -1vw;">
                                                             <label class="tb " for="" style="color: black;">IGST</label><br>
-                                                            <select style="color: black;background-color: white;" class="form-control fw- border-secondary tb " id="inter_st" name="item_igst" >
+                                                            <select style="color: black;background-color: white;width: 32vw;" class="form-control fw-tb " id="inter_st" name="inter_st" >
                                                             <option value="IGST0[0%]" selected>IGST0[0%]</option>
                                                             <option value="IGST3[3%]">IGST3[3%]</option>
                                                             <option value="IGST5[5%]">IGST5[5%]</option>
@@ -657,14 +655,15 @@
                                                     <br>
                                                 </div>
                                                 
-                                                <div class="d-flex">
-                                                    <div class="w-50 me-3">
-                                                        <label class="tb " for="" style="color: black;">SALES PRICE</label><br>
-                                                        <input style="color: black;background-color: white;" id="saleprice" class="form-control fw-normal border-secondary" type="number" name="saleprice" value="0">
+                                                <div class="row">
+                                                    <div class="col-md-6" style="margin-left: -15px;width: 5vw;">
+                                                      
+                                                        <label class="col-form-label" style="color: #000000;margin-left: 2vw;">SALES PRICE</label>
+                                                        <input style="color: black;background-color: white;width: 32vw;margin-left: 2vw;" id="saleprice" class="form-control fw-normal" type="number" name="saleprice" value="0">
                                                     </div>
-                                                    <div class="w-50">
-                                                        <label class="tb " for="" style="color: black;">PURCHASE PRICE</label><br>
-                                                        <input style="color: black;background-color: white;" id="purprice" class="form-control fw-normal border-secondary" type="number" name="purprice" value="0">
+                                                    <div class="col-md-6" style="margin-left: 15px;">
+                                                        <label class="col-form-label" style="color: black;width: 32vw;">PURCHASE PRICE</label>
+                                                        <input style="color: black;background-color: white;width: 32vw;" id="purprice" class="form-control fw-normal" type="number" name="purprice" value="0">
                                                     </div>
                                                 </div>
                                                 <div class="text-start mt-5">
@@ -674,37 +673,37 @@
                                         </div>
                                     </div>
                 
-                                    <div hidden id="stock_template"style="background-color: rgba(144, 211, 117, 0.098);">
+                                    <div hidden id="stock_template" style="background-color: white;">
                                         <div class="row">
                                             <div class="col-sm-12  col-md-1"></div>
                                             <div class="col-sm-12 col-md-10 pb-4">
                                                 <br><br>
-                                                <div class="d-flex">
-                                                    <div class="w-50 me-3">
-                                                    <label class="tb " for="stock" style="color: black;">OPENING STOCK</label><br>
-                                                    <input style="color: black;background-color: white;" id="stock" class="form-control fw-normal border-secondary" type="number" name="item_opening_stock" value="0">
+                                                <div class="row">
+                                                    <div class="col-md-6" style="margin-left: -1vw;">
+                                                        <label class="tb " for="opn_stock_" style="color: #000000;"> OPENING STOCK</label>
+                                                        <input style="color: black;background-color: white;" id="stock" class="form-control fw-normal " type="number" name="stock" value="0">
                                                     </div>
-                                                    <div id="at_price_div" class="w-50">
-                                                    <label class="tb " for="itmprice" style="color: black;">AT PRICE</label><br>
-                                                    <input style="color: black;background-color: white" id="itmprice" class="form-control fw-normal border-secondary " type="number" name="item_at_price" value="0">
+                                                    <div id="at_price_div" class="col-md-6" style="visibility: hidden;">
+                                                        <label class="tb " for="at_price" style="color: #000000;">AT PRICE</label>
+                                                        <input style="color: black;background-color: white" id="itmprice" class="form-control fw-normal " type="number" name="itmprice" value="0">
                                                     </div>
                                                 </div>
                                                 <br>
-                                                <div class="d-flex">
-                                                    <div class="w-50 me-3">
-                                                    <label class="tb " for="itmdate" style="color: black;">DATE</label><br>
-                                                    <input style="color: black;background-color: white" id="itmdate" class="form-control fw-normal border-secondary " type="date" required name="itmdate" value="2024-05-25">
+                                                <div class="row">
+                                                    <div class="col-md-6 mt-4" style="margin-left: -10px;">
+                                                        <label class="tb " for="itmdate" style="color: #000000;">DATE</label>
+                                                        <input style="color: black;background-color: white" id="itmdate" class="form-control fw-normal " type="date" required name="itmdate" value="{{tod}}">
                                                     </div>
                                                     <div class="w-50">
-                                                    <label class="tb " for="minstock" style="color: black;">MINIMUM STOCK TO MAINTAIN</label><br>
-                                                    <input style="color: black;background-color: white" id="minstock" class="form-control fw-normal border-secondary " type="number" name="minstock" value="0">
-                                                    </div>
+                                                        <label class="tb " for="minstock" style="color: black; margin-top: 2.2vw;">MINIMUM STOCK TO MAINTAIN</label><br>
+                                                        <input style="color: black;background-color: white" id="minstock" class="form-control fw-normal " type="number" name="minstock" value="0">
+                                                        </div>
                                                 </div>
-                                                <input type="hidden" id="clickedButtonValue" name="clickedButtonValue">
+                                                
                 
                                                 <div class="text-center mt-4">
                                                           
-                                                    <button class="btn btn-custom" type="submit" name="itemsave" value="itemsave" id="itemsave" data-dismiss="modal">SAVE</button>
+                                                    <button class="btn btn-custom" type="submit" name="itemsave" value="itemsave" id="itemsave" data-dismiss="modal" style="background-color:rgb(61, 68, 101); color:white;">SAVE</button>
                                                 </div>
                                                 
                                                 
@@ -716,169 +715,188 @@
                         </div>
                     </form>
                    
-                        <form  method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem" >
-                            {% csrf_token %}
-                
-                            <div class="main" >
-                              {% if messages %}
-                              {% for message in messages %}
-                                  <label for="" class="text-center" style="background-color: rgb(255, 0, 0,0.5); width: 50%;color:white;text-shadow: 2px 2px 4px #000000;padding: 10px; border-radius: 10px; margin-left: 16vw; ">{{message}}</label>
-                              {% endfor %}
-                           {% endif %}
-                                  
-                                    <div class=" bs p-4 rounded mb-5" style="background-color: #8290c7;">
-                                          
-                                      <br>
-                                      <div id="main_form_div">
-                                        
-                                        <div class="row">
-                                          <div class="col-md-3 ">
-                                            <label class="col-form-label" style="color: black;">TYPE</label>
-                                            <select style="color: black;" class="form-control border-dark bg-light" name="type" id="type" required>
-                                                <option selected value="" hidden>Select Type</option>
-                                                <option value="Goods">Products</option>
-                                                <option value="Services">Services</option>
-                                            </select>
-                                            <script>
-                                                function updateLabelAndPlaceholder() {
-                                                    var select = document.getElementById("type");
-                                                    var selectedOption = select.options[select.selectedIndex].value;
-                                                    var label = document.getElementById("hsnLabel");
-                                                    var input = document.getElementById("hsn");
-                                            
-                                                    if (selectedOption === "Products") {
-                                                        label.innerHTML = "Item HSN :";
-                                                        input.placeholder = "ITEM HSN";
-                                                    } else if (selectedOption === "Services") {
-                                                        label.innerHTML = "Item SAC :";
-                                                        input.placeholder = "ITEM SAC";
-                                                    }
-                                                }
-                                            </script>
-                                        </div>
-                
-                                            <div class="col-md-3">
-                                                <label class="col-form-label" style="color: black;">ITEM NAME</label>
-                                                <input style="color: black;" class="form-control border-dark " type="text" placeholder="ITEM NAME" autocomplete="off" id="item_name" name="item_name" required>
-                                            </div>
-                
-                                            <div class="col-md-3">
-                                                <label class="col-form-label" id="hsnLabel" style="color: black;">ITEM HSN</label>
-                                                <input style="color: black;" class="form-control border-dark" type="number" placeholder="ITEM HSN" id="hsn" name="hsn" onchange="checkhsn(this)" required>
-                                            <div class="text-danger m-2" id="warnhsn"></div>
-                                            </div>
-                
-                                            <div class="col-md-3">
-                                                <label class="col-form-label" style="color: black;">ITEM UNIT</label>
-                                                <div class="d-flex">
-                                                    <select style="color: black;" class="form-control border-dark bg-light" id="units" name="unit" required>
-                                                        <option value="" hidden>Select a unit</option>
-                                                        <option value="NOS">NOS</option>
-                                                        <option value="BOX">BOX</option>
-                                                        <option value="PACKET">PACKET</option>
-                                                        {% for i in item_units %}
-                                                        <option value="{{ i.unit_name }}">{{ i.unit_name }}</option>
-                                                        {% endfor %}
-                                                    </select>&nbsp;&nbsp;&nbsp;
-                                                    <button type="button" class="btn " style="background-color:rgb(60, 61, 101); height:6vh;" data-toggle="modal" data-target="#addUnitModal"><span class="fa fa-plus " style="color: #ffffff;" ></span></button>
-                                                </div>
-                                                </div>                                                    
-                                        </div>
-                                      
-                                        <div class="container">
-                                          <div class="row justify-content-center">
-                                              <div class="col-md-12">
-                                                  <!-- PRICING CARD -->
-                                                  <div class="custom-card" style="background-color: white;margin-bottom: 5vh;height: 65.5vh;margin-top: 5vh;border-radius: 10px;margin-left: vw;">
-                                                      <div class="text-center mb-4">
-                                                          <h2 class="fw-bold">PRICING</h2>
-                                                      </div>
-                                                      <div class="text-center pt-5">
-                                                        <label class=" tb fs-5" for="item_tax_1" style=" user-select: none; color: black;">Taxable</label>
-                                                        <input class="me-3" name="taxref" type="radio" id="inclusive" value="Taxable" required>
-                                                        <label class="tb fs-5" for="item_tax_2" style=" user-select: none; color: black;">Non Taxable</label>
-                                                        <input name="taxref" type="radio" value="Non Taxable" id="check" required>
-                                                    </div>
-                                                    <br>
-                                                    <div id="taxdiv" style="display: none;">
-                                                        <div class="d-flex">
-                                                            <div class="w-50 me-3" style="margin-left: 1vw;">
-                                                                <label class="tb " for="" style="color: black;">GST</label><br>
-                                                                <select style="color: black;background-color: white;width: 32vw;" class="form-control fw- " id="intra_st" name="intra_st" >
-                                                                <option value="GST0[0%]" selected>GST0[0%]</option>
-                                                                <option value="GST3[3%]">GST3[3%]</option>
-                                                                <option value="GST5[5%]">GST5[5%]</option>
-                                                                <option value="GST12[12%]">GST12[12%]</option>
-                                                                <option value="GST18[18%]">GST18[18%]</option>
-                                                                <option value="GST28[28%]">GST28[28%]</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="w-50" style="margin-left: -1vw;">
-                                                                <label class="tb " for="" style="color: black;">IGST</label><br>
-                                                                <select style="color: black;background-color: white;width: 32vw;" class="form-control fw-tb " id="inter_st" name="inter_st" >
-                                                                <option value="IGST0[0%]" selected>IGST0[0%]</option>
-                                                                <option value="IGST3[3%]">IGST3[3%]</option>
-                                                                <option value="IGST5[5%]">IGST5[5%]</option>
-                                                                <option value="IGST12[12%]">IGST12[12%]</option>
-                                                                <option value="IGST18[18%]">IGST18[18%]</option>
-                                                                <option value="IGST28[28%]">IGST28[28%]</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <br>
-                                                    </div>
-                                                      <div class="row">
-                                                          <div class="col-md-6" style="margin-left: -15px;width: 5vw;">
-                                                            
-                                                              <label class="col-form-label" style="color: #000000;margin-left: 2vw;">SALES PRICE</label>
-                                                              <input style="color: black;background-color: white;width: 32vw;margin-left: 2vw;" id="saleprice" class="form-control fw-normal" type="number" name="saleprice" value="0">
-                                                          </div>
-                                                          <div class="col-md-6" style="margin-left: 15px;">
-                                                              <label class="col-form-label" style="color: black;width: 32vw;">PURCHASE PRICE</label>
-                                                              <input style="color: black;background-color: white;width: 32vw;" id="purprice" class="form-control fw-normal" type="number" name="purprice" value="0">
-                                                          </div>
-                                                      </div>
-                                                  </div>
-                                      
-                                                  <!-- STOCKS CARD -->
-                                                  <div class="custom-card">
-                                                      <div class="text-center mb-4">
-                                                          <h2 class="fw-bold">STOCKS</h2>
-                                                      </div>
-                                                      <div class="row">
-                                                          <div class="col-md-6" style="margin-left: -1vw;">
-                                                              <label class="tb " for="opn_stock_" style="color: #000000;">STOCK IN HAND</label>
-                                                              <input style="color: black;background-color: white;" id="stock" class="form-control fw-normal " type="number" name="stock" value="0">
-                                                          </div>
-                                                          <div id="at_price_div" class="col-md-6" style="visibility: hidden;">
-                                                              <label class="tb " for="at_price" style="color: #000000;">AT PRICE</label>
-                                                              <input style="color: black;background-color: white" id="itmprice" class="form-control fw-normal " type="number" name="itmprice" value="0">
-                                                          </div>
-                                                      </div>
-                                                      <div class="row">
-                                                      <div class="col-md-6 mt-4" style="margin-left: -10px;">
-                                                          <label class="tb " for="itmdate" style="color: #000000;">DATE</label>
-                                                          <input style="color: black;background-color: white" id="itmdate" class="form-control fw-normal " type="date" required name="itmdate" value="{{tod}}">
-                                                      </div>
-                                                      <div class="w-50">
-                                                        <label class="tb " for="minstock" style="color: black; margin-top: 2.2vw;">MINIMUM STOCK TO MAINTAIN</label><br>
-                                                        <input style="color: black;background-color: white" id="minstock" class="form-control fw-normal " type="number" name="minstock" value="0">
-                                                        </div></div>
-                                                      <div class="text-center mt-4">
-                                                          
-                                                          <button class="btn btn-custom" type="submit" name="itemsave" value="itemsave" id="itemsave" data-dismiss="modal">SAVE</button>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </div>
-                                      </div>
-                                      </div>
-                          </form>
+                        
                     </div> 
                 </div> 
             </div>
                   
         
+
+        {% comment %} <div class="modal fade" id="customercreation">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: rgba(61, 68, 101);">
+                        <h3 class="m-3 text" style="color:white;">ADD PARTY</h3>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
+                    </div>
+                    <div class="modal-body" style="background-color: rgba(61, 68, 101);">
+                        <form  method="POST" autocomplete="off" id="modalCustomer" style="background-color: white; padding: 30px; border-radius: 15px;box-shadow: 4px 3px 4px gray;">
+                            {% csrf_token %}
+                            <div class="bg-light bs p-4 rounded mb-5">
+                                <div id="main_form_div">
+                                    <div class="row" style="margin-left: -1vh;">
+                                        <div class="col-md-4">
+                                            <label class="col-form-label" for="partyname" style="color: black;">Party Name</label>
+                                            <input type="text" class="form-control border-secondary" id="partyname" name="partyname" style="color: black;" required>
+                                            <div class="text-danger m-2" id="warnPartyName"></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-form-label" style="color: black;">GSTIN</label>
+                                            <input type="text" class="form-control border-secondary" onchange="checkgst(this)" id="gstin" name="gstin" style="color: black;" placeholder="29APPCK7465F1Z1"  required>
+                                            <div class="text-danger m-2" id="warngst"></div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-form-label" for="partyphno" style="color: black;">Mobile</label>
+                                            <input type="number" class="form-control border-secondary" id="partyphno" name="partyphno" style="color: black;" onchange="checkphone(this)" required>
+                                            <div class="text-danger m-2" id="warnphone"></div>
+                                        </div>
+                                        
+                                    </div>
+
+                                    <div>
+                                        <p></p>
+                                        <hr class="p-0 m-0">
+                                        <div style="background-color: rgba(130, 144, 199);" class="p-3 pb-0 mb-0">
+                                            <div class="">
+                                                <div class="row pb-0 mb-0">
+                                                    <div id="gsthead" class="col text-center pb-2" >
+                                                        <a class="fw-bolder fs-4" style="color: white; cursor: pointer;" >GST & ADDRESS</a>
+                                                    </div>
+                                                    <div id="credithead" class="col text-center pb-2" >
+                                                        <a class="fw-bolder fs-4" style="color: white; cursor: pointer;" >CREDIT & BALANCES</a>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="gsttemp" >
+                                            <div class="row">
+                                                <div class="col-sm-12  col-md-1"></div>
+                                                <div class="col-sm-12 col-md-10 pb-4">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label mt-4" style="color: black;">GST Type</label>
+                                                            <select class="form-control border-secondary" id="modalgsttype" name="modalgsttype" style="color: black; background-color: white;">
+                                                                <option selected value="" hidden>Select</option>
+                                                                <option value="Registered Party">Registered Party</option>
+                                                                <option value="Unregistered or Consumer">Unregistered or Consumer</option>
+                                                                <option value="Registered Business or Combosision">Registered Business or Combosision</option>
+                                                            </select>
+                                                            <div class="text-danger m-2" id="gstType"></div>
+
+                                                            <label class="col-form-label mt-4" for="company" style="color: black;">Supply State</label>
+                                                            <select class="form-control border-secondary" name="splystate" id="splystate" style="color: black; background-color: white;">
+                                                                <option value="" selected hidden>Select</option>
+                                                                <option value="Andaman and Nicobar Islads">Andaman and Nicobar Islands</option>
+                                                                <option value="Andhra Pradhesh">Andhra Pradhesh</option>
+                                                                <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                                                                <option value="Assam">Assam</option>
+                                                                <option value="Bihar">Bihar</option>
+                                                                <option value="Chandigarh">Chandigarh</option>
+                                                                <option value="Chhattisgarh">Chhattisgarh</option>
+                                                                <option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+                                                                <option value="Daman anad Diu">Daman anad Diu</option>
+                                                                <option value="Delhi">Delhi</option>
+                                                                <option value="Goa">Goa</option>
+                                                                <option value="Gujarat">Gujarat</option>
+                                                                <option value="Haryana">Haryana</option>
+                                                                <option value="Himachal Pradesh">Himachal Pradesh</option>
+                                                                <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                                                                <option value="Jharkhand">Jharkhand</option>
+                                                                <option value="Karnataka">Karnataka</option>
+                                                                <option value="Kerala">Kerala</option>
+                                                                <option value="Ladakh">Ladakh</option>
+                                                                <option value="Lakshadweep">Lakshadweep</option>
+                                                                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                                                                <option value="Maharashtra">Maharashtra</option>
+                                                                <option value="Manipur">Manipur</option>
+                                                                <option value="Meghalaya">Meghalaya</option>
+                                                                <option value="Mizoram">Mizoram</option>
+                                                                <option value="Nagaland">Nagaland</option>
+                                                                <option value="Odisha">Odisha</option>
+                                                                <option value="Pondicherry">Pondicherry</option>
+                                                                <option value="Punjab">Punjab</option>
+                                                                <option value="Rajasthan">Rajasthan</option>
+                                                                <option value="Sikkim">Sikkim</option>
+                                                                <option value="Tamil Nadu">Tamil Nadu</option>
+                                                                <option value="Telangana">Telangana</option>
+                                                                <option value="Tripura">Tripura</option>
+                                                                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                                                                <option value="Uttarakhand">Uttarakhand</option>
+                                                                <option value="West Bengal">West Bengal</option>
+                                                                <option value="Other Territory">Other Territory</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label mt-4" style="color: black;">Billing Address</label>
+                                                            <textarea class="form-control border-secondary" name="baddress" id="baddress" rows="6" type="text" style="color: black; background-color: white;"></textarea>
+                                                            <div class="text-danger m-2" id="warnBAddress"></div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label mt-4" for="partyemail" style="color: black;">Email</label>
+                                                            <input type="email" class="form-control border-secondary" id="partyemail" name="partyemail" style="color: black; background-color: white;" required>
+                                                            <div class="text-danger m-2" id="warnemail"></div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="text-start mt-5">
+                                                        <button id="gstnxt" class="btn" style="background-color:rgb(61, 68, 101);" type="button">NEXT</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br><br>
+                                        </div>
+        
+                                        <div id="credittemp"style="background-color: rgba(144, 211, 117, 0.098);" hidden>
+                                            <div class="row">
+                                                <div class="col-sm-12  col-md-1"></div>
+                                                <div class="col-sm-12 col-md-10 pb-4">
+                                                    <div class="row mt-4">
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label" style="color: black;" for="openbalance">Opening Balance  &nbsp; &nbsp; - </label>   &nbsp;&nbsp;&nbsp;
+                                                            <label class="col-form-label" style="color: black;">To Pay</label> &nbsp; &nbsp; 
+                                                            <input type="radio" class="radio-input border-secondary" id="toPayRadio" name="paymentType" value="To Pay"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                                                            <label class="col-form-label" style="color: black;">To Receive</label> &nbsp; &nbsp;
+                                                            <input type="radio" class="radio-input border-secondary" id="toReceiveRadio" name="paymentType" value="To Receive">
+                                                            <input type="number" class="form-control border-secondary" id="openbalance"  name="openbalance" style="color: black; background-color: white;" value="0">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label" style="color: black;" for="openbalance">Credit Limit</label>
+                                                            <input type="number" class="form-control border-secondary" id="crd_lmt"  name="crd_lmt" style="color: black; background-color: white;" value="0">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <label class="col-form-label mt-4" style="color: black;">Date</label>
+                                                            <input type="date" class="form-control border-secondary" id="partydate" name="partydate" style="color: black; background-color: white;"  value="{{tod}}">
+                                                        </div>
+                                                    </div>
+                                                    
+
+                                                    <div class="text-start mt-5">
+                                        
+                                                        <button id="creditprev" class="btn fw-bold" style="background-color:rgb(61, 68, 101);color:white;" type="button">PREVIOUS</button>
+                                                        <button class="btn fw-bold" style="background-color:rgb(61, 68, 101);color:white;" type="button" id="customersave" >SAVE</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        
+                                        
+                                </div>
+                            </div>
+                        </form><br><br><br>
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
 
         <div class="modal fade" id="customercreation">
             <div class="modal-dialog modal-xl">
@@ -888,7 +906,7 @@
                         <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close" style="background-color: white;"></button>
                     </div>
                     <div class="modal-body" style="background-color: rgb(130, 144, 199);">
-                        <form action="" method="POST" autocomplete="off" id="modalCustomer" > 
+                        <form  method="POST" autocomplete="off" id="modalCustomer" style="background-color: white; padding: 30px; border-radius: 15px;box-shadow: 4px 3px 4px gray;">
                             {% csrf_token %}
                             <div class="bg-light bs p-4 rounded mb-5">
                                 <div id="main_form_div">
@@ -1055,7 +1073,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
@@ -1708,154 +1725,154 @@ $('#addRow').click(function() {
               })
               // set today end
 
-$(document).on("click", "#itemsave", function () {
-var item_name = $("#item_name").val().trim();
-var hsn = $("#hsn").val().trim();
-var unit = $("#units").val().trim();
-var tax;
-
-if ($('#inclusive').prop('checked')) {
-tax = $('#inclusive').val();
-} else {
-tax = $('#check').val();
-}
-
-// Parse sales and purchase prices as floats
-var sale_price = parseFloat($("#saleprice").val().trim());
-var purchase_price = parseFloat($("#purprice").val().trim());
-
-// Regular expression for validating HSN with 6 or more digits
-var hsnRegex = /^[0-9]{6,}$/;
-
-// Check for NaN and negative values
-if (item_name === '') {
-alert('Please provide an Item Name');
-} else if (hsn === '') {
-alert('Please provide a HSN');
-} else if (!hsnRegex.test(hsn)) {
-alert('Please provide a valid HSN with 6 or more digits');
-} else if (unit === '') {
-alert('Please select a unit');
-} else if (isNaN(sale_price) || sale_price < 0) {
-alert('Please provide a valid Sales Price');
-} else if (isNaN(purchase_price) || purchase_price < 0) {
-alert('Please provide a valid Purchase Price');
-} else {
-// Perform HSN existence check
-$.ajax({
-url: "{% url 'check_hsn_exist' %}",
-data: {
-'hsn': hsn
-},
-dataType: 'json',
-success: function(data) {
-if (data.exists === 'true') {
-$('#warnhsn').text('HSN already exists!');
-alert('HSN already exists.');
-} else {
-// HSN does not exist, proceed to save the item
-$('#warnhsn').text('');
-
-$.ajax({
-    type: 'POST',
-    url: "{% url 'saveitem' %}",
-    data: {
-        name: item_name,
-        unit: unit, // Use the trimmed unit value
-        hsn: hsn,
-        taxref: tax,
-        sell_price: sale_price,
-        cost_price: purchase_price,
-        intra_st: $("#intra_st").val(),
-        inter_st: $("#inter_st").val(),
-        itmdate: $("#itmdate").val(),
-        stock: $("#stock").val(),
-        itmprice: $("#itmprice").val(),
-        minstock: $("#minstock").val(),
-        csrfmiddlewaretoken: '{{ csrf_token }}',
-    },
-    success: function (response) {
-        document.getElementById("modalItem").reset();
-        $('#newitem').modal('hide');
-        reloadItem();
-    },
-});
-}
-}
-});
-}
-});
-
-
+              $(document).on("click", "#itemsave", function () {
+                var item_name = $("#item_name").val().trim();
+                var hsn = $("#hsn").val().trim();
+                var unit = $("#units").val().trim();
+                var tax;
+            
+                if ($('#inclusive').prop('checked')) {
+                    tax = $('#inclusive').val();
+                } else {
+                    tax = $('#check').val();
+                }
+            
+                // Parse sales and purchase prices as floats
+                var sale_price = parseFloat($("#saleprice").val().trim());
+                var purchase_price = parseFloat($("#purprice").val().trim());
+            
+                // Regular expression for validating HSN with 6 or more digits
+                var hsnRegex = /^[0-9]{6,}$/;
+            
+                // Check for NaN and negative values
+                if (item_name === '') {
+                    alert('Please provide an Item Name');
+                } else if (hsn === '') {
+                    alert('Please provide a HSN');
+                } else if (!hsnRegex.test(hsn)) {
+                    alert('Please provide a valid HSN with 6 or more digits');
+                } else if (unit === '') {
+                    alert('Please select a unit');
+                } else if (isNaN(sale_price) || sale_price < 0) {
+                    alert('Please provide a valid Sales Price');
+                } else if (isNaN(purchase_price) || purchase_price < 0) {
+                    alert('Please provide a valid Purchase Price');
+                } else {
+                    // Perform HSN existence check
+                    $.ajax({
+                        url: "{% url 'check_hsn_exist' %}",
+                        data: {
+                            'hsn': hsn
+                        },
+                        dataType: 'json',
+                        success: function(data) {
+                            if (data.exists === 'true') {
+                                $('#warnhsn').text('HSN already exists!');
+                                alert('HSN already exists.');
+                            } else {
+                                // HSN does not exist, proceed to save the item
+                                $('#warnhsn').text('');
+            
+                                $.ajax({
+                                    type: 'POST',
+                                    url: "{% url 'saveitem' %}",
+                                    data: {
+                                        name: item_name,
+                                        unit: unit, // Use the trimmed unit value
+                                        hsn: hsn,
+                                        taxref: tax,
+                                        sell_price: sale_price,
+                                        cost_price: purchase_price,
+                                        intra_st: $("#intra_st").val(),
+                                        inter_st: $("#inter_st").val(),
+                                        itmdate: $("#itmdate").val(),
+                                        stock: $("#stock").val(),
+                                        itmprice: $("#itmprice").val(),
+                                        minstock: $("#minstock").val(),
+                                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                                    },
+                                    success: function (response) {
+                                        document.getElementById("modalItem").reset();
+                                        $('#newitem').modal('hide');
+                                        reloadItem();
+                                    },
+                                });
+                            }
+                        }
+                    });
+                }
+            });
 
 
-function reloadItem() {
-$.ajax({
-url: "{% url 'salesinvoice_item_dropdown' %}",
-type: "GET",
-dataType: "json",
-data: {
-csrfmiddlewaretoken: '{{ csrf_token }}',
-},
-success: function(data) {
 
 
-id_list = data.id_list;
-product_list = data.product_list;
-
-// Assuming you have a select element with id 'productDropdown'
-// var selectElement = document.getElementById('productDropdown');
-
-$('#items-table-body tr').each(function(){
-var currentRow = $(this).html();
-
-if(currentRow!=""){
-    var selectElement = $(this).find('.product');
-
-    var itmValue = $(this).find('.product').val();
-
-    selectElement.empty();
-
-    selectElement.append(`<option value="">Select Product</option>`);
-
-    $.each(data, function(key, value){
-        var ID = value[0]
-        var itemName = value[1]
-        var hsn = value[2]
-        var price = value[3]
-        var gst =  value[4]
-        var igst = value[5]     
-
-        selectElement.append(`<option value="${ID}" data-item-name="${itemName}" data-item-hsn="${hsn}"  data-item-price="${price}"  data-item-gst="${gst }" data-item-igst="${igst }">${itemName}</option>`);
-        // <option value="{{ i.id }}" data-item-name="{{ i.item_name }}" data-item-hsn="{{ i.item_hsn }}" data-item-unit="{{ i.item_unit }}" data-item-price="{{ i.item_sale_price }}" data-item-gst="{{ i.item_gst }}" data-item-igst="{{ i.item_igst }}">{{ i.item_name }}</option>
-        // selectElement.append(`<option></option>`).val(value[0])
+            function reloadItem() {
+                $.ajax({
+                    url: "{% url 'salesinvoice_item_dropdown' %}",
+                    type: "GET",
+                    dataType: "json",
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    },
+                    success: function(data) {
+                        
         
+                        id_list = data.id_list;
+                        product_list = data.product_list;
+            
+                        // Assuming you have a select element with id 'productDropdown'
+                        // var selectElement = document.getElementById('productDropdown');
         
-    })
-    console.log('item value..',itmValue)
-    if (itmValue != ""){
-        $(this).find('.product').val(itmValue)
-    }
-}
-})
-
-
-
-// Clear existing options
-// selectElement.options.length = 0;
-
-
-// Add new options
-/* for (let i = 0; i < id_list.length; i++) {
-var option = new Option(product_list[i], id_list[i]);
-selectElement.add(option);
-}*/
-},
-error: function(xhr, status, error) {
-console.error(xhr.responseText);
-}
-});
-}
+                        $('#items-table-body tr').each(function(){
+                            var currentRow = $(this).html();
+        
+                            if(currentRow!=""){
+                                var selectElement = $(this).find('.product');
+        
+                                var itmValue = $(this).find('.product').val();
+        
+                                selectElement.empty();
+        
+                                selectElement.append(`<option value="">Select Product</option>`);
+        
+                                $.each(data, function(key, value){
+                                    var ID = value[0]
+                                    var itemName = value[1]
+                                    var hsn = value[2]
+                                    var price = value[3]
+                                    var gst =  value[4]
+                                    var igst = value[5]     
+        
+                                    selectElement.append(`<option value="${ID}" data-item-name="${itemName}" data-item-hsn="${hsn}"  data-item-price="${price}"  data-item-gst="${gst }" data-item-igst="${igst }">${itemName}</option>`);
+                                    // <option value="{{ i.id }}" data-item-name="{{ i.item_name }}" data-item-hsn="{{ i.item_hsn }}" data-item-unit="{{ i.item_unit }}" data-item-price="{{ i.item_sale_price }}" data-item-gst="{{ i.item_gst }}" data-item-igst="{{ i.item_igst }}">{{ i.item_name }}</option>
+                                    // selectElement.append(`<option></option>`).val(value[0])
+                                    
+                                    
+                                })
+                                console.log('item value..',itmValue)
+                                if (itmValue != ""){
+                                    $(this).find('.product').val(itmValue)
+                                }
+                            }
+                        })
+        
+                        
+            
+                        // Clear existing options
+                        // selectElement.options.length = 0;
+                        
+            
+                        // Add new options
+                        /* for (let i = 0; i < id_list.length; i++) {
+                            var option = new Option(product_list[i], id_list[i]);
+                            selectElement.add(option);
+                        }*/
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }
 
 
 
@@ -2182,19 +2199,19 @@ slNo++;
                 })
             })
 
-function productsearch(roinc){
-$(`#product${roinc}`).selectize({
-sortField: 'value',
-render: {
-item: function (item, escape) {
-if (item.value === '') {
-    return '';
-}
-return '<div>' + escape(item.text) + '</div>';
-}
-}
-});
-}  
+            function productsearch(roinc){
+            $(`#product${roinc}`).selectize({
+            sortField: 'value',
+            render: {
+            item: function (item, escape) {
+            if (item.value === '') {
+                return '';
+            }
+            return '<div>' + escape(item.text) + '</div>';
+            }
+            }
+            });
+            }  
         </script>
 <script>
 var checkbox1 = document.getElementById('inclusive');

@@ -3167,24 +3167,21 @@ def credit_add(request):
 
 def creditbilldata(request):
     try:
-        partyid = request.POST['id']
-        party_instance = Parties.objects.get(id=partyid)
+        selected_party_id = request.POST.get('id')
+        party_instance = get_object_or_404(Parties, id=selected_party_id)
+        
+        # Subquery to get the used bill numbers
+        used_bill_numbers_subquery = Creditnote.objects.filter(invoice_no__in=Subquery(SalesInvoice.objects.filter(party=party_instance).values('invoice_no'))).values('invoice_no')
 
-        # Initialize lists to store multiple bill numbers and dates
+        # Fetch only the bills belonging to the selected party and not used in credit notes
+        bill_instances = SalesInvoice.objects.filter(party=party_instance).exclude(invoice_no__in=Subquery(used_bill_numbers_subquery))
+
         bill_numbers = []
         bill_dates = []
 
-        try:
-            # Retrieve all instances for the party
-            bill_instances = SalesInvoice.objects.filter(party=party_instance)
-
-            # Loop through each instance and collect bill numbers and dates
-            for bill_instance in bill_instances:
-                bill_numbers.append(bill_instance.invoice_no)
-                bill_dates.append(bill_instance.date)
-
-        except SalesInvoice.DoesNotExist:
-            pass
+        for bill_instance in bill_instances:
+            bill_numbers.append(bill_instance.invoice_no)
+            bill_dates.append(bill_instance.date)
 
         # Return a JSON response with the list of bill numbers and dates
         if not bill_numbers and not bill_dates:
@@ -3193,10 +3190,43 @@ def creditbilldata(request):
         return JsonResponse({'bill_numbers': bill_numbers, 'bill_dates': bill_dates})
 
     except KeyError:
-        return JsonResponse({'error': 'The key "id" is missing in the POST request.'})
+            return JsonResponse({'error': 'The key "id" is missing in the POST request.'})
 
     except Parties.DoesNotExist:
-        return JsonResponse({'error': 'Party not found.'})
+            return JsonResponse({'error': 'Party not found.'})
+
+# def creditbilldata(request):
+#     try:
+#         partyid = request.POST['id']
+#         party_instance = Parties.objects.get(id=partyid)
+
+#         # Initialize lists to store multiple bill numbers and dates
+#         bill_numbers = []
+#         bill_dates = []
+
+#         try:
+#             # Retrieve all instances for the party
+#             bill_instances = SalesInvoice.objects.filter(party=party_instance)
+
+#             # Loop through each instance and collect bill numbers and dates
+#             for bill_instance in bill_instances:
+#                 bill_numbers.append(bill_instance.invoice_no)
+#                 bill_dates.append(bill_instance.date)
+
+#         except SalesInvoice.DoesNotExist:
+#             pass
+
+#         # Return a JSON response with the list of bill numbers and dates
+#         if not bill_numbers and not bill_dates:
+#             return JsonResponse({'bill_numbers': ['no invoice'], 'bill_dates': ['nodate']})
+
+#         return JsonResponse({'bill_numbers': bill_numbers, 'bill_dates': bill_dates})
+
+#     except KeyError:
+#         return JsonResponse({'error': 'The key "id" is missing in the POST request.'})
+
+#     except Parties.DoesNotExist:
+#         return JsonResponse({'error': 'Party not found.'})
     
 def credit_bill_date(request):
     selected_bill_no = request.POST.get('billNo', None)
@@ -3406,11 +3436,11 @@ def credit_save(request):
           credit_note.save()
           salesinvoice = SalesInvoice.objects.filter(company=cmp, party=party)
           # Remove selected invoice number from dropdown if credit note created for the selected party
-          if checkbtn == 'on' and party:
-              selected_invoice = request.POST.get('billNod')
-              if selected_invoice:
-                  SalesInvoice.objects.filter(company=cmp, party=party, invoice_no=selected_invoice).delete()
-          # if salesinvoice:
+          # if checkbtn == 'on' and party:
+          #     selected_invoice = request.POST.get('billNod')
+          #     if selected_invoice:
+          #         SalesInvoice.objects.filter(company=cmp, party=party, invoice_no=selected_invoice).delete()
+          # if salesinvoice:  
           #   idsales=request.POST['bno']
           #   credit_note.salesinvoice=SalesInvoice.objects.get(invoice_no=idsales,company=cmp)
           #   credit_note.save()
