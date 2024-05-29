@@ -1177,6 +1177,7 @@ def saveitem(request):
     sid = request.session.get('staff_id')
     staff =  staff_details.objects.get(id=sid)
     company_obj = staff.company
+    tod = toda.strftime("%Y-%m-%d")
 
     name = request.POST['name']
     unit = request.POST['unit']
@@ -1209,7 +1210,7 @@ def saveitem(request):
     )
     itm.save()
 
-    return JsonResponse({'success': True})
+    return JsonResponse({'success': True,'tod':tod})
 
 def itemdetail(request):
     itmid = request.GET['id']
@@ -2402,6 +2403,8 @@ def sales_invoice_list(request):
 
 
 def sales_invoice_add(request):
+  toda = date.today()
+  tod = toda.strftime("%Y-%m-%d")
   if 'staff_id' in request.session:
     if request.session.has_key('staff_id'):
       staff_id = request.session['staff_id']
@@ -2421,7 +2424,7 @@ def sales_invoice_add(request):
   else:
         next_count=1
 
-  return render(request, 'sales_invoice_add.html',{'staff':staff,'Party':Party,'item':item,'count':next_count,'item_units':item_units,'cust':cust})
+  return render(request, 'sales_invoice_add.html',{'staff':staff,'Party':Party,'item':item,'count':next_count,'item_units':item_units,'cust':cust,'tod':tod})
 
 
 def salesinvoice_add_parties(request):
@@ -2803,17 +2806,19 @@ def salesinvoice_graph(request):
         SalesInvoice.objects
         .values('date__month')
         .annotate(total_sales=Sum('grandtotal'))
+        .order_by('date__month')
     )
 
     # Extract month-wise sales and labels with month names
     month_names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     labels = [month_names[month - 1] for month in range(1, 13)]
-    sales = [sales_dict.get('total_sales', 0) for sales_dict in sales_data]
+    sales_dict = {data['date__month']: data['total_sales'] for data in sales_data}
+    sales = [sales_dict.get(month, 0) for month in range(1, 13)]
 
     # Prepare data for chart
     chart_data = {'labels': labels, 'sales': sales}
     years = list(range(2022, 2031))
-    return render(request, 'salesinvoice_graph.html', {'chart_data': chart_data,'staff':staff,'years':years})
+    return render(request, 'salesinvoice_graph.html', {'chart_data': chart_data, 'staff': staff, 'years': years})
 
 
 def export_sales_invoices_to_excel(request):
@@ -3148,6 +3153,8 @@ def credit_add(request):
   staff = staff_details.objects.get(id=sid)
   cmp = company.objects.get(id=staff.company.id)
   todaydate = date.today().isoformat()
+  toda = date.today()
+  tod = toda.strftime("%Y-%m-%d")
   party = Parties.objects.filter(company_id=cmp.id)
   item=ItemModel.objects.filter(company_id=cmp.id) 
   item_units = ItemUnitModel.objects.filter(company=cmp)
@@ -3161,7 +3168,8 @@ def credit_add(request):
         'party':party,
         'item':item,
         'todaydate':todaydate,
-        'item_units':item_units
+        'item_units':item_units,
+        'tod':tod
     }
   return render(request, 'credit_add.html',context)
 
@@ -4262,6 +4270,8 @@ def check_hsns(request):
         return JsonResponse({'exists':'false'})
         
 def invoice_edit(request,id):
+  toda = date.today()
+  tod = toda.strftime("%Y-%m-%d")
   if 'staff_id' in request.session:
     if request.session.has_key('staff_id'):
       staff_id = request.session['staff_id']
@@ -4277,7 +4287,7 @@ def invoice_edit(request,id):
   cust = Parties.objects.filter(company=company_instance)
   bdate = getinoice.date.strftime("%Y-%m-%d")
 
-  return render(request, 'invoice_edit.html',{'staff':staff,'getinoice':getinoice,'getitem':getitem,'Party':Party,'item':item,'cust':cust,'bdate':bdate})
+  return render(request, 'invoice_edit.html',{'staff':staff,'getinoice':getinoice,'getitem':getitem,'Party':Party,'item':item,'cust':cust,'bdate':bdate,'tod':tod})
   
 def check_name_exists(request):
     item_name= request.GET.get('item_name')
