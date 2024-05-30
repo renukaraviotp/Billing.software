@@ -1089,7 +1089,8 @@ def create_debitnotes(request):
     pdebt.save()
     
    
-          
+    itemId = request.POST.getlist("item_id[]")
+    print(itemId,'fgd')    
     product = tuple(request.POST.getlist("product[]"))
     qty =  tuple(request.POST.getlist("qty[]"))
     discount =  tuple(request.POST.getlist("discount[]"))
@@ -1105,13 +1106,13 @@ def create_debitnotes(request):
     print('qty==',qty)
     print('discount==',discount)
     print('total==',total) 
-    if len(product)==len(qty)==len(discount)==len(total)==len(tax):
-        mapped=zip(product,qty,discount,total,tax)
+    if len(itemId)==len(product)==len(qty)==len(discount)==len(total)==len(tax):
+        mapped=zip(itemId,product,qty,discount,total,tax)
         mapped=list(mapped)
         for ele in mapped:
           itm = ItemModel.objects.get(id=ele[0])
           
-          purchasedebit1.objects.create(product =itm,qty=ele[1],discount=ele[2],total=ele[3],tax=ele[4],pdebit=pdebitid,company=cmp)
+          purchasedebit1.objects.create(product =itm,qty=ele[2],discount=ele[3],total=ele[4],tax=ele[5],pdebit=pdebitid,company=cmp)
 
     purchasedebit.objects.filter(company=cmp).update(tot_debt_no=F('tot_debt_no') + 1)
           
@@ -3381,31 +3382,13 @@ def credit_save(request):
         if party_id:
             party = Parties.objects.get(id=party_id)
 
-        # Check if 'billNo' exists in POST data and assign value accordingly
-        # bill_no = request.POST.get('billNo', None)
-        # if bill_no == 'nobill':
-        #     bill_no = None
-        checkbtn=request.POST.get('abc', None)
+        checkbtn = request.POST.get('abc', None)
         if checkbtn == 'on':
-          if request.POST.get('billNod') == 'nobill':
-             bill_no = None
-          else:
-            bill_no = request.POST.get('billNod')
+            bill_no = None if request.POST.get('billNod') == 'nobill' else request.POST.get('billNod')
+            bill_date = None if request.POST.get('billDated') == 'nodate' else request.POST.get('billDated')
         else:
-           bill_no = request.POST.get('billNo')
-        if checkbtn == 'on':
-          if request.POST.get('billDated') == 'nodate':
-            bill_date = None
-          else:
-            bill_date = request.POST.get('billDated')
-        else:
-          bill_date = request.POST.get('billDate')
-
-        # Check if 'billDate' exists in POST data and assign value accordingly
-        # bill_date_str = request.POST.get('billDate', None)
-        # bill_date = None
-        # if bill_date_str:
-        #     bill_date = parse_date(bill_date_str)
+            bill_no = request.POST.get('billNo')
+            bill_date = request.POST.get('billDate')
 
         # Create an instance of Creditnote model and save the data
         credit_note = Creditnote(
@@ -3433,57 +3416,63 @@ def credit_save(request):
 
         # Save the instance
         credit_note.save()
-        
-        if checkbtn=='on':
-          party_details = request.POST.get('partyname')
-          party_id = party_details.split()[0]
-          party = Parties.objects.get(pk=party_id,company=cmp)
-          
-          print(party.party_name)
-          credit_note.party=party
-          credit_note.save()
-          salesinvoice = SalesInvoice.objects.filter(company=cmp, party=party)
-          # Remove selected invoice number from dropdown if credit note created for the selected party
-          # if checkbtn == 'on' and party:
-          #     selected_invoice = request.POST.get('billNod')
-          #     if selected_invoice:
-          #         SalesInvoice.objects.filter(company=cmp, party=party, invoice_no=selected_invoice).delete()
-          # if salesinvoice:  
-          #   idsales=request.POST['bno']
-          #   credit_note.salesinvoice=SalesInvoice.objects.get(invoice_no=idsales,company=cmp)
-          #   credit_note.save()
-          # else:
-          #   pass
-        
+
+        if checkbtn == 'on':
+            party_details = request.POST.get('partyname')
+            party_id = party_details.split()[0]
+            party = Parties.objects.get(pk=party_id, company=cmp)
+            
+            credit_note.party = party
+            credit_note.save()
+
+            # salesinvoice = SalesInvoice.objects.filter(company=cmp, party=party)
+            # if salesinvoice:
+            #     idsales = request.POST['bno']
+            #     credit_note.salesinvoice = SalesInvoice.objects.get(invoice_no=idsales, company=cmp)
+            #     credit_note.save()
+
         history = CreditnoteHistory(company=cmp, staff=staff, credit=credit_note, action='Created')
         history.save()
 
         # Save credit note items
+        itemId = request.POST.getlist("item_id[]")
+        print(itemId,'fgd')
         product = request.POST.getlist("product[]")
+        print(product,'ddf')
         qty = request.POST.getlist("qty[]")
+        print(qty,'sd')
         discount = request.POST.getlist("discount[]")
+        print(discount,'lk')
         total = request.POST.getlist("total[]")
+        print(total,'ty')
         hsn = request.POST.getlist("hsn[]")
+        print(hsn,'yfh')
         tax = request.POST.getlist("tax[]")
+        print(tax,'op')
         price = request.POST.getlist("price[]")
+        print(price,'kj')
 
-        if len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
-            mapped = zip(product, qty, discount, total, hsn, tax, price)
+        if len(itemId) == len(product) == len(qty) == len(discount) == len(total) == len(hsn) == len(tax) == len(price):
+            mapped = zip(itemId, product, qty, discount, total, hsn, tax, price)
             for ele in mapped:
-                itm = ItemModel.objects.get(id=ele[0])
-                CreditnoteItem.objects.create(
-                    item=itm,
-                    product=itm.item_name,
-                    qty=ele[1],
-                    discount=ele[2],
-                    total=ele[3],
-                    hsn=ele[4],
-                    tax=ele[5],
-                    price=ele[6],
-                    company=cmp,
-                    credit=credit_note,
-                    staff=staff
-                )
+                if ele[0]:  # Check if item ID is not empty
+                    try:
+                        itm = ItemModel.objects.get(id=int(ele[0]))
+                        CreditnoteItem.objects.create(
+                            item=itm,
+                            product=itm.item_name,
+                            qty=ele[2],  # Use the correct indices for these fields
+                            discount=ele[3],
+                            total=ele[4],
+                            hsn=ele[5],
+                            tax=ele[6],
+                            price=ele[7],
+                            company=cmp,
+                            credit=credit_note,
+                            staff=staff
+                        )
+                    except (ValueError, ItemModel.DoesNotExist) as e:
+                        print(f"Error processing item with ID {ele[0]}: {e}")
 
         Creditnote.objects.filter(company=cmp, staff=staff).update(returnno=F('returnno'))
 
@@ -3495,6 +3484,7 @@ def credit_save(request):
 
     else:
         return render(request, 'credit_add.html')
+
 
 
 
@@ -4489,26 +4479,51 @@ def get_invoice_item(request):
         return redirect('credit_add')
     return render(request, 'tab_logic.html',{"items":invoice_items})
   
-def get_invoiceitem(request):
+# def get_invoiceitem(request):
 
+#     sid = request.session.get('staff_id')
+#     staff = staff_details.objects.get(id=sid)
+#     cmp = company.objects.get(id=staff.company.id) 
+#     bno = request.GET.get('invoice_no') 
+#     print(bno, 'ftydf')  # Output the invoice number for debugging
+#     # Retrieve the invoice object with the given invoice number or return a 404 error if not found
+#     invoice = get_object_or_404(SalesInvoice, invoice_no=bno)
+#     invoice_items = SalesInvoiceItem.objects.filter(company=cmp, salesinvoice=invoice)
+#     items=ItemModel.objects.filter(company=cmp)
+#     for i in items:
+#       allitem=[(i.id,i.item_name,i.item_current_stock)]
+      
+#     for i in invoice_items:
+#       c=str(i.item)
+#       itemlist=[(c,i.item.item_name,i.hsn,i.quantity,i.tax,i.discount,i.totalamount,i.item.item_sale_price)]
+#     context={
+#       'itemlist':itemlist,
+#       'allitem':allitem
+#     }
+#     return JsonResponse(context)
+
+def get_invoiceitem(request):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
-    cmp = company.objects.get(id=staff.company.id) 
-    bno = request.GET.get('invoice_no') 
-    print(bno, 'ftydf')  # Output the invoice number for debugging
+    cmp = company.objects.get(id=staff.company.id)
+    bno = request.GET.get('invoice_no')
+    
     # Retrieve the invoice object with the given invoice number or return a 404 error if not found
     invoice = get_object_or_404(SalesInvoice, invoice_no=bno)
     invoice_items = SalesInvoiceItem.objects.filter(company=cmp, salesinvoice=invoice)
-    items=ItemModel.objects.filter(company=cmp)
-    for i in items:
-      allitem=[(i.id,i.item_name,i.item_current_stock)]
-      
+    items = ItemModel.objects.filter(company=cmp)
+
+    itemlist = []
     for i in invoice_items:
-      c=str(i.item)
-      itemlist=[(c,i.item.item_name,i.hsn,i.quantity,i.tax,i.discount,i.totalamount,i.item.item_sale_price)]
-    context={
-      'itemlist':itemlist,
-      'allitem':allitem
+        c = int(i.item.id)
+        itemlist.append((c, i.item.item_name, i.hsn, i.quantity, i.tax, i.discount, i.totalamount, i.item.item_sale_price))
+        print(itemlist,'hnk')
+    
+    allitem = [(i.id, i.item_name, i.item_current_stock) for i in items]
+
+    context = {
+        'itemlist': itemlist,
+        'allitem': allitem
     }
     return JsonResponse(context)
   
@@ -4615,29 +4630,59 @@ def get_invoiceitem(request):
 #         }
 #         return JsonResponse(context)
 
+# def get_pbill_item(request):
+#     sid = request.session.get('staff_id')
+#     staff = staff_details.objects.get(id=sid)
+#     cmp = company.objects.get(id=staff.company.id) 
+
+#     invid = request.GET['bill_no']
+        
+#     inn = PurchaseBill.objects.get(billno=invid, company=cmp)
+#     invvv = PurchaseBillItem.objects.filter(purchasebill=inn, company=cmp).select_related('product')
+#     invvv_data = [{
+#         'id':item.id,
+#         'qty': item.qty,
+#         'total': item.total,
+#         'item_name': item.product.item_name,
+#         'hsn': item.product.item_hsn,
+#         'price': item.product.item_sale_price,
+#         'tax': item.product.item_gst,
+#         'discount': item.discount,
+#     } for item in invvv]
+#     print(invvv_data,'billdata')
+
+#     context = {
+#         'invvv_data': invvv_data,
+#     }
+#     return JsonResponse(context)
+
 def get_pbill_item(request):
     sid = request.session.get('staff_id')
     staff = staff_details.objects.get(id=sid)
-    cmp = company.objects.get(id=staff.company.id) 
+    cmp = company.objects.get(id=staff.company.id)
 
-    invid = request.GET['bill_no']
+    invid = request.GET.get('bill_no')
+    
+    try:
+        inn = PurchaseBill.objects.get(billno=invid, company=cmp)
+        invvv = PurchaseBillItem.objects.filter(purchasebill=inn, company=cmp).select_related('product')
         
-    inn = PurchaseBill.objects.get(billno=invid, company=cmp)
-    invvv = PurchaseBillItem.objects.filter(purchasebill=inn, company=cmp).select_related('product')
-    invvv_data = [{
-        'qty': item.qty,
-        'total': item.total,
-        'item_name': item.product.item_name,
-        'hsn': item.product.item_hsn,
-        'price': item.product.item_sale_price,
-        'tax': item.product.item_gst,
-        'discount': item.discount,
-    } for item in invvv]
-
-    context = {
-        'invvv_data': invvv_data,
-    }
-    return JsonResponse(context)
+        invvv_data = [{
+            'id': item.id,
+            'product_id': item.product.id,
+            'qty': item.qty,
+            'total': item.total,
+            'item_name': item.product.item_name,
+            'hsn': item.product.item_hsn,
+            'price': item.product.item_sale_price,
+            'tax': item.product.item_gst,
+            'discount': item.discount,
+        } for item in invvv]
+        
+        context = {'invvv_data': invvv_data}
+        return JsonResponse(context)
+    except PurchaseBill.DoesNotExist:
+        return JsonResponse({'error': 'Purchase bill not found'}, status=404)
   
 def fetch_item_details(request):
     if request.method == 'GET' and request.is_ajax():

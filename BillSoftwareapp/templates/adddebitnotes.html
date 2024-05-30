@@ -401,23 +401,10 @@
                                                                         <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
                                                                     </a>
                                                                 </div>
-                                                                <!-- <div class="d-flex">
-                                                                    <select name='product[]' id="product1" class="form-control border-secondary product" onchange="changeprd(this.id,this.value)" style="color: black; background-color: white; width: 150px;" required>
-                                                                        <option value="" selected hidden>Select Product</option>
-                                                                        {% for i in item %}
-                                                                            {% if i.cid_id == cmp.cid %} 
-                                                                                <option value="{{ i.id }}">{{ i.item_name }}</option>
-                                                                            {% endif %}
-                                                                        {% endfor %}
-                                                                    </select>
-                                                                    
-                                                                    <button id="modal_closing" type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
-                                                                        <span class="fa fa-plus"></span>
-                                                                    </button>
-                                                                </div>   -->
+                                                                
                                                             </td>
                                                             <td>
-                                                                <input type="hidden" name="itemId[]" id="itemId1">
+                                                                <input type="hidden" name="item_id[]" id="itemId1">
                                                                 <input type="text" name='hsn[]' id="hsn1" class="form-control border-secondary HSNCODE" style="color: black; background-color: white; width: 150px;" readonly />
                                                             </td>
                                                             <td>
@@ -1080,10 +1067,11 @@
         if (customer === '') {
             alert('Please select a customer');
             return false;
-        } else if(plosu === ''){
-            alert('Please select place of supply');
-            return false;
-        }
+        } 
+        //else if(plosu === ''){
+           // alert('Please select place of supply');
+           // return false;
+        //}
   
 
         var table = document.getElementById('tab_logic');
@@ -1731,7 +1719,7 @@ $(document).ready(function(){
                     </td>
 
                     <td tyle="width:12%">
-                        <input type="hidden" name="itemId[]" id="itemId${roinc}">
+                        <input type="hidden" name="item_id[]" id="itemId${roinc}">
                         <input type="text" name='hsn[]' id="hsn${roinc}" class="form-control border-secondary" style="color: black; background-color: white;" readonly />
                     </td>
 
@@ -2469,171 +2457,101 @@ $('#contact').blur(function() {
     });
     </script>
 
-    <script>
-        $(document).ready(function() {
-        
-            $('#bill_no').on('change', function() {
-                var selectedOption = $(this).find('option:selected');
-                if (selectedOption.val() == '') {
-                    $('#bill_no').val('');
-                } else {
-                    var invId = document.getElementById('bill_no').value;
-        
-                    $.ajax({
-                        type: 'GET',
-                        url: '{% url "get_pbill_item" %}',
-                        data: {
-                            'bill_no': invId
-                        },
-                        success: function(response) {
-                            if (response.invvv_data) {
-                                $("#items-table-body").empty();
-                                var tablelength = $("#items-table-body tr").length;
-                                var invc = document.getElementById('bill_no').value || 0;
-                                response.invvv_data.forEach(function(item, index) {
-                                    $('#items-table-body').append(
-                                        `<tr>
-                                            <td>${index + 1}</td>
-                                            <td style="width:15%;">
-                                                <div class="d-flex">
-                                                    <select class="form-control item-select" onchange="changeprd(this.id,this.value)" name='product[]' id="product1">
-                                                        <option value="${item.product_id}" selected>${item.item_name}</option>
-                                                        {% for i in item %}
-                                                            {% if i.cid_id == cmp.cid %}
-                                                                <option  value="{{ i.id  }}">{{ i.item_name  }} </option>
-                                                            {% endif %}
-                                                        {% endfor %}
-                                                    </select>
-                                                    <a href="#">
-                                                        <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                            <td><input type="text" name='hsn[]' id="hsn1" value="${item.hsn}" class="form-control hsn" readonly /></td>
-                                            <td><input type="number" name='qty[]' id="qty1" value="${item.qty}" class="form-control qty" /></td>
-                                            <td><input type="number" name='price[]' id="unit1" value="${item.price}" class="form-control price" readonly /></td>
-                                            <td>
-                                                <input type="text" id="intrataxval1" hidden>
-                                                <input type="text" id="intertaxval1" hidden>
-                                                <input type="text" value="${item.tax}" name='tax[]' id="tax1" class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST RATE" width="150px;"  readonly />
-                                            </td>
-                                            
-                                            <td><input type="number" name='discount[]' id="disc1" value="${item.discount}" class="form-control disc" /></td>
-                                            <td><input type="number" name='total[]' id="total1" value="${item.total}" class="form-control total" readonly /></td>
-                                            <td style="display: none;">
-                                                <input type="text" name='taxamount1' id="taxamount1" class="form-control taxamount"/>
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
-                                            </td>
-                                        </tr>`
-                                    );
-                                });
-        
-                                // Event listeners for input fields
-                                $('.qty, .price, .tax, .disc').on('input', function() {
-                                    var row = $(this).closest('tr');
-                                    var qty = parseFloat(row.find('.qty').val()) || 0;
-                                    var price = parseFloat(row.find('.price').val()) || 0;
-                                    var tax = parseFloat(row.find('.tax').val()) || 0;
-                                    var discount = parseFloat(row.find('.disc').val()) || 0;
-                                    var total = (qty * price) + (qty * tax) - discount;
-                                    row.find('.total').val(total.toFixed(2));
-                                    calc_total();
-                                });
-        
-                                // Alert when quantity is changed
-                                $('.qty').on('input', function() {
-                                    alert('Quantity changed to ' + $(this).val());
-                                });
 
-                                // Alert when item is changed
-                                $('.item-select').on('change', function() {
-                                    alert('Item changed to ' + $(this).find('option:selected').text());
-                                });
-        
-                                if (invc != 0){
-                                    var newlength = $("#items-table-body tr").length;
-                                    if(tablelength != newlength){
-                                        setTimeout(() => {
-                                            alert('Items list have been changed')
-                                        }, 1000);
-                                    }
-                                }
-        
-                                calc(); // Call the calc function after populating the table
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(xhr.responseText);
-                        }
-                    });
-                }
-            });
-        });
-        
-        function calc() {
-            $('#tab_logic tbody tr').each(function () {
-                var html = $(this).html();
-                if (html != '') {
-                    var qtyElement = $(this).find('.qty');
-                    var priceElement = $(this).find('.price');
-                    var disElement = $(this).find('.disc');
-                    var taxElement = $(this).find('.tax');
-                    
-                    if (qtyElement.length && priceElement.length && disElement.length && taxElement.length) {
-                        var qty = qtyElement.val();
-                        var price = priceElement.val();
-                        var dis = disElement.val();
-                        var bc = $("#plosu").val();
-                        console.log(bc,'fse')
-                        
-                        if (bc == 'State') {
-                            var taxval = taxElement.val().slice(3);
-                            console.log(taxval,'htt')
-                        } else {
-                            var taxval = taxElement.val().slice(4);
-                            console.log(taxval,'tyrs')
-                        }
-                        
-                        var tax = parseInt(taxval.match(/\d+/)[0], 10);
-                        console.log(tax,'bvbjb')
-                        
-                        $(this).find('.total').val((parseFloat(qty) * parseFloat(price)) - parseFloat(dis));
-                        $(this).find('.taxamount').val(((qty * price) - dis) * (tax / 100));
-                        calc_total();
-                    } else {
-                        console.log("One or more elements not found in the row.");
+
+<script>
+    $('#bill_no').on('change', function() {
+        var selectedOption = $(this).find('option:selected');
+        if (selectedOption.val() == '') {
+            $('#bill_no').val('');
+        } else {
+            var invId = document.getElementById('bill_no').value;
+    
+            $.ajax({
+                type: 'GET',
+                url: '{% url "get_pbill_item" %}',
+                data: {
+                    'bill_no': invId
+                },
+                success: function(response) {
+                    if (response.invvv_data) {
+                        $("#items-table-body").empty();
+                        response.invvv_data.forEach(function(item, index) {
+                            var rowId = index + 1; // Unique row ID
+                            $('#items-table-body').append(
+                                `<tr>
+                                    <td>${rowId}</td>
+                                    <td style="width:15%;">
+                                        <div class="d-flex">
+                                            <select class="form-control item-select" onchange="changeprd(this.id,this.value)" name='product[]' id="product${rowId}">
+                                                <option value="${item.product_id}" selected>${item.item_name}</option>
+                                                {% for i in item %}
+                                                    {% if i.cid_id == cmp.cid %}
+                                                        <option value="{{ i.id }}">{{ i.item_name }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <a href="#">
+                                                <button type="button" class="btn btn-outline-secondary ml-1" data-bs-target="#newitem" data-bs-toggle="modal" style="background-color:rgb(61, 68, 101); color: white;">+</button>
+                                            </a>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="item_id[]" id="itemId${rowId}" value="${item.id}">
+                                        <input type="text" name='hsn[]' id="hsn${rowId}" value="${item.hsn}" class="form-control hsn" readonly />
+                                    </td>
+                                    <td><input type="number" name='qty[]' id="qty${rowId}" value="${item.qty}" class="form-control qty" /></td>
+                                    <td><input type="number" name='price[]' id="unit${rowId}" value="${item.price}" class="form-control price" readonly /></td>
+                                    <td>
+                                        <input type="text" id="intrataxval${rowId}" hidden>
+                                        <input type="text" id="intertaxval${rowId}" hidden>
+                                        <input type="text" value="${item.tax}" name='tax[]' id="tax${rowId}" class="form-control border-secondary tax" style="color: black; background-color: white;" placeholder="GST RATE" width="150px;" readonly />
+                                    </td>
+                                    <td><input type="number" name='discount[]' id="disc${rowId}" value="${item.discount}" class="form-control disc" /></td>
+                                    <td><input type="number" name='total[]' id="total${rowId}" value="${item.total}" class="form-control total" readonly /></td>
+                                    <td style="display: none;">
+                                        <input type="text" name='taxamount1' id="taxamount${rowId}" class="form-control taxamount"/>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-danger px-2 mx-1 py-1 remove_row fa fa-close"></button>
+                                    </td>
+                                </tr>`
+                            );
+                        });
+    
+                        // Event listeners for input fields
+                        $('.qty, .price, .tax, .disc').on('input', function() {
+                            var row = $(this).closest('tr');
+                            var qty = parseFloat(row.find('.qty').val()) || 0;
+                            var price = parseFloat(row.find('.price').val()) || 0;
+                            var tax = parseFloat(row.find('.tax').val()) || 0;
+                            var discount = parseFloat(row.find('.disc').val()) || 0;
+                            var total = (qty * price) + (qty * tax) - discount;
+                            row.find('.total').val(total.toFixed(2));
+                            calc_total();
+                        });
+    
+                        // Alert when quantity is changed
+                        $('.qty').on('input', function() {
+                            alert('Quantity changed to ' + $(this).val());
+                        });
+    
+                        // Alert when item is changed
+                        $('.item-select').on('change', function() {
+                            alert('Item changed to ' + $(this).find('option:selected').text());
+                        });
+    
+                        calc(); // Call the calc function after populating the table
                     }
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
                 }
             });
         }
-        
-        function calc_total() {
-            total = 0;
-            $('.total').each(function () {
-                total += parseFloat($(this).val());
-                console.log(total,'jhk')
-            });
-            taxamount = 0;
-            $('.taxamount').each(function () {
-                taxamount += parseFloat($(this).val());
-                console.log(taxamount,'oiuh')
-            });
-            $('#sub_total').val(total.toFixed(2));
-            $('#tax_amount').val(taxamount.toFixed(2));
-            console.log('#tax_amount')
-            adj_val = parseFloat($('#adj').val())
-            gtot = taxamount + total + adj_val;
-            $('#grandtotal').val(gtot.toFixed(2));
-            $('#baldue').val(gtot.toFixed(2));
-            adv_val = parseFloat($('#advance').val())
-            adv_val = gtot - adv_val
-            $('#balance').val(adv_val.toFixed(2));
-            taxfun();
-        }
-        
-    </script>
+    });
+    
+</script>
         
 
     

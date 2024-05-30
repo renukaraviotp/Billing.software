@@ -260,7 +260,7 @@
                                 
                                         <div class="col">
                                             <label class="col-form-label ">State of Supply</label>
-                                            <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;">
+                                            <select type="text" class="form-control border-secondary" id="psu" name="placosupply" onclick="toggleDateInput()"  style="color: black;background-color: white;" required>
                                                 <option value="" selected hidden>Select</option>
                                                 <option value="State">State</option>
                                                 <option value="Other State">Other State</option>
@@ -385,6 +385,7 @@
                                                         </td>
     
                                                         <td >
+                                                            <input type="hidden" name="item_id[]" id="itemId1">
                                                             <input type="text" name='hsn[]' id="hsn1" class="form-control border-secondary HSNCODE" style="color: black; background-color: white;" readonly />
                                                         </td>
     
@@ -971,7 +972,7 @@
                     </td>
 
                     <td style="width:14%">
-                        <input type="text"  name='id[]' style="color:black;" value="0" hidden>
+                        <input type="hidden" name="item_id[]" id="itemId${roinc}">
                         <input type="text" name='hsn[]'  value="" id="hsn${roinc}" class="form-control " style="color: black; background-color: white;" readonly />
                     </td>
 
@@ -2064,6 +2065,15 @@
 
     
 </script>
+{% comment %} <script>
+    $(document).ready(function() {
+        var psu = document.getElementById('psu').value;
+        if(psu === ''){
+            alert('Please select place of supply');
+            return false;
+        }
+    });
+</script> {% endcomment %}
 
 <script>
     function checkhsn(element){
@@ -2229,7 +2239,7 @@
         })();
       });
 </script>
-<script>
+{% comment %} <script>
     function ChangeItemsinTable() {
         var bno = document.getElementById('bno').value;
         $.ajax({
@@ -2268,7 +2278,7 @@
                             </td>
         
                             <td style="width:14%">
-                                <input type="text" name='id[]' style="color:black;" value="0" hidden>
+                                <input type="hidden" name="item_id[]" id="itemId${count}">
                                 <input type="text" name='hsn[]' value="${item[2]}" id="hsn${count}" class="form-control " style="color: black; background-color: white;" readonly />
                             </td>
         
@@ -2337,10 +2347,9 @@
             }
         });
     }
-</script>
-
-{% comment %} <script>
-    function ChangeItemsinTable(){
+</script> {% endcomment %}
+<script>
+    function ChangeItemsinTable() {
         var bno = document.getElementById('bno').value;
         $.ajax({
             url: "{% url 'get_invoiceitem' %}",
@@ -2351,75 +2360,66 @@
             },
             success: function(data) {
                 var tbody1 = document.querySelector('#tab_logic tbody');
-                if (data && data.itemlist && Array.isArray(data.itemlist)){
+                if (data && data.itemlist && Array.isArray(data.itemlist)) {
                     tbody1.innerHTML = '';
-                    var count = 0;
+                    count = 0;
                     data.itemlist.forEach(function(item) {
                         count++;
                         var newRow1 = `<tr id='addr0'>
                             <td style="text-align: center; width:2%" class="nnum">
                                 ${count}
                             </td>
-                            <td style="width:21%">
+    
+                            <td style="width:21%" >
                                 <div class="d-flex">
-                                    <select name='product[]' id="product${count}" class="form-control product prd" onchange="changeprd(this.id,this.value)" style="color: black; background-color: white;">
+                                    <select name='product[]' id="product${count}" class="form-control product prd" onchange="changeprd1(this.id,this.value)" style="color: black; background-color: white;">
                                         <option value="${item.product_id}" selected hidden>${item[1]}</option>
-                                        {% for i in item %}
-                                            {% if i.cid_id == cmp.cid %}
-                                                <option value="{{ i.id }}">{{ i.item_name }}</option>
-                                            {% endif %}
-                                        {% endfor %}
+                                        ${data.allitem.map(i => `<option value="${i[0]}">${i[1]}</option>`).join('')}
                                     </select>&nbsp;&nbsp;&nbsp;
                                     <button id="modal_closing" type="button" style="background-color:rgb(61, 68, 101);" class="btn" data-bs-toggle="modal" data-bs-target="#newitem" data-bs-whatever="@mdo">
                                         <span class="fa fa-plus"></span>
                                     </button>
                                 </div>
                             </td>
+    
                             <td style="width:14%">
-                                <input type="text" name='id[]' style="color:black;" value="0" hidden>
-                                <input type="text" name='hsn[]' value="${item[2]}" id="hsn" class="form-control" style="color: black; background-color: white;" readonly />
+                                <input type="hidden" value="${item[0]}" name="item_id[]" id="itemId${count}">
+                                <input type="text" name='hsn[]' value="${item[2]}" id="hsn${count}" class="form-control " style="color: black; background-color: white;" readonly />
                             </td>
+    
                             <td style="width: 10%;">
-                                <input type="number" name='qty[]' placeholder='Enter Qty' id="qty${count}" value="${item[3]}" class="form-control qty mb-1" step=0 min=0 style="color: black; background-color: white;" />
+                                <input type="number" name='qty[]' placeholder='Enter Qty' id="qty${count}" value="${item[3]}" class="form-control qty mb-1 " step=0 min=0 style="color: black; background-color: white;" />
                             </td>
+    
                             <td style="width:12%">
                                 <input type="number" name='price[]' id="unit${count}" class="form-control price" value="${item[7]}" step="0.00" min="0" style="color: black; background-color: white;" readonly />
                             </td>
+    
                             <td style="width: 15%;">
-                                <input type="text" id="intrataxval" value="" hidden>
-                                <input type="text" id="intertaxval" value="" hidden>
-                                {% if crd.state_of_supply == 'State' %}
-                                    <input type="text" name='tax[]' id="tax${count}" class="form-control tax" style="color: black; background-color: white;" value="${item[4]}" readonly />
-                                {% else %}
-                                    <input type="text" name='tax[]' id="tax${count}" class="form-control tax" style="color: black; background-color: white;" value="${item[4]}" readonly />
-                                {% endif %}
+                                <input type="text" id="intrataxval${count}" value="" hidden>
+                                <input type="text" id="intertaxval${count}" value="" hidden>
+                                <input type="text" name='tax[]' id="tax${count}" class="form-control tax" style="color: black; background-color: white;" value="${item[4]}" readonly />
                             </td>
+    
                             <td style="width:10%">
                                 <input type="number" name='discount[]' placeholder='Enter Discount' id="disc${count}" value="${item[5]}" class="form-control disc" step=0 min=0 style="color: black; background-color: white;">
                             </td>
+    
                             <td style="width:13%">
                                 <input type="number" name='total[]' value="0" id="total${count}" placeholder=0 class="form-control total" value="${item[6]}" step="any" readonly style="color: black; background-color: white;" />
                             </td>
                             <td style="display: none;">
                                 <input type="hidden" step="any" id="taxamount${count}" class="form-control taxamount" />
                             </td>
-                            <td style="width:5%">
-                                <button type="button" id="" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"></button>
-                            </td>
-                        </tr>`; 
-                        tbody1.insertAdjacentHTML('beforeend', newRow1);
-                        var dropdown = document.getElementById('product' + count);
     
-                        // Iterate over the array and append each item to the dropdown
-                        data.allitem.forEach(function(itm) {
-                            var option = document.createElement('option');
-                            option.text = itm[1];
-                            option.value = itm[0]; // You can set a different value if needed
-                            dropdown.add(option);
-                        });
+                            <td style="width:5%">
+                                <button type="button" id="" class="btn btn-danger remove_row px-2 py-1 mx-1 fa fa-close" title="Remove Row"> </button>
+                            </td>
+                        </tr>`;
+                        tbody1.insertAdjacentHTML('beforeend', newRow1);
     
                         // Event listeners for input fields
-                        $('.qty, .price, .tax, .disc').on('input', function() {
+                        $('.qty, .price, .tax, .disc').off('input').on('input', function() {
                             var row = $(this).closest('tr');
                             var qty = parseFloat(row.find('.qty').val()) || 0;
                             var price = parseFloat(row.find('.price').val()) || 0;
@@ -2431,16 +2431,15 @@
                         });
     
                         // Alert when quantity is changed
-                        $('#qty' + count).on('input', function() {
+                        $('#qty' + count).off('input').on('input', function() {
                             alert('Quantity changed to ' + $(this).val());
                         });
     
                         // Alert when item is changed
-                        $('#product' + count).on('change', function() {
+                        $('#product' + count).off('change').on('change', function() {
                             alert('Item changed to ' + $(this).find('option:selected').text());
                         });
                     });
-    
                     calc();
                 }
             },
@@ -2450,7 +2449,9 @@
         });
     }
     
-</script> {% endcomment %}
+</script>
+
+
 
 
 {% endblock %}

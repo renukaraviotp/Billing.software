@@ -87,9 +87,7 @@
         color: red;
     }
     
-    ::-webkit-scrollbar{
-        display: none
-    }
+    
     .filter-dropdown {
         display: none;
         position: absolute;
@@ -237,7 +235,7 @@
                                         <span style="color: black; font-size: small; font-weight: bold;">Excel </span> <span class="fa-solid fa-file-excel" style="color:#3d4465;"></span>
                                     </button>
 
-                                    <button class="btn mt-4 button-hover" type="button" onclick="printfunction()" style="margin-right: 2vh;">
+                                    <button class="btn mt-4 button-hover" type="button" onclick="printfunction()" style="margin-right: -2vh;">
                                         <span style="color: black; font-size: small; font-weight: bold;">Print </span> <span class="fa-solid fa-print" style="color:#3d4465;"></span>
                                     </button>
                          
@@ -256,25 +254,25 @@
                     <div class="row pt-0 m-0">
                         <div class="card p-0 bg-light bs" style="height: 36rem; background: linear-gradient(#3d4465 0%, #3d4465 178.5px, white 17px, white 100%);">
                             <div class="row m-0 p-0 pt-3">
-                                <div class="col-md-8" style="margin-left:5%;">
+                                <div class="col-md-8" style="margin-left:3%;">
                                     <h3 class="tb fw-bolder pt-55" style="color:white;">DEBIT NOTE</h3>
                                 </div>
                             </div>
         
                             <div class="row">
                                 <div class="col-md-4">
-                                    <input id="search_input" style="padding-inline-start: 2rem; margin-left: 10vh;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder="Search">
+                                    <input id="search_input" style="padding-inline-start: 2rem; margin-left: 7vh;" class="w-100 border-secondary text-dark pt-1 pb-1 pe-1 rounded" type="text" placeholder="Search">
                                 </div>
                                 <div class="col-md-6"></div>
                                 <div class="col-md-2">
-                                    <a class="btn button-hover" href="{% url 'add_debitnote' %}" style=" margin-left: -5%; margin-right: 3%;"> 
+                                    <a class="btn button-hover" href="{% url 'add_debitnote' %}" style=" margin-left: -20%; margin-right: 3%;"> 
                                         <i class="fa fa-plus border-dark" aria-hidden="true" style="color: #3d4465;"></i> &nbsp;Add Debit Note
                                     </a>
                                 </div>
                             </div><br>
                             <div class="row mt-4" style="margin-left: 8vh; margin-right: 6vh;">
                                 <div class="col-md-12">
-                                    <div class="table-responsive mt-1" style="overflow: scroll;height: 28rem; width: 97%;" id="tablediv">
+                                    <div class="table-responsive mt-1" style="height: 28rem; width: 97%;" id="tablediv">
                                         <table class="table tb" id="debittable" style="text-align: center;">
                                     <thead>
                                         <tr class="fs-2 tb" >
