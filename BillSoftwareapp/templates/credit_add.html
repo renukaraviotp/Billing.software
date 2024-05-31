@@ -527,13 +527,14 @@
         <div class="modal fade" id="newitem">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
-                    <div class="modal-header" style="background-color: rgba(61, 68, 101);">
-                        <h3 class="text ms-3" style="color:white;">ADD ITEM</h3>
-                        <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+                    
                     <div class="modal-body" style="background-color: rgba(61, 68, 101);" >
                         <form method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem">
                             {% csrf_token %}
+                            <div class="modal-header" style="background-color: rgba(61, 68, 101);">
+                                <h3 class="text ms-3" style="color:white;">ADD ITEM</h3>
+                                <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
                             <div class="bg-light bs p-4 rounded mb-5">
                                 <div id="main_form_div">
                                     <div class="row" style="margin-left: -1vh;">
@@ -707,13 +708,14 @@
         <div class="modal fade" id="customercreation">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
-                    <div class="modal-header" style="background-color: rgba(61, 68, 101);">
-                        <h3 class="m-3 text" style="color:white;">ADD PARTY</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
+                    
                     <div class="modal-body" style="background-color: rgba(61, 68, 101);">
                         <form action="" method="POST" autocomplete="off" id="modalCustomer" > 
                             {% csrf_token %}
+                            <div class="modal-header" style="background-color: rgba(61, 68, 101);">
+                                <h3 class="m-3 text" style="color:white;">ADD PARTY</h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
                             <div class="bg-light bs p-4 rounded mb-5">
                                 <div id="main_form_div">
                                     <div class="row" style="margin-left: -1vh;">
@@ -1898,7 +1900,7 @@
         if (item_name === '') {
             alert('Please provide an Item Name');
         } else if (hsn === '') {
-            alert('Please provide a HSN');
+            alert('Please provide a HSN/SAC');
         } else if (sale_price < 0) {
             alert('Please provide a valid Sales Price');
         } else if (purchase_price < 0) {
@@ -1918,7 +1920,7 @@
                 success: function(data) {
                     if (data.exists) {
                         //$('#warnhsn').text('HSN already exists!');
-                        alert('HSN already exists');
+                        alert('HSN/SAC already exists');
                     } else {
                         // HSN does not exist, proceed to save the item
                         //$('#warnhsn').text('');

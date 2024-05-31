@@ -621,14 +621,14 @@ body {
         <div class="modal fade" id="customercreation">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
-                    <div class="modal-header" style="background-color: rgba(61, 68, 101);">
-                        <h3 class="m-3 text-white">ADD PARTY</h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
             
                     <div class="modal-body" style="background-color: rgba(61, 68, 101);">
                         <form method="POST" autocomplete="off" id="modalCustomer"  >
                             {% csrf_token %}
+                            <div class="modal-header" style="background-color: rgba(61, 68, 101);">
+                                <h3 class="m-3 text-white">ADD PARTY</h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
                             <div class="bg-light bs p-4 rounded mb-5">
                                 <div id="main_form_div">
                                     <div class="row" style="margin-left: -1vh;">
@@ -799,13 +799,14 @@ body {
     <div class="modal fade" id="newitem">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header" style="background-color: rgba(61, 68, 101);">
-                <h3 class="text-white ms-3">ADD ITEM</h3>
-                <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            
             <div class="modal-body" style="background-color: rgba(61, 68, 101);" >
                 <form method="post" class="needs-validation" novalidate autocomplete="off" id="modalItem">
                     {% csrf_token %}
+                    <div class="modal-header" style="background-color: rgba(61, 68, 101);">
+                        <h3 class="text-white ms-3">ADD ITEM</h3>
+                        <button type="button" class="btn-close me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="bg-light bs p-4 rounded mb-5">
                         <div id="main_form_div">
                             <div class="row" style="margin-left: -1vh;">
@@ -1495,7 +1496,7 @@ function reloadCustomer(id) {
         if (item_name === ''){
             alert('Please provide an Item Name');
         } else if(item_hsn === ''){
-            alert('Please provide a HSN number');
+            alert('Please provide a HSN/SAC number');
             return false;
         }
         else{
@@ -2024,7 +2025,7 @@ $(document).ready(function(){
         // If the HSN number is valid and not repeated, clear the warning message
         document.getElementById('warnhsn').innerHTML = '';
     } else {
-        document.getElementById('warnhsn').innerHTML = 'Please provide a valid 6-digit HSN Number';
+        document.getElementById('warnhsn').innerHTML = 'Please provide a valid 6 or more digit HSN/SAC Number';
         // Optionally, you might want to focus on the input field after showing the error.
         element.focus();
     }
@@ -2103,7 +2104,7 @@ function checkgst(element) {
             dataType: 'json',
             success: function(data) {
                 if (data.exists) {
-                    $('#hsn_error').text('HSN already exists!');
+                    $('#hsn_error').text('HSN/SAC already exists!');
                 } else {
                     $('#hsn_error').text('');
                 }

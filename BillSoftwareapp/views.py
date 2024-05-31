@@ -1048,93 +1048,183 @@ def save_parties(request):
             return redirect('view_parties')
 
     return render(request, 'add_parties.html')
-
-def create_debitnotes(request):
-  if 'staff_id' in request.session:
-    if request.session.has_key('staff_id'):
-      staff_id = request.session['staff_id']
+  
+  # def create_debitnotes(request):
+  # if 'staff_id' in request.session:
+  #   if request.session.has_key('staff_id'):
+  #     staff_id = request.session['staff_id']
            
-    else:
-      return redirect('/')
-  staff =  staff_details.objects.get(id=staff_id)
-  cmp = company.objects.get(id=staff.company.id)
-  partys=Parties.objects.get(id=request.POST.get('customername'))
-  billno = purchasedebit.objects.filter(party=partys).values_list('billno', flat=True)
-  print(billno)
+  #   else:
+  #     return redirect('/')
+  # staff =  staff_details.objects.get(id=staff_id)
+  # cmp = company.objects.get(id=staff.company.id)
+  # partys=Parties.objects.get(id=request.POST.get('customername'))
+  # billno = purchasedebit.objects.filter(party=partys).values_list('billno', flat=True)
+  # print(billno)
     
-  billdate = purchasedebit.objects.filter(party=partys).values_list('billdate', flat=True)
+  # billdate = purchasedebit.objects.filter(party=partys).values_list('billdate', flat=True)
 
-  context = {
-        'billno': billno,
-        'billdate':billdate, 
-        # Add other context variables as needed
-    }
-  if request.method == 'POST': 
-    print(request.POST.get("bill_no"),"ammu")
-    pdebt = purchasedebit(party=partys,
-                      pdebitid=request.POST.get('pdebitid'),
-                      debitdate=request.POST.get('debitdate'),
-                      supply=request.POST.get('placosupply'),
-                      billno=request.POST.get("billno"),
-                      billdate=request.POST.get("billdate"), 
-                      reference_number=request.POST.get("pdebitid"),
-                      subtotal=float(request.POST.get('subtotal')),
-                      igst = request.POST.get('igst'),
-                      cgst = request.POST.get('cgst'),
-                      sgst = request.POST.get('sgst'),
-                      adjustment = request.POST.get("adj"),
-                      taxamount = request.POST.get("taxamount"),
-                      grandtotal=request.POST.get('grandtotal'),
-                      company=cmp,staff=staff)
-    pdebt.save()
+  # context = {
+  #       'billno': billno,
+  #       'billdate':billdate, 
+  #       # Add other context variables as needed
+  #   }
+  # if request.method == 'POST': 
+  #   print(request.POST.get("bill_no"),"ammu")
+  #   pdebt = purchasedebit(party=partys,
+  #                     pdebitid=request.POST.get('pdebitid'),
+  #                     debitdate=request.POST.get('debitdate'),
+  #                     supply=request.POST.get('placosupply'),
+  #                     billno=request.POST.get("billno"),
+  #                     billdate=request.POST.get("billdate"), 
+  #                     reference_number=request.POST.get("pdebitid"),
+  #                     subtotal=float(request.POST.get('subtotal')),
+  #                     igst = request.POST.get('igst'),
+  #                     cgst = request.POST.get('cgst'),
+  #                     sgst = request.POST.get('sgst'),
+  #                     adjustment = request.POST.get("adj"),
+  #                     taxamount = request.POST.get("taxamount"),
+  #                     grandtotal=request.POST.get('grandtotal'),
+  #                     company=cmp,staff=staff)
+  #   pdebt.save()
     
    
-    itemId = request.POST.getlist("item_id[]")
-    print(itemId,'fgd')    
-    product = tuple(request.POST.getlist("product[]"))
-    qty =  tuple(request.POST.getlist("qty[]"))
-    discount =  tuple(request.POST.getlist("discount[]"))
-    total =  tuple(request.POST.getlist("total[]"))
-    tax =  tuple(request.POST.getlist("tax[]"))
-    pdebitid = purchasedebit.objects.get(pdebitid=pdebt.pdebitid, company=cmp)
+  #   itemId = request.POST.getlist("item_id[]")
+  #   print(itemId,'fgd')    
+  #   product = tuple(request.POST.getlist("product[]"))
+  #   qty =  tuple(request.POST.getlist("qty[]"))
+  #   discount =  tuple(request.POST.getlist("discount[]"))
+  #   total =  tuple(request.POST.getlist("total[]"))
+  #   tax =  tuple(request.POST.getlist("tax[]"))
+  #   pdebitid = purchasedebit.objects.get(pdebitid=pdebt.pdebitid, company=cmp)
     
     
    
 
  
-    print('product==',product)
-    print('qty==',qty)
-    print('discount==',discount)
-    print('total==',total) 
-    if len(itemId)==len(product)==len(qty)==len(discount)==len(total)==len(tax):
-        mapped=zip(itemId,product,qty,discount,total,tax)
-        mapped=list(mapped)
-        for ele in mapped:
-          itm = ItemModel.objects.get(id=ele[0])
+  #   print('product==',product)
+  #   print('qty==',qty)
+  #   print('discount==',discount)
+  #   print('total==',total) 
+  #   if len(itemId)==len(product)==len(qty)==len(discount)==len(total)==len(tax):
+  #       mapped=zip(itemId,product,qty,discount,total,tax)
+  #       mapped=list(mapped)
+  #       for ele in mapped:
+  #         itm = ItemModel.objects.get(id=ele[0])
           
-          purchasedebit1.objects.create(product =itm,qty=ele[2],discount=ele[3],total=ele[4],tax=ele[5],pdebit=pdebitid,company=cmp)
+  #         purchasedebit1.objects.create(product =itm,qty=ele[2],discount=ele[3],total=ele[4],tax=ele[5],pdebit=pdebitid,company=cmp)
 
-    purchasedebit.objects.filter(company=cmp).update(tot_debt_no=F('tot_debt_no') + 1)
+  #   purchasedebit.objects.filter(company=cmp).update(tot_debt_no=F('tot_debt_no') + 1)
           
-    pdebt.tot_debt_no = pdebt.pdebitid
-    pdebt.save()
+  #   pdebt.tot_debt_no = pdebt.pdebitid
+  #   pdebt.save()
     
-    # selected_bill_no = request.POST.get('billno')
-    # if selected_bill_no:
-    #   purchasedebit.objects.filter(party=partys, billno=selected_bill_no).delete()
+  #   # selected_bill_no = request.POST.get('billno')
+  #   # if selected_bill_no:
+  #   #   purchasedebit.objects.filter(party=partys, billno=selected_bill_no).delete()
       
 
   
-    DebitnoteTransactionHistory.objects.create(debitnote=pdebt,staff=staff,company=cmp,action='Created')
+  #   DebitnoteTransactionHistory.objects.create(debitnote=pdebt,staff=staff,company=cmp,action='Created')
 
-    if 'Next' in request.POST:
-      return redirect('add_debitnote')
+  #   if 'Next' in request.POST:
+  #     return redirect('add_debitnote')
     
-    if "Save" in request.POST:
-      return redirect('view_purchasedebit')
+  #   if "Save" in request.POST:
+  #     return redirect('view_purchasedebit')
     
-  else:
-    return render(request,'adddebitnotes.html',context)
+  # else:
+  #   return render(request,'adddebitnotes.html',context)
+
+def create_debitnotes(request):
+    if 'staff_id' in request.session:
+        if request.session.has_key('staff_id'):
+            staff_id = request.session['staff_id']
+        else:
+            return redirect('/')
+    
+    staff = staff_details.objects.get(id=staff_id)
+    cmp = company.objects.get(id=staff.company.id)
+    partys = Parties.objects.get(id=request.POST.get('customername'))
+    billno = purchasedebit.objects.filter(party=partys).values_list('billno', flat=True)
+    billdate = purchasedebit.objects.filter(party=partys).values_list('billdate', flat=True)
+
+    context = {
+        'billno': billno,
+        'billdate': billdate, 
+    }
+
+    if request.method == 'POST': 
+        pdebt = purchasedebit(
+            party=partys,
+            pdebitid=request.POST.get('pdebitid'),
+            debitdate=request.POST.get('debitdate'),
+            supply=request.POST.get('placosupply'),
+            billno=request.POST.get("billno"),
+            billdate=request.POST.get("billdate"), 
+            reference_number=request.POST.get("pdebitid"),
+            subtotal=float(request.POST.get('subtotal')),
+            igst=request.POST.get('igst'),
+            cgst=request.POST.get('cgst'),
+            sgst=request.POST.get('sgst'),
+            adjustment=request.POST.get("adj"),
+            taxamount=request.POST.get("taxamount"),
+            grandtotal=request.POST.get('grandtotal'),
+            company=cmp, staff=staff
+        )
+        pdebt.save()
+        print(pdebt,'debit')
+
+        itemId = request.POST.getlist("item_id[]")
+        print(itemId,'gf')
+        product = request.POST.getlist("product[]")
+        print(product,'gf1')
+        qty = request.POST.getlist("qty[]")
+        print(qty,'gf2')
+        discount = request.POST.getlist("discount[]")
+        print(discount,'gf3')
+        total = request.POST.getlist("total[]")
+        print(total,'gf4')
+        tax = request.POST.getlist("tax[]")
+        print(tax,'gf5')
+
+        pdebitid = purchasedebit.objects.get(pdebitid=pdebt.pdebitid, company=cmp)
+        print(pdebitid,'gf6')
+
+        if len(itemId) == len(product) == len(qty) == len(discount) == len(total) == len(tax):
+            mapped = zip(itemId, product, qty, discount, total, tax)
+            for ele in mapped:
+                try:
+                    itm = ItemModel.objects.get(id=ele[0])
+                    purchasedebit1.objects.create(
+                        product=itm,
+                        qty=ele[2],
+                        discount=ele[3],
+                        total=ele[4],
+                        tax=ele[5],
+                        pdebit=pdebitid,
+                        company=cmp
+                    )
+                    
+                except ItemModel.DoesNotExist:
+                    print(f"ItemModel with ID {ele[0]} does not exist.")
+                    continue
+
+        purchasedebit.objects.filter(company=cmp).update(tot_debt_no=F('tot_debt_no') + 1)
+        pdebt.tot_debt_no = pdebt.pdebitid
+        pdebt.save()
+      
+        DebitnoteTransactionHistory.objects.create(debitnote=pdebt, staff=staff, company=cmp, action='Created')
+
+        if 'Next' in request.POST:
+            return redirect('add_debitnote')
+        
+        if "Save" in request.POST:
+            return redirect('view_purchasedebit')
+    
+    else:
+        return render(request, 'adddebitnotes.html', context)
+
     
 def view_purchasedebit(request):
   if 'staff_id' in request.session:
