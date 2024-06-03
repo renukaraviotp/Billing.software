@@ -2409,7 +2409,10 @@ def check_contact_exists(request):
     
 def check_email_exists(request):
     email= request.GET.get('email')
-    if Parties.objects.filter(email=email).exists():
+    sid = request.session.get('staff_id')
+    staff =  staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    if Parties.objects.filter(company=cmp,email=email).exists():
         return JsonResponse({'exists': True})
     return JsonResponse({'exists':False})
     
@@ -4253,20 +4256,27 @@ def check_gstin_exist(request):
       
 def check_phone_number_exist(request):
     phone_number = request.GET.get('phone_number')
-    if Parties.objects.filter(phone_number=phone_number).exists():
+    sid = request.session.get('staff_id')
+    staff =  staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    if Parties.objects.filter(company=cmp,phone_number=phone_number).exists():
         return JsonResponse({'exists': True})
     return JsonResponse({'exists': False})
     
     
 def check_email_exist(request):
     email= request.GET.get('email')
-    if Parties.objects.filter(email=email).exists():
+    sid = request.session.get('staff_id')
+    staff =  staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    if Parties.objects.filter(company=cmp,email=email).exists():
         return JsonResponse({'exists': True})
     return JsonResponse({'exists':False})
     
     
 def check_hsn_exist(request):
     hsn = request.GET.get('hsn')  
+    
     if ItemModel.objects.filter(item_hsn=hsn).exists():  
         return JsonResponse({'exists': 'true'})
     else:
@@ -4330,14 +4340,20 @@ def check_gstins(request):
 
 def check_phone_numbers(request):
     phone_number = request.GET.get('phone_number')
-    if Parties.objects.filter(phone_number=phone_number).exists():
+    sid = request.session.get('staff_id')
+    staff =  staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    if Parties.objects.filter(phone_number=phone_number,company=cmp).exists():
         return JsonResponse({'exists': True})
     return JsonResponse({'exists': False})
 
 
 def check_mails(request):
     email= request.GET.get('email')
-    if Parties.objects.filter(email=email).exists():
+    sid = request.session.get('staff_id')
+    staff =  staff_details.objects.get(id=sid)
+    cmp = company.objects.get(id=staff.company.id)
+    if Parties.objects.filter(company=cmp,email=email).exists():
         return JsonResponse({'exists': True})
     return JsonResponse({'exists':False})
 

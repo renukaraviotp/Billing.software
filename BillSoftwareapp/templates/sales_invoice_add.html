@@ -353,8 +353,11 @@
                                                     
     
                                                 </tbody>
+                                                <tr>
+                                                    <td style="border: none;"><a class="btn  ml-1" role="button" style="background-color:rgb(61, 68, 101);color: white;" id="addRow" ><span class="fa fa-plus"></span></a></td>
+                                                </tr>
                                             </table>
-                                            <button type="button" class="btn btn-primary" id="addRow"><span class="fa fa-plus " style="color: #161515;" ></span></button>
+                                            
                                         </div>
                                     {% comment %} </div> {% endcomment %}
     
@@ -618,7 +621,6 @@
                                                     <input style="color: black;background-color: white" id="minstock" class="form-control fw-normal " type="number" name="minstock" value="0">
                                                     </div>
                                                 </div>
-                                                <input type="hidden" id="clickedButtonValue" name="clickedButtonValue">
                 
                                                 <div class="text-center mt-4">
                                                           
@@ -1361,7 +1363,7 @@ $('#addRow').click(function() {
                         <option value="{{ i.id }}" data-item-name="{{ i.item_name }}" data-item-hsn="{{ i.item_hsn }}" data-item-unit="{{ i.item_unit }}" data-item-price="{{ i.item_sale_price }}" data-item-gst="{{ i.item_gst }}" data-item-igst="{{ i.item_igst }}">{{ i.item_name }}</option>
                         {% endfor %}
                     </select> &nbsp;&nbsp;&nbsp;
-                    <button type="button" class="btn " style="background-color: rgb(165, 217, 250);" data-toggle="modal" data-target="#newitem"><span class="fa fa-plus" style="color: #161515;"></span></button>
+                    <button type="button" class="btn " style="background-color:rgb(61, 68, 101);color: white;" data-toggle="modal" data-target="#newitem"><span class="fa fa-plus" style="color: #161515;"></span></button>
                 </div>
             </td>
             <td>
@@ -1639,11 +1641,11 @@ $('#addRow').click(function() {
                 dataType: 'json',
                 success: function(data) {
                 if (data.exists === 'true') {
-                $('#warnhsn').text('HSN/SAC already exists!');
+                $('#hsnmsg').text('HSN/SAC already exists!');
                 alert('HSN already exists.');
                 } else {
                 // HSN does not exist, proceed to save the item
-                $('#warnhsn').text('');
+                $('#hsnmsg').text('');
                 
                 $.ajax({
                 type: 'POST',
